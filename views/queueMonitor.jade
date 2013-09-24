@@ -1,0 +1,98 @@
+extends layout
+
+block gcsCss
+	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
+	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
+	link(rel='stylesheet', href='/stylesheets/gcsOmniWindow.css')
+
+block content
+	div.ow-overlay.ow-closed
+	div.modal.ow-closed
+		| Esta es una prueba de modal
+
+	div#dataContainer
+		//-div(data-bind='foreach: $data.queues')
+		//-div.infoContainer
+			//-div#infoAgentData
+		<!-- ko foreach: $data.queues -->
+		<!-- ko if: "default" != id() -->
+		div.queueHead
+			div.queueStats
+				div.queueID(data-bind="click: hideQueue")
+					|Queue 
+					span(data-bind="text: id")
+				div.statsData
+					div.stat
+						|Completed: 
+						span.statValue(data-bind="text: completed")
+					div.stat
+						|Abandoned: 
+						span.statValue(data-bind="text: abandoned")
+					div.stat
+						|Hold Time: 
+						span.statValue(data-bind="text: holdtime")
+					div.stat
+						|Wait Time:
+						span.statValue(data-bind="text: waiting_calls")
+			//-div.emptyAlert(data-bind="visible: agents().length < 1")
+				//-| Empty Queue
+			div.agentsContainer(data-bind='foreach: agents')
+				div.agent
+					div.agentTop(data-bind="click: showDropUl")
+						div.agentStatus
+							button.btn-gcs
+								i.icon-chevron-down
+							div.agentIcon(data-bind="statusIcon: status()")							
+							div.agentTopName
+								span(data-bind="text: name")
+							div.agentTopId
+								|ext.
+								span(data-bind="text: id")
+								span(data-bind="visible: paused() == 1")
+									| &nbsp;--> Paused
+					div.agentDrop
+						ul.agentsUl
+							li.agentName
+								i.icon-user 
+								span(data-bind="text: name")
+							li
+								button.actionBtn(data-bind="click: removeAgent")
+									span.icon-stack
+										i.icon-circle.icon-stack-base.actionBtnBase
+										i.icon-remove.actionBtn
+								button.actionBtn(data-bind="click: pauseAgent")
+									span.icon-stack
+										i.icon-circle.icon-stack-base.actionBtnBase
+										i.icon-pause.actionBtn
+								button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
+									span.icon-stack
+										i.icon-circle.icon-stack-base.actionBtnBase
+										i.icon-headphones.actionBtn
+							li(data-bind="visible: paused() == 1")
+								i.icon-pause
+								|&nbsp;Paused
+							li
+								span(data-bind="statusIcon: status()")
+								|Status: 
+								span(data-bind="text: statusName")
+							li Hablando con alguien
+							li
+								i.icon-ok 
+								|Calls Taken: 
+								span(data-bind="text: taken")
+							li
+								i.icon-time 
+								|Last Call: 
+								span(data-bind="text: lastCall")
+		<!-- /ko -->
+		<!-- /ko -->
+
+
+block gcsScripts
+	script(src="/javascripts/jquery-2.0.3.min.js")
+	script(src="/javascripts/alertify.min.js")
+	script(src="/javascripts/knockout-2.3.0.js")
+	script(src="/javascripts/knockout.viewmodel.min.js")
+	script(src="/socket.io/socket.io.js")
+	script(src="/javascripts/queueMonitorClient.js")
+	script(src="/javascripts/jquery.omniwindow.js")

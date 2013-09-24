@@ -1,0 +1,29 @@
+//-
+//-Greencore Solutions SRL Main Jade Layout
+//-
+//-Use block content to include the body of derivated pages
+//-
+//-Use block gcsCSS to include extra css from derivated pages
+//-
+//-Use block gcsScripts to add extra javascript from derivated pages
+doctype 5
+html
+  head
+    meta(charset='utf-8')
+    title= title
+    link(type="image/x-icon" href='/images/favicon.ico')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
+    block gcsCss
+
+  body
+    div#barTitle
+      img(src="images/g-icon-15x15.png")
+      span#barLogo 
+        | greencore solutions
+      div#barHelp
+        i.icon-question-sign.icon-large 
+        | Help
+    block content
+
+    block gcsScripts
