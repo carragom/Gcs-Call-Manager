@@ -230,6 +230,7 @@ gcs_ami.prototype.connect = function () {
 	ami.on('ami_socket_error', function(){
 		self.emit('error', "Socket error");
 	});
+  
 	ami.on('ami_socket_timeout',function(){
 		self.emit('error', "Timeout error");
 	});

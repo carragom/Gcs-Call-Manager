@@ -15,8 +15,8 @@ body {
   margin: 0px;
   font: 14px DroidSans, Helvetica, Arial, sans-serif;
   position: relative;
-  /*width: 98%;
-  height: 99%;*/
+  width: 98%;
+  height: 99%;
 }
 
 @font-face {
@@ -133,7 +133,9 @@ input:not([type=submit]) {
   padding-left: 5px;
   margin-top: 10px;
   margin-bottom: 10px;  
-  width: 100%;
+  width: 64%;
+  float: left;
+  position: relative;
 }
 
 .queueStats {

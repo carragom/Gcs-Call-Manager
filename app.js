@@ -125,7 +125,7 @@ app.configure(function() {
 var queueMonitor = require('./routes/queueMonitor');
 
 app.get('/', function(req, res){
-	res.render('index', {user: req.user, title: 'Greencore Solutions Queue Monitoreo'});
+	res.render('index', {user: req.user, title: 'Greencore Solutions Queue Monitor'});
 });
 
 app.get('/account', ensureAuthenticated, function(req, res){
@@ -156,6 +156,9 @@ server = http.createServer(app).listen(app.get('port'), function(){
 });
 
 gcsAmi.connect(); //This call opens the connection to asterisk AMI
+gcsAmi.on('error', function(error){
+	console.log('AMI error: '+error);
+});
 
 var io = require('socket.io').listen(server, {log: false});
 

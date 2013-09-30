@@ -15,7 +15,6 @@ ko.bindingHandlers.statusIcon = {
 		var iconCircle = 'icon-circle-blank';
 		var status = valueAccessor();
 
-
 		switch (status) {
 			case '1':
 				iconMain = 'icon-phone';
