@@ -117,6 +117,7 @@ input:not([type=submit]) {
   border-radius: 15px;
   border: 2px solid #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,5);
+  margin-top: 10px;
 }
 
 #infoAgentData {

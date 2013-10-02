@@ -3,106 +3,110 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var http = require('http');
-var path = require('path');
-var util = require('util');
-var connect = require('express/node_modules/connect');
-var cookie = require('express/node_modules/cookie');
+/*
+	var express = require('express');
+	var routes = require('./routes');
+	var user = require('./routes/user');
+	var http = require('http');
+	var path = require('path');
+	var util = require('util');
+	var connect = require('express/node_modules/connect');
+	var cookie = require('express/node_modules/cookie');
 
-var flash = require('connect-flash');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+	var flash = require('connect-flash');
+	var passport = require('passport');
+	var LocalStrategy = require('passport-local').Strategy;
 
-var Gcs_Ami = require('./gcs_modules/gcs_ami');
-var gcsAmi = new Gcs_Ami();
+	var Gcs_Ami = require('./gcs_modules/gcs_ami');
+	var gcsAmi = new Gcs_Ami(); 
+*/
 
 // development only
 /*if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }*/
 
+var express = require('express'),
+	http = require('http'),
+	fs = require('fs'),
+	passport = require('passport'),
+	Gcs_Ami = require('./gcs_modules/gcs_ami'),
+	gcsAmi = new Gcs_Ami();
 
-var users = [
-	{id: 1, username: 'fede', password: 'cisco', email: 'fede@paja.com'},
-	{id: 2, username: 'alvaro', password: 'paja', email: 'alvaro@paja.com'}
-];
+var env = process.env.NODE_ENV || 'development',
+	config = require('./config/config')[env],
+	mongoose = require('mongoose');
 
-function findById(id, fn) {
-	var idx=id-1;
-	if (users[idx]) {
-		fn(null, users[idx]);
-	} else {
-		fn(new Error('user '+ id + 'does not exist'));
-	};
-};
+mongoose.connect(config.db);
 
-function findByUsername(username, fn) {
-	for (var i = 0, len = users.length; i < len; i++) {
-		var user = users[i];
-		if (user.username === username) {
-			return fn(null, user);
+require('./models/user'); //If more models change to "for *js" 
+
+require('./config/passport')(passport, config);
+
+/*
+	var users = [
+		{id: 1, username: 'fede', password: 'cisco', email: 'fede@paja.com'},
+		{id: 2, username: 'alvaro', password: 'paja', email: 'alvaro@paja.com'}
+	];
+
+	function findById(id, fn) {
+		var idx=id-1;
+		if (users[idx]) {
+			fn(null, users[idx]);
+		} else {
+			fn(new Error('user '+ id + 'does not exist'));
 		};
 	};
-	return fn(null, null);
-};
 
-// Serialize user to support persisten login sessions
+	function findByUsername(username, fn) {
+		for (var i = 0, len = users.length; i < len; i++) {
+			var user = users[i];
+			if (user.username === username) {
+				return fn(null, user);
+			};
+		};
+		return fn(null, null);
+	};
 
-passport.serializeUser(function(user, done) {
-	done(null, user.id);
-});
+	// Serialize user to support persisten login sessions
 
-passport.deserializeUser(function(id, done) {
-	findById(id, function(err, user){
-		done(err, user);
+	passport.serializeUser(function(user, done) {
+		done(null, user.id);
 	});
-});
 
-//Set up Passport Strategy
-passport.use(new LocalStrategy( function(username, password, done){
-	process.nextTick(function (){
-		findByUsername(username, function(err, user) {
-			if (err) {
-				return done(err);
-			};
-			if (!user) {
-				return done(null, false, { message: 'Usuario Desconocido '+username});
-			};
-			if (user.password != password) {
-				return done(null, false, { message: 'Password Incorrecto'});
-			};
-			return done(null, user);
-		})
+	passport.deserializeUser(function(id, done) {
+		findById(id, function(err, user){
+			done(err, user);
+		});
 	});
-}));
 
+	//Set up Passport Strategy
+	passport.use(new LocalStrategy( function(username, password, done){
+		process.nextTick(function (){
+			findByUsername(username, function(err, user) {
+				if (err) {
+					return done(err);
+				};
+				if (!user) {
+					return done(null, false, { message: 'Usuario Desconocido '+username});
+				};
+				if (user.password != password) {
+					return done(null, false, { message: 'Password Incorrecto'});
+				};
+				return done(null, user);
+			})
+		});
+	}));
+*/
 
 var app = express();
 
-// all environments
-/*app.configure(function(){
-	app.set('port', process.env.PORT || 3001);
-	app.set('views', __dirname + '/views');
-	app.set('view engine', 'jade');
-	app.use(express.favicon());
-	app.use(express.logger('dev'));
-	app.use(express.bodyParser());
-	app.use(express.methodOverride());
-	app.use(express.cookieParser);
-	app.use(express.session({secret: 'We4aN6chi7'}));	
+require('./config/express')(app, config, passport);
+require('./config/routes')(app, passport);
 
-	app.use(flash());
-	app.use(passport.initialize());
-	app.use(passport.session());
 
-	app.use(app.router);
-	app.use(express.static(path.join(__dirname, 'public')));
-});*/
 
-app.configure(function() {
+/* app.configure(function() {
   app.set('port', process.env.PORT || 3001);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -119,37 +123,39 @@ app.configure(function() {
   app.use(passport.session());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
-});
+}); */
 
+/*Old routing
+	var queueMonitor = require('./routes/queueMonitor');
 
-var queueMonitor = require('./routes/queueMonitor');
+	app.get('/', function(req, res){
+		res.render('index', {user: req.user, title: 'Greencore Solutions Queue Monitor'});
+	});
 
-app.get('/', function(req, res){
-	res.render('index', {user: req.user, title: 'Greencore Solutions Queue Monitor'});
-});
+	app.get('/account', ensureAuthenticated, function(req, res){
+		res.render('account', {user: req.user});
+	});
 
-app.get('/account', ensureAuthenticated, function(req, res){
-	res.render('account', {user: req.user});
-});
+	app.get('/queueMonitor', ensureAuthenticated, queueMonitor.queueMonitor);
 
-app.get('/queueMonitor', ensureAuthenticated, queueMonitor.queueMonitor);
+	app.get('/login', function(req, res) {
+		res.render('login', {user: req.user, message: req.flash('error')});
+	});
 
-app.get('/login', function(req, res) {
-	res.render('login', {user: req.user, message: req.flash('error')});
-});
+	//app.get('/users', user.list);
 
-//app.get('/users', user.list);
+	app.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}), 
+		function(req, res){
+			res.redirect('/queueMonitor');
+		}
+	);
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}), 
-	function(req, res){
-		res.redirect('/queueMonitor');
-	}
-);
+	app.get('/logout', function(req, res){
+		req.logout();
+		res.redirect('/');
+	});
 
-app.get('/logout', function(req, res){
-	req.logout();
-	res.redirect('/');
-});
+*/
 
 server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -200,9 +206,3 @@ io.sockets.on('connection', function(socket){
 
 });
 
-function ensureAuthenticated(req, res, next) {
-	if (req.isAuthenticated()) {
-		return next();
-	};
-	res.redirect('login');
-};
