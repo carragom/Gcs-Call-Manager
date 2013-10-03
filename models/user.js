@@ -29,7 +29,6 @@ UserSchema
 
 //Validations
 var validatePresenceOf = function(value) {
-	console.log('Invalid User');
 	return value && value.length;
 };
 
