@@ -43,7 +43,7 @@ function makeAgent (queue, name, location, stInterface, membership, lastcall, st
   this.paused      = paused; //Is Agent Paused?
   this.taken       = taken; //Calls Taken
   this.penalty     = penalty; //Agent penalty
-  this.caller      = 'nobody';
+  this.caller      = 'no one';
   this.id          = location.replace(/Local\//,'').replace(/@from-queue\/n/,''); //clean up for ID
   this.age         = 0; //If age > 0 then is no longer in queue
 };

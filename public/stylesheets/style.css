@@ -118,10 +118,38 @@ input:not([type=submit]) {
   border: 2px solid #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,5);
   margin-top: 10px;
+  text-shadow: 0px 2px 1px rgba(0,0,0, 0.3);
 }
 
 #infoAgentData {
+  height: 65%;
+  overflow: auto;
+}
 
+.infoLabel {
+  text-shadow: none;
+  color: #fff3ad;
+}
+
+.infoContainerUl {
+  font-size: 20px;
+  line-height: 31px;
+  list-style: none;
+  margin-right: 4%;
+}
+
+.infoContainerUl .icon-stack-base {
+  color: #fff3ad;
+}
+
+.infoIcon {
+  float: right;
+  font-size: 14px;
+}
+
+#spyAgentData {
+  height: 35%;
+  border: 1px solid #0ff;
 }
 
 .queueHead {

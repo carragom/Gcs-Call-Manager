@@ -11,9 +11,50 @@ block content
 		| Esta es una prueba de modal
 
 	div#dataContainer
-		//-div(data-bind='foreach: $data.queues')
 		div.infoContainer
-			div#infoAgentData
+			div#infoAgentData(data-bind="with: selectedAgent")
+				center					
+					h1
+						span(data-bind="visible: queue")
+							i.icon-user &nbsp;
+						span(data-bind="text: name")
+				div(data-bind="visible: queue")	
+					center
+						h3
+							span.infoLabel Information for queue:&nbsp;
+							span(data-bind="text: queue")
+					ul.infoContainerUl
+						li
+							span.infoLabel The agent is now:&nbsp
+							span(data-bind="text: statusName")
+							span.infoIcon(data-bind="statusIcon: status()")
+						li
+							span.infoLabel And is talking to:&nbsp;
+							span(data-bind="text: caller")
+							span.infoIcon.icon-stack
+								i.icon-circle-blank.icon-stack-base
+								i.icon-comments-alt
+						li
+							span.infoLabel Has taken:&nbsp;
+							span(data-bind="text: taken")
+							span.infoLabel &nbsp;calls
+							span.infoIcon.icon-stack
+								i.icon-circle-blank.icon-stack-base
+								i.icon-check
+						li
+							span.infoLabel The last call was:&nbsp;
+							span(data-bind="text: lastCall")
+							span.infoIcon.icon-stack
+								i.icon-circle-blank.icon-stack-base
+								i.icon-time
+					center
+						button(data-bind="click: clearAgentData")
+							|Dismiss
+				//-div(data-bind="text: ko.toJSON($data)")
+
+
+						
+			div#spyAgentData
 		<!-- ko foreach: $data.queues -->
 		<!-- ko if: "default" != id() -->
 		div.queueHead
@@ -38,10 +79,10 @@ block content
 				//-| Empty Queue
 			div.agentsContainer(data-bind='foreach: agents')
 				div.agent
-					div.agentTop(data-bind="click: showDropUl")
+					div.agentTop(data-bind="click: $root.selectedAgent")
 						div.agentStatus
 							button.btn-gcs
-								i.icon-chevron-down
+								i.icon-arrow-right
 							div.agentIcon(data-bind="statusIcon: status()")							
 							div.agentTopName
 								span(data-bind="text: name")
@@ -94,5 +135,5 @@ block gcsScripts
 	script(src="/javascripts/knockout-2.3.0.js")
 	script(src="/javascripts/knockout.viewmodel.min.js")
 	script(src="/socket.io/socket.io.js")
-	script(src="/javascripts/queueMonitorClient.js")
 	script(src="/javascripts/jquery.omniwindow.js")
+	script(src="/javascripts/queueMonitorClient.js")	

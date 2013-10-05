@@ -54,6 +54,7 @@ ko.bindingHandlers.statusIcon = {
 
 //var queueArray = {queues:[{id: 'default', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[{id:'0', location:''}],age:'0'}]};
 var queueArray = {queues:[]};
+
 var socket = io.connect('http://10.42.20.55:3001');
 
 var AppViewModel = ko.viewmodel.fromModel(queueArray, {
@@ -61,14 +62,26 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 		"{root}.queues":"id",
 		"{root}.queues[i].agents": "id"
 	},
-	/*extend:{
-		"{root}.queues[i]": function(queue) {
-			queue.visible = ko.observable(false);
-		},
-		"{root}.queues[i].agents[i]": function(agent) {
-			agent.queue = {root}.queues[i].id
+	extend: {
+		"{root}": function(root) {
+			root.selectedAgent = ko.observable({
+				name: "Select an agent to display", 
+				queue:false,
+				location:'',
+				stInterface:'',
+				membership:'',
+				lastCall:'',
+				status:ko.observable(), //needs to be observable from the start
+				statusName:'',
+				paused:'',
+				taken:'',
+				penalty:'',
+				caller:'',
+				id:'',
+				age:''
+			});
 		}
-	}*/
+	}
 });
 
 function hideQueue(data, evt) {
@@ -85,6 +98,17 @@ function showDropUl(data, evt) {
 		ul.slideDown('slow');
 	};
 };
+
+function displayAgentData(data, evt) {
+	console.log(data.id());
+	queueArray.selectedAgent('Nueva Paja');
+	console.log(queueArray.selectedAgent);
+	ko.viewmodel.updateFromModel(AppViewModel, queueArray)
+};
+
+function clearAgentData(data, evt) {
+	AppViewModel.selectedAgent({name: "Select an agent to display", queue: false})
+}
 
 function isTalking(data) {
 	switch (data) {
@@ -123,7 +147,8 @@ function removeAgent(data) {
 
 function spyAgent(data, evt) {
 	alertify.log(data.name()+' '+data.id()+' '+data.queue());
-	$('div.modal').omniWindow().trigger('show');
+	//$('div.modal').omniWindow().trigger('show');
+	socket.emit('spyAgent');
 };
 
 socket.on('generalMsg', function(msg){
@@ -131,8 +156,8 @@ socket.on('generalMsg', function(msg){
 });
 
 socket.on('freshData', function(data){
-		fresh = {queues: data};
-		ko.viewmodel.updateFromModel(AppViewModel, fresh);
+		queueArray.queues = data;
+		ko.viewmodel.updateFromModel(AppViewModel, queueArray);
 });
 
 ko.applyBindings(AppViewModel);
