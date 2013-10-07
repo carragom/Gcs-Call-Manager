@@ -9,6 +9,13 @@
     }
 };*/
 
+
+/**
+ * Returns an html string with the appropiate icon stack
+ *
+ * Recieves the state id and returns the icon stack for that state
+ *
+ **/
 ko.bindingHandlers.statusIcon = {
 	update: function(element, valueAccessor) {
 		var iconMain ='';
@@ -50,7 +57,6 @@ ko.bindingHandlers.statusIcon = {
 	}
 };
 
-//TODO add action buttons custom binding
 
 //var queueArray = {queues:[{id: 'default', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[{id:'0', location:''}],age:'0'}]};
 var queueArray = {queues:[]};
@@ -65,7 +71,7 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 	extend: {
 		"{root}": function(root) {
 			root.selectedAgent = ko.observable({
-				name: "Select an agent to display", 
+				name: "Select an agent", 
 				queue:false,
 				location:'',
 				stInterface:'',
@@ -106,10 +112,35 @@ function displayAgentData(data, evt) {
 	ko.viewmodel.updateFromModel(AppViewModel, queueArray)
 };
 
-function clearAgentData(data, evt) {
-	AppViewModel.selectedAgent({name: "Select an agent to display", queue: false})
-}
 
+/**
+ * Fade Out the selected agent and then reset the selectedAgent observable
+ *
+ **/
+function clearAgentData(data, evt) {
+	$('#infoAgentData').fadeOut('400', function(){		
+		AppViewModel.selectedAgent({name: "Select an agent",
+			queue: false,
+			location:'',
+			stInterface:'',
+			membership:'',
+			lastCall:'',
+			status:ko.observable(), //needs to be observable from the start
+			statusName:'',
+			paused:'',
+			taken:'',
+			penalty:'',
+			caller:'',
+			id:'',
+			age:''
+		});
+	});	
+};
+
+/**
+ * Check if agent is in any mode that allows chanSpy
+ *
+ **/
 function isTalking(data) {
 	switch (data) {
 		case '2':
@@ -121,6 +152,10 @@ function isTalking(data) {
 	};
 };
 
+/**
+ * Pause an Agent in the selected Queue
+ *
+ **/
 function pauseAgent(data) {
 	var pkg = {
 		id: data.id(),
@@ -136,6 +171,11 @@ function pauseAgent(data) {
 	socket.emit('pauseAgent', pkg);
 };
 
+
+/**
+ * Remove an Agent from the selected Queue
+ *
+ **/
 function removeAgent(data) {
 	alertify.log(data.name()+' '+data.id()+' '+data.queue());
 	var pkg = {
@@ -143,8 +183,16 @@ function removeAgent(data) {
 		interface: data.location()
 	};
 	socket.emit('removeAgent', pkg);
+	clearAgentData(null, null);
 };
 
+/**
+ * Originate a ChanSpy channel to monitor the selected agent
+ *
+ * The agent must be in a state that allows it and needs an 
+ * extension number to send the monitoring channel
+ *
+ **/
 function spyAgent(data, evt) {
 	alertify.log(data.name()+' '+data.id()+' '+data.queue());
 	//$('div.modal').omniWindow().trigger('show');

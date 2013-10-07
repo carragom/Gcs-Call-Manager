@@ -5,6 +5,17 @@ html {
 	width: 99%;
 }
 
+
+@font-face {
+  font-family: DroidSans;
+  src: url('../font/DroidSans.ttf');
+}
+
+@font-face {
+  font-family: Radian;
+  src: url('../font/radion.otf') format("opentype");
+}
+
 body {
 	background: url(../images/gcs-logo.png) bottom right no-repeat;
 	background-attachment: fixed;
@@ -17,16 +28,6 @@ body {
   position: relative;
   width: 98%;
   height: 99%;
-}
-
-@font-face {
-  font-family: DroidSans;
-  src: url('../font/DroidSans.ttf');
-}
-
-@font-face {
-  font-family: Radian;
-  src: url('../font/radion.otf') format("opentype");
 }
 
 label{
@@ -122,7 +123,7 @@ input:not([type=submit]) {
 }
 
 #infoAgentData {
-  height: 65%;
+  height: 60%;
   overflow: auto;
 }
 
@@ -147,9 +148,10 @@ input:not([type=submit]) {
   font-size: 14px;
 }
 
-#spyAgentData {
-  height: 35%;
-  border: 1px solid #0ff;
+#actionData {
+  height: 40%;
+  border-top: 2px solid #fff;
+  border-radius: 15px;
 }
 
 .queueHead {
@@ -208,7 +210,7 @@ input:not([type=submit]) {
 }
 
 .statValue {
-  color: yellow;
+  color: #fff3ad;
   font-weight: bold;
 }
 
@@ -329,6 +331,18 @@ input:not([type=submit]) {
   color: rgba(155,155,155,0.7);
 }
 
+.dismissBtn {
+  background-image: none;
+  border-radius: 15px 0 15px 0;
+  background-color: #ffe761;
+  color: #007730;
+  padding: 3px 12px;
+}
+
+#actionBtnTable td {
+  text-align: center;
+}
+
 .actionBtn {
   cursor: pointer;
   text-decoration: none;
@@ -336,8 +350,16 @@ input:not([type=submit]) {
   background-color: transparent;
   background-image: none;
   border-color: transparent;
-  color: #000;
+  color: #007730;
   font-size: 17px;
+}
+
+.actionBtn:disabled .icon-stack-base {
+  color: #fff3ad;
+}
+
+.actionBtn:disabled .actionBtnIcon {
+  color: #ccc;
 }
 
 .actionBtn:disabled:hover{
@@ -350,7 +372,7 @@ input:not([type=submit]) {
 }
 
 .actionBtnBase {
-  color: rgba(255,255,255,0.4);
+  color: #ffe761;
 }
 
 span .icon-stack {

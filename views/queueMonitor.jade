@@ -11,8 +11,8 @@ block content
 		| Esta es una prueba de modal
 
 	div#dataContainer
-		div.infoContainer
-			div#infoAgentData(data-bind="with: selectedAgent")
+		div.infoContainer(data-bind="with: selectedAgent")
+			div#infoAgentData
 				center					
 					h1
 						span(data-bind="visible: queue")
@@ -48,13 +48,39 @@ block content
 								i.icon-circle-blank.icon-stack-base
 								i.icon-time
 					center
-						button(data-bind="click: clearAgentData")
+						button.dismissBtn(data-bind="click: clearAgentData")
 							|Dismiss
-				//-div(data-bind="text: ko.toJSON($data)")
-
 
 						
-			div#spyAgentData
+			div#actionData
+				center
+					table#actionBtnTable						
+						tr
+							td
+								button.actionBtn(data-bind="click: removeAgent, enable: queue")
+										span.icon-stack
+											i.icon-circle.icon-stack-base.actionBtnBase
+											i.icon-remove.actionBtnIcon
+
+							td
+								button.actionBtn(data-bind="click: pauseAgent, enable: queue")
+										span.icon-stack
+											i.icon-circle.icon-stack-base.actionBtnBase
+											i.icon-pause.actionBtnIcon
+
+							td
+								button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
+										span.icon-stack
+											i.icon-circle.icon-stack-base.actionBtnBase
+											i.icon-headphones.actionBtnIcon
+						tr
+							td
+								|Remove
+							td
+								|Pause
+							td
+								|Monitor
+
 		<!-- ko foreach: $data.queues -->
 		<!-- ko if: "default" != id() -->
 		div.queueHead
@@ -77,8 +103,8 @@ block content
 						span.statValue(data-bind="text: waiting_calls")
 			//-div.emptyAlert(data-bind="visible: agents().length < 1")
 				//-| Empty Queue
-			div.agentsContainer(data-bind='foreach: agents')
-				div.agent
+			ol.agentsContainer(data-bind='foreach: agents')
+				li.agent
 					div.agentTop(data-bind="click: $root.selectedAgent")
 						div.agentStatus
 							button.btn-gcs
