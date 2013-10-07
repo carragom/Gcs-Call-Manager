@@ -205,7 +205,7 @@ function removeAgent(agent, cola) {
 
 
 
-//******************************************************************************
+//********************* Controller **********************************************
 
 function gcs_ami() {
 	if (false === this instanceof gcs_ami) {
@@ -213,6 +213,18 @@ function gcs_ami() {
 	}
 	events.EventEmitter.call(this);
 };
+
+function getCallersId(ami_datos) {
+  for (var qInd = 1; qInd < queueArray.length; qInd++) {
+    var agentId = isAgentInQueue(ami_datos.calleridnum, queueArray[qInd].agents);
+    if (-1 != agentId) {
+      var lastCaller = queueArray[qInd].agents[agentId].caller;
+      if (('no one' == lastCaller) || (ami_datos.connectedlinenum)) {
+        queueArray[qInd].agents[agentId].caller = ami_datos.connectedlinenum || 'Unknown*';
+      }
+    }
+  }
+}
 
 sys.inherits(gcs_ami, events.EventEmitter);
  
@@ -223,7 +235,7 @@ gcs_ami.prototype.connect = function () {
 		setInterval(function (){
 			incAge();
 			ami.send({action: 'QueueStatus'});
-			//ami.send({action: 'CoreShowChannels'});
+			ami.send({action: 'CoreShowChannels'});
 		}, 1000);
 	});
 
@@ -239,7 +251,8 @@ gcs_ami.prototype.connect = function () {
 		//console.log('AMI DATA', ami_datos.event);
 		switch (ami_datos.event) {
 			case 'CoreShowChannel':
-				self.emit('gcs_talking', ami_datos);
+        getCallersId(ami_datos);
+				//self.emit('gcs_talking', ami_datos);
 				break;
       case 'QueueParams':
         updateQueue(ami_datos);
