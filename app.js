@@ -58,6 +58,7 @@ gcsAmi.on('error', function(error){
 	console.log('AMI error: '+error);
 });
 
+
 var io = require('socket.io').listen(server, {log: false});
 
 /*io.set('authorization', function (handshakeData, accept) {
@@ -93,7 +94,14 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('spyAgent', function(data){
-		socket.emit('generalMsg', {msg: 'Queremos espiarsh'});
+		var pkg = {
+			action: 'Originate',
+			application: 'ExtenSpy',
+			options: 'qES',
+			supervisor: data.supervisorId,
+			agent: data.agentId
+		};
+		gcsAmi.send({order: "spyAgent", payload: pkg});
 	});
 
 	gcsAmi.on('freshData', function(ami_data){

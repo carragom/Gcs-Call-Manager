@@ -18,11 +18,17 @@ block content
 						span(data-bind="visible: queue")
 							i.icon-user &nbsp;
 						span(data-bind="text: name")
-				div(data-bind="visible: queue")	
+				div.infoValidData(data-bind="fadeVisible: queue")	
 					center
-						h3
+						h4							
 							span.infoLabel Information for queue:&nbsp;
-							span(data-bind="text: queue")
+							span(data-bind="text: queue")							
+						h2
+							span(data-bind="text: id")
+							span(data-bind="fadeVisible: paused() == 1")
+								|&nbsp;/&nbsp;Paused
+						button.gcsBtn(data-bind="click: clearAgentData")
+							|Dismiss
 					ul.infoContainerUl
 						li
 							span.infoLabel The agent is now:&nbsp
@@ -33,7 +39,13 @@ block content
 							span(data-bind="text: caller")
 							span.infoIcon.icon-stack
 								i.icon-circle-blank.icon-stack-base
-								i.icon-comments-alt
+								i.icon-comments-alt						
+						li
+							span.infoLabel The last call was:&nbsp;
+							span(data-bind="text: lastCall")
+							span.infoIcon.icon-stack
+								i.icon-circle-blank.icon-stack-base
+								i.icon-time
 						li
 							span.infoLabel Has taken:&nbsp;
 							span(data-bind="text: taken")
@@ -41,15 +53,8 @@ block content
 							span.infoIcon.icon-stack
 								i.icon-circle-blank.icon-stack-base
 								i.icon-check
-						li
-							span.infoLabel The last call was:&nbsp;
-							span(data-bind="text: lastCall")
-							span.infoIcon.icon-stack
-								i.icon-circle-blank.icon-stack-base
-								i.icon-time
 					center
-						button.dismissBtn(data-bind="click: clearAgentData")
-							|Dismiss
+						
 
 						
 			div#actionData
@@ -69,7 +74,7 @@ block content
 											i.icon-pause.actionBtnIcon
 
 							td
-								button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
+								button.actionBtn(data-bind="click: toggleSpyForm, enable: isTalking(status())")
 										span.icon-stack
 											i.icon-circle.icon-stack-base.actionBtnBase
 											i.icon-headphones.actionBtnIcon
@@ -80,6 +85,14 @@ block content
 								|Pause
 							td
 								|Monitor
+
+				div.spyAgentFormContainer
+					form#spyForm(data-bind="submit: spyAgent, checkStatusForSpy: status()")
+						div
+							label Supervisor Extension:
+							input(type="text" id="spyDst" name="supExtension" placeholder="Enter the Supervisor Extension")
+						button.gcsBtn(type="submit") Create
+						button.gcsBtn(data-bind="click: toggleSpyForm") Cancel
 
 		<!-- ko foreach: $data.queues -->
 		<!-- ko if: "default" != id() -->

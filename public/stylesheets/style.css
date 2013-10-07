@@ -123,8 +123,12 @@ input:not([type=submit]) {
 }
 
 #infoAgentData {
-  height: 60%;
+  height: 65%;
   overflow: auto;
+}
+
+.infoValidData {
+  display: none;
 }
 
 .infoLabel {
@@ -149,10 +153,21 @@ input:not([type=submit]) {
 }
 
 #actionData {
-  height: 40%;
+  height: 35%;
   border-top: 2px solid #fff;
   border-radius: 15px;
 }
+
+.spyAgentFormContainer {
+  display: inline;
+  padding: 10px;
+  text-align: center;
+}
+
+#spyForm {
+  display: none;
+}
+
 
 .queueHead {
   border-radius: 10px;
@@ -331,11 +346,11 @@ input:not([type=submit]) {
   color: rgba(155,155,155,0.7);
 }
 
-.dismissBtn {
+.gcsBtn {
   background-image: none;
   border-radius: 15px 0 15px 0;
-  background-color: #ffe761;
-  color: #007730;
+  background-color: #228A4C;
+  color: #ffe761;
   padding: 3px 12px;
 }
 
@@ -350,7 +365,7 @@ input:not([type=submit]) {
   background-color: transparent;
   background-image: none;
   border-color: transparent;
-  color: #007730;
+  color: #ffe761;
   font-size: 17px;
 }
 
@@ -372,7 +387,7 @@ input:not([type=submit]) {
 }
 
 .actionBtnBase {
-  color: #ffe761;
+  color: #228A4C;
 }
 
 span .icon-stack {

@@ -1,14 +1,13 @@
-/*ko.bindingHandlers.fadeVisible = {
+ko.bindingHandlers.fadeVisible = {
     init: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
         $(element).toggle(shouldDisplay);
     },
     update: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
-        shouldDisplay ? $(element).fadeIn('slow') : $(element).fadeOut('slow');
+        shouldDisplay ? $(element).fadeIn() : $(element).fadeOut();
     }
-};*/
-
+};
 
 /**
  * Returns an html string with the appropiate icon stack
@@ -57,6 +56,15 @@ ko.bindingHandlers.statusIcon = {
 	}
 };
 
+ko.bindingHandlers.checkStatusForSpy = {
+	update: function(element, valueAccessor) {
+		if (!isTalking(valueAccessor()) && $(element).is(":visible")) {
+			$(element).fadeOut('200');
+			alertify.log('The Call has ended, monitor canceled')
+		};
+	}
+};
+
 
 //var queueArray = {queues:[{id: 'default', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[{id:'0', location:''}],age:'0'}]};
 var queueArray = {queues:[]};
@@ -79,13 +87,13 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 				lastCall:'',
 				status:ko.observable(), //needs to be observable from the start
 				statusName:'',
-				paused:'',
+				paused:ko.observable(),
 				taken:'',
 				penalty:'',
 				caller:'',
 				id:'',
 				age:''
-			});
+			});			
 		}
 	}
 });
@@ -127,7 +135,7 @@ function clearAgentData(data, evt) {
 			lastCall:'',
 			status:ko.observable(), //needs to be observable from the start
 			statusName:'',
-			paused:'',
+			paused:ko.observable(),
 			taken:'',
 			penalty:'',
 			caller:'',
@@ -193,11 +201,28 @@ function removeAgent(data) {
  * extension number to send the monitoring channel
  *
  **/
-function spyAgent(data, evt) {
-	alertify.log(data.name()+' '+data.id()+' '+data.queue());
-	//$('div.modal').omniWindow().trigger('show');
-	socket.emit('spyAgent');
+function spyAgent(form) {
+	console.log('Inputted extension: '+form.supExtension.value);
+	console.log('create chanspy with: '+AppViewModel.selectedAgent().id()+' and Local/'+form.supExtension.value);
+	var pkg = {
+		agentId: AppViewModel.selectedAgent().stInterface(),
+		supervisorId: "Local/"+form.supExtension.value
+	};
+	$('#spyForm').toggle('slow');
+	if (isTalking(AppViewModel.selectedAgent().status())) {
+		socket.emit('spyAgent', pkg);
+	} else {
+		alertify.log('Agent Monitor Canceled, '+AppViewModel.selectedAgent().name+' call ended');
+	}
 };
+
+/**
+ * Toggle visibility on ChanSpy Form 
+ *
+ **/
+function toggleSpyForm(data, evt) {
+	$('#spyForm').toggle('slow');
+}
 
 socket.on('generalMsg', function(msg){
 	alertify.log(msg.msg);
@@ -207,5 +232,11 @@ socket.on('freshData', function(data){
 		queueArray.queues = data;
 		ko.viewmodel.updateFromModel(AppViewModel, queueArray);
 });
+
+/**
+ * Subscribe to selectedAgent status and cancel chanSpy if it was in progress
+ *
+ **/
+
 
 ko.applyBindings(AppViewModel);

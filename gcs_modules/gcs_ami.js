@@ -221,10 +221,10 @@ function getCallersId(ami_datos) {
       var lastCaller = queueArray[qInd].agents[agentId].caller;
       if (('no one' == lastCaller) || (ami_datos.connectedlinenum)) {
         queueArray[qInd].agents[agentId].caller = ami_datos.connectedlinenum || 'Unknown*';
-      }
-    }
-  }
-}
+      };
+    };
+  };
+};
 
 sys.inherits(gcs_ami, events.EventEmitter);
  
@@ -310,10 +310,11 @@ gcs_ami.prototype.connect = function () {
 };
 
 gcs_ami.prototype.send = function (req) {
-	//Check if req.action is valid and allowed
-	if ('gcs_getCallers' == req.action) {
-		ami.send({action: 'CoreShowChannels'})
-		console.log('get callers');
+	//TODO Check if req.action is valid and allowed
+	if ('spyAgent' == req.order) {
+    var pkg=req.payload;
+		ami.send({action: pkg.action, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
+		console.log({action: pkg.action, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
 	} else {
 		ami.send(req);
 	};
