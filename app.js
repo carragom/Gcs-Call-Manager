@@ -35,6 +35,8 @@ var express = require('express'),
 
 var env = process.env.NODE_ENV || 'development',
 	config = require('./config/config')[env],
+	cookie = require('express/node_modules/cookie'),
+	connect = require('express/node_modules/connect'),
 	mongoose = require('mongoose');
 
 mongoose.connect(config.db);
@@ -61,15 +63,15 @@ gcsAmi.on('error', function(error){
 
 var io = require('socket.io').listen(server, {log: false});
 
-/*io.set('authorization', function (handshakeData, accept) {
+io.set('authorization', function (handshakeData, accept) {
 
   if (handshakeData.headers.cookie) {
 
     handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
 
-    handshakeData.sessionID = connect.utils.parseSignedCookie(handshakeData.cookie['express.sid'], 'We4aN6chi7');
+    handshakeData.sessionID = connect.utils.parseSignedCookie(handshakeData.cookie['connect.sid'], 'We4aN6chi7');
 
-    if (handshakeData.cookie['express.sid'] == handshakeData.sessionID) {
+    if (handshakeData.cookie['connect.sid'] == handshakeData.sessionID) {
       return accept('Cookie is invalid.', false);
     }
 
@@ -78,7 +80,7 @@ var io = require('socket.io').listen(server, {log: false});
   } 
 
   accept(null, true);
-});*/
+});
 
 io.sockets.on('connection', function(socket){
 	socket.on('my event', function(data){
