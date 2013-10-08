@@ -1,3 +1,15 @@
+/** 	Greencore Solutions SRL
+ * Client side script for Greencore's Queue Manager
+ *
+ * Uses knockout.js, knockout viewmodel plugin, alertify
+ *
+ **/
+
+
+/**
+ * Animates transitions
+ *
+ **/
 ko.bindingHandlers.fadeVisible = {
     init: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
@@ -56,6 +68,10 @@ ko.bindingHandlers.statusIcon = {
 	}
 };
 
+/**
+ * If status changes to a non talking state, cancel Spy attempt
+ *
+ **/
 ko.bindingHandlers.checkStatusForSpy = {
 	update: function(element, valueAccessor) {
 		if (!isTalking(valueAccessor()) && $(element).is(":visible")) {
@@ -98,28 +114,33 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 	}
 });
 
+/**
+ * Hide Queue div
+ *
+ **/
 function hideQueue(data, evt) {
 	$(evt.currentTarget).siblings().toggle('slow');
 	$(evt.currentTarget).parent().not(this).siblings().slideToggle('slow');
 };
 
-function showDropUl(data, evt) {
-	var ul = $(evt.currentTarget).siblings(); //TODO revisar que esto funcione
-	if (ul.is(':visible')) {
-		ul.slideToggle('slow');
-	} else {
-		$(".agentDrop").not(this).slideUp('slow');
-		ul.slideDown('slow');
+/** showDropUl and displayAgentData might not be needed anymore
+	function showDropUl(data, evt) {
+		var ul = $(evt.currentTarget).siblings(); //TODO revisar que esto funcione
+		if (ul.is(':visible')) {
+			ul.slideToggle('slow');
+		} else {
+			$(".agentDrop").not(this).slideUp('slow');
+			ul.slideDown('slow');
+		};
 	};
-};
 
-function displayAgentData(data, evt) {
-	console.log(data.id());
-	queueArray.selectedAgent('Nueva Paja');
-	console.log(queueArray.selectedAgent);
-	ko.viewmodel.updateFromModel(AppViewModel, queueArray)
-};
-
+	function displayAgentData(data, evt) {
+		console.log(data.id());
+		queueArray.selectedAgent('Nueva Paja');
+		console.log(queueArray.selectedAgent);
+		ko.viewmodel.updateFromModel(AppViewModel, queueArray)
+	};
+**/
 
 /**
  * Fade Out the selected agent and then reset the selectedAgent observable
@@ -203,10 +224,10 @@ function removeAgent(data) {
  **/
 function spyAgent(form) {
 	console.log('Inputted extension: '+form.supExtension.value);
-	console.log('create chanspy with: '+AppViewModel.selectedAgent().id()+' and Local/'+form.supExtension.value);
+	console.log('create chanspy with: '+AppViewModel.selectedAgent().location()+' and Local/'+form.supExtension.value);
 	var pkg = {
 		agentId: AppViewModel.selectedAgent().stInterface(),
-		supervisorId: "Local/"+form.supExtension.value
+		supervisorId: "SIP/"+form.supExtension.value
 	};
 	$('#spyForm').toggle('slow');
 	if (isTalking(AppViewModel.selectedAgent().status())) {
@@ -232,11 +253,6 @@ socket.on('freshData', function(data){
 		queueArray.queues = data;
 		ko.viewmodel.updateFromModel(AppViewModel, queueArray);
 });
-
-/**
- * Subscribe to selectedAgent status and cancel chanSpy if it was in progress
- *
- **/
 
 
 ko.applyBindings(AppViewModel);

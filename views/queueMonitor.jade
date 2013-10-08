@@ -18,7 +18,7 @@ block content
 						span(data-bind="visible: queue")
 							i.icon-user &nbsp;
 						span(data-bind="text: name")
-				div.infoValidData(data-bind="fadeVisible: queue")	
+				div.infoValidData(data-bind="fadeVisible: queue")
 					center
 						h4							
 							span.infoLabel Information for queue:&nbsp;
@@ -116,8 +116,8 @@ block content
 						span.statValue(data-bind="text: waiting_calls")
 			//-div.emptyAlert(data-bind="visible: agents().length < 1")
 				//-| Empty Queue
-			ol.agentsContainer(data-bind='foreach: agents')
-				li.agent
+			div.agentsContainer(data-bind='foreach: agents')
+				div.agent
 					div.agentTop(data-bind="click: $root.selectedAgent")
 						div.agentStatus
 							button.btn-gcs

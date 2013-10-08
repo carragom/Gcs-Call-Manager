@@ -98,6 +98,8 @@ io.sockets.on('connection', function(socket){
 			action: 'Originate',
 			application: 'ExtenSpy',
 			options: 'qES',
+			context: 'from-internal',
+			timeout: '30000',
 			supervisor: data.supervisorId,
 			agent: data.agentId
 		};

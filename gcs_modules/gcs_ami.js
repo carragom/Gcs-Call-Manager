@@ -196,7 +196,7 @@ function removeAgent(agent, cola) {
     if (-1 != aInd) {
       queueArray[qInd].agents[aInd].age = 2;
     } else {
-      console.log('Agent not found: '+agent.location+'in queue '+cola);
+      console.log('Agent not found: '+agent.location+' in queue '+cola);
     };
   };
 };
@@ -216,11 +216,16 @@ function gcs_ami() {
 
 function getCallersId(ami_datos) {
   for (var qInd = 1; qInd < queueArray.length; qInd++) {
-    var agentId = isAgentInQueue(ami_datos.calleridnum, queueArray[qInd].agents);
-    if (-1 != agentId) {
+    var agentId = isAgentInQueue(ami_datos.connectedlinenum, queueArray[qInd].agents);
+    var callerId = ami_datos.calleridnum;
+    if (-1 == agentId) {
+      agentId = isAgentInQueue(ami_datos.calleridnum, queueArray[qInd].agents);
+      callerId = ami_datos.connectedlinenum;
+    }
+    if (-1 != agentId && (callerId != queueArray[qInd].agents[agentId].id)) {
       var lastCaller = queueArray[qInd].agents[agentId].caller;
-      if (('no one' == lastCaller) || (ami_datos.connectedlinenum)) {
-        queueArray[qInd].agents[agentId].caller = ami_datos.connectedlinenum || 'Unknown*';
+      if (('no one' == lastCaller) || (callerId)) {        
+        queueArray[qInd].agents[agentId].caller = callerId || 'Unknown*';
       };
     };
   };
@@ -314,7 +319,7 @@ gcs_ami.prototype.send = function (req) {
 	if ('spyAgent' == req.order) {
     var pkg=req.payload;
 		ami.send({action: pkg.action, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
-		console.log({action: pkg.action, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
+		console.log({action: pkg.action, context: pkg.context, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
 	} else {
 		ami.send(req);
 	};
