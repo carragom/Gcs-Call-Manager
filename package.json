@@ -7,12 +7,17 @@
   },
   "dependencies": {
     "express": "3.4.0",
+    "mongoose": "*",
+    "connect-mongo": "*",
+    "connect-flash": "*",
     "jade": "*",
     "socket.io": "*",
     "asterisk-ami": "*",
     "connect-flash": "*",
     "passport": "*",
     "passport-local": "*",
+    "async": "latest",
+    "underscore": "*",
     "moment": "*"
   }
 }

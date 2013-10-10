@@ -43,7 +43,7 @@ function makeAgent (queue, name, location, stInterface, membership, lastcall, st
   this.paused      = paused; //Is Agent Paused?
   this.taken       = taken; //Calls Taken
   this.penalty     = penalty; //Agent penalty
-  this.caller      = 'nobody';
+  this.caller      = 'no one';
   this.id          = location.replace(/Local\//,'').replace(/@from-queue\/n/,''); //clean up for ID
   this.age         = 0; //If age > 0 then is no longer in queue
 };
@@ -196,7 +196,7 @@ function removeAgent(agent, cola) {
     if (-1 != aInd) {
       queueArray[qInd].agents[aInd].age = 2;
     } else {
-      console.log('Agent not found: '+agent.location+'in queue '+cola);
+      console.log('Agent not found: '+agent.location+' in queue '+cola);
     };
   };
 };
@@ -205,13 +205,30 @@ function removeAgent(agent, cola) {
 
 
 
-//******************************************************************************
+//********************* Controller **********************************************
 
 function gcs_ami() {
 	if (false === this instanceof gcs_ami) {
 		return new gcs_ami;
 	}
 	events.EventEmitter.call(this);
+};
+
+function getCallersId(ami_datos) {
+  for (var qInd = 1; qInd < queueArray.length; qInd++) {
+    var agentId = isAgentInQueue(ami_datos.connectedlinenum, queueArray[qInd].agents);
+    var callerId = ami_datos.calleridnum;
+    if (-1 == agentId) {
+      agentId = isAgentInQueue(ami_datos.calleridnum, queueArray[qInd].agents);
+      callerId = ami_datos.connectedlinenum;
+    }
+    if (-1 != agentId && (callerId != queueArray[qInd].agents[agentId].id)) {
+      var lastCaller = queueArray[qInd].agents[agentId].caller;
+      if (('no one' == lastCaller) || (callerId)) {        
+        queueArray[qInd].agents[agentId].caller = callerId || 'Unknown*';
+      };
+    };
+  };
 };
 
 sys.inherits(gcs_ami, events.EventEmitter);
@@ -223,7 +240,7 @@ gcs_ami.prototype.connect = function () {
 		setInterval(function (){
 			incAge();
 			ami.send({action: 'QueueStatus'});
-			//ami.send({action: 'CoreShowChannels'});
+			ami.send({action: 'CoreShowChannels'});
 		}, 1000);
 	});
 
@@ -239,7 +256,8 @@ gcs_ami.prototype.connect = function () {
 		//console.log('AMI DATA', ami_datos.event);
 		switch (ami_datos.event) {
 			case 'CoreShowChannel':
-				self.emit('gcs_talking', ami_datos);
+        getCallersId(ami_datos);
+				//self.emit('gcs_talking', ami_datos);
 				break;
       case 'QueueParams':
         updateQueue(ami_datos);
@@ -274,8 +292,15 @@ gcs_ami.prototype.connect = function () {
         break;
 
       case 'QueueMemberRemoved':
+        ami_datos.id = ami_datos.location.replace(/Local\//,'').replace(/@from-queue\/n/,'');
         removeAgent(ami_datos, ami_datos.queue);
         queueGarbageCollector();
+        var payload = {
+          queue: ami_datos.queue,
+          id: ami_datos.id,
+          name: ami_datos.membername
+        };
+        self.emit('agentRemoved', payload);
         break; 
 
       case 'QueueMemberPaused':
@@ -297,10 +322,11 @@ gcs_ami.prototype.connect = function () {
 };
 
 gcs_ami.prototype.send = function (req) {
-	//Check if req.action is valid and allowed
-	if ('gcs_getCallers' == req.action) {
-		ami.send({action: 'CoreShowChannels'})
-		console.log('get callers');
+	//TODO Check if req.action is valid and allowed
+	if ('spyAgent' == req.order) {
+    var pkg=req.payload;
+		ami.send({action: pkg.action, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
+		console.log({action: pkg.action, context: pkg.context, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
 	} else {
 		ami.send(req);
 	};

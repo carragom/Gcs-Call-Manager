@@ -5,6 +5,17 @@ html {
 	width: 99%;
 }
 
+
+@font-face {
+  font-family: DroidSans;
+  src: url('../font/DroidSans.ttf');
+}
+
+@font-face {
+  font-family: Radian;
+  src: url('../font/radion.otf') format("opentype");
+}
+
 body {
 	background: url(../images/gcs-logo.png) bottom right no-repeat;
 	background-attachment: fixed;
@@ -17,16 +28,6 @@ body {
   position: relative;
   width: 98%;
   height: 99%;
-}
-
-@font-face {
-  font-family: DroidSans;
-  src: url('../font/DroidSans.ttf');
-}
-
-@font-face {
-  font-family: Radian;
-  src: url('../font/radion.otf') format("opentype");
 }
 
 label{
@@ -117,11 +118,56 @@ input:not([type=submit]) {
   border-radius: 15px;
   border: 2px solid #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,5);
+  margin-top: 10px;
+  text-shadow: 0px 2px 1px rgba(0,0,0, 0.3);
 }
 
 #infoAgentData {
-
+  height: 65%;
+  overflow: auto;
 }
+
+.infoValidData {
+  display: none;
+}
+
+.infoLabel {
+  text-shadow: none;
+  color: #fff3ad;
+}
+
+.infoContainerUl {
+  font-size: 20px;
+  line-height: 31px;
+  list-style: none;
+  margin-right: 4%;
+}
+
+.infoContainerUl .icon-stack-base {
+  color: #fff3ad;
+}
+
+.infoIcon {
+  float: right;
+  font-size: 14px;
+}
+
+#actionData {
+  height: 35%;
+  border-top: 2px solid #fff;
+  border-radius: 15px;
+}
+
+.spyAgentFormContainer {
+  display: inline;
+  padding: 10px;
+  text-align: center;
+}
+
+#spyForm {
+  display: none;
+}
+
 
 .queueHead {
   border-radius: 10px;
@@ -179,7 +225,7 @@ input:not([type=submit]) {
 }
 
 .statValue {
-  color: yellow;
+  color: #fff3ad;
   font-weight: bold;
 }
 
@@ -300,6 +346,18 @@ input:not([type=submit]) {
   color: rgba(155,155,155,0.7);
 }
 
+.gcsBtn {
+  background-image: none;
+  border-radius: 15px 0 15px 0;
+  background-color: #228A4C;
+  color: #ffe761;
+  padding: 3px 12px;
+}
+
+#actionBtnTable td {
+  text-align: center;
+}
+
 .actionBtn {
   cursor: pointer;
   text-decoration: none;
@@ -307,8 +365,16 @@ input:not([type=submit]) {
   background-color: transparent;
   background-image: none;
   border-color: transparent;
-  color: #000;
+  color: #ffe761;
   font-size: 17px;
+}
+
+.actionBtn:disabled .icon-stack-base {
+  color: #fff3ad;
+}
+
+.actionBtn:disabled .actionBtnIcon {
+  color: #ccc;
 }
 
 .actionBtn:disabled:hover{
@@ -321,7 +387,7 @@ input:not([type=submit]) {
 }
 
 .actionBtnBase {
-  color: rgba(255,255,255,0.4);
+  color: #228A4C;
 }
 
 span .icon-stack {
