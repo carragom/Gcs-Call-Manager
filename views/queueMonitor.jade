@@ -99,7 +99,7 @@ block content
 		div.queueHead
 			div.queueStats
 				div.queueID(data-bind="click: hideQueue")
-					|Queue 
+					|Agents in Queue 
 					span(data-bind="text: id")
 				div.statsData
 					div.stat
@@ -117,10 +117,10 @@ block content
 			//-div.emptyAlert(data-bind="visible: agents().length < 1")
 				//-| Empty Queue
 			div.agentsContainer(data-bind='foreach: agents')
-				div.agent
-					div.agentTop(data-bind="click: $root.selectedAgent")
+				div.agent(data-bind="css: {selectedAgent: selected}")
+					div.agentTop(data-bind="click: markSelectedItem")
 						div.agentStatus
-							button.btn-gcs
+							button.btn-gcs(data-bind="visible: selected")
 								i.icon-arrow-right
 							div.agentIcon(data-bind="statusIcon: status()")							
 							div.agentTopName

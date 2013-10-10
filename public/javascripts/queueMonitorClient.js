@@ -110,6 +110,10 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 				id:'',
 				age:''
 			});			
+		},
+
+		"{root}.queues[i].agents[i]": function(agent) {
+			agent.selected = ko.observable(false);
 		}
 	}
 });
@@ -163,7 +167,8 @@ function clearAgentData(data, evt) {
 			id:'',
 			age:''
 		});
-	});	
+	});
+	$('.agentTop').removeClass('selectedAgent');
 };
 
 /**
@@ -243,7 +248,26 @@ function spyAgent(form) {
  **/
 function toggleSpyForm(data, evt) {
 	$('#spyForm').toggle('slow');
-}
+};
+
+function amISelected(data, evt) {
+	if (AppViewModel.selectedAgent() == data) {
+		alertify.log(data.name+' está seleccionado');
+		return true;
+	} else {
+		return false;
+	}
+};
+
+function markSelectedItem(data, evt) {
+	//data.selected(!data.selected());	
+	if (AppViewModel.selectedAgent() != data) {
+		var clickedElement = $('evt.currentTarget');
+		$('.agentTop').not(evt.currentTarget).removeClass('selectedAgent');
+		$(evt.currentTarget).addClass('selectedAgent');
+		AppViewModel.selectedAgent(data);
+	};	
+};
 
 socket.on('generalMsg', function(msg){
 	alertify.log(msg.msg);
@@ -256,7 +280,7 @@ socket.on('freshData', function(data){
 
 socket.on('agentRemoved', function(data){
 	alertify.log('Agent '+data.name+' removed from queue '+data.queue);
-	if (AppViewModel.selectedAgent().id() == data.id) {
+	if ((AppViewModel.selectedAgent().id() == data.id) && (AppViewModel.selectedAgent().queue() == data.queue)) {
 		clearAgentData(null, null);
 	};
 });

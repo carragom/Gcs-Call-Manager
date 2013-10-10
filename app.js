@@ -91,7 +91,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	gcsAmi.on('agentRemoved', function(payload) {
-		// gcsAmiPayload has all data needed to send the clients
+		// payload has all data needed to send the clients
 		socket.emit('agentRemoved', payload);
 	});
 

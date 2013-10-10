@@ -10,7 +10,6 @@ var sys         = require('sys'); // In order of expanding event emitter we need
 var moment = require('moment'); //Format dates to human readable
 
 //Session setup
-//var ami = null;
 var ami = new AsteriskAmi({ 
 	host: '10.42.20.20',
 	username: 'dev',
