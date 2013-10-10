@@ -250,8 +250,15 @@ socket.on('generalMsg', function(msg){
 });
 
 socket.on('freshData', function(data){
-		queueArray.queues = data;
-		ko.viewmodel.updateFromModel(AppViewModel, queueArray);
+	queueArray.queues = data;
+	ko.viewmodel.updateFromModel(AppViewModel, queueArray);
+});
+
+socket.on('agentRemoved', function(data){
+	alertify.log('Agent '+data.name+' removed from queue '+data.queue);
+	if (AppViewModel.selectedAgent().id() == data.id) {
+		clearAgentData(null, null);
+	};
 });
 
 

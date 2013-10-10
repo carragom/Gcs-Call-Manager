@@ -1,25 +1,7 @@
 
 /**
  * Module dependencies.
- */
-
-/*
-	var express = require('express');
-	var routes = require('./routes');
-	var user = require('./routes/user');
-	var http = require('http');
-	var path = require('path');
-	var util = require('util');
-	var connect = require('express/node_modules/connect');
-	var cookie = require('express/node_modules/cookie');
-
-	var flash = require('connect-flash');
-	var passport = require('passport');
-	var LocalStrategy = require('passport-local').Strategy;
-
-	var Gcs_Ami = require('./gcs_modules/gcs_ami');
-	var gcsAmi = new Gcs_Ami(); 
-*/
+ **/
 
 // development only
 /*if ('development' == app.get('env')) {
@@ -106,6 +88,11 @@ io.sockets.on('connection', function(socket){
 			agent: data.agentId
 		};
 		gcsAmi.send({order: "spyAgent", payload: pkg});
+	});
+
+	gcsAmi.on('agentRemoved', function(payload) {
+		// gcsAmiPayload has all data needed to send the clients
+		socket.emit('agentRemoved', payload);
 	});
 
 	gcsAmi.on('freshData', function(ami_data){

@@ -292,8 +292,15 @@ gcs_ami.prototype.connect = function () {
         break;
 
       case 'QueueMemberRemoved':
+        ami_datos.id = ami_datos.location.replace(/Local\//,'').replace(/@from-queue\/n/,'');
         removeAgent(ami_datos, ami_datos.queue);
         queueGarbageCollector();
+        var payload = {
+          queue: ami_datos.queue,
+          id: ami_datos.id,
+          name: ami_datos.membername
+        };
+        self.emit('agentRemoved', payload);
         break; 
 
       case 'QueueMemberPaused':
