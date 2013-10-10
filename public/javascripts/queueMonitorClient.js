@@ -13,11 +13,11 @@
 ko.bindingHandlers.fadeVisible = {
     init: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
-        $(element).toggle(shouldDisplay);
+        shouldDisplay ? $(element).fadeIn('slow') : $(element).hide();
     },
     update: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
-        shouldDisplay ? $(element).fadeIn() : $(element).fadeOut();
+        shouldDisplay ? $(element).fadeIn('slow') : $(element).fadeOut();
     }
 };
 
