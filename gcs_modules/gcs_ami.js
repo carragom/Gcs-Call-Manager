@@ -7,7 +7,7 @@
 var AsteriskAmi = require('asterisk-ami'); //required for AMI communication
 var events      = require('events'); // required	for Event Emitting
 var sys         = require('sys'); // In order of expanding event emitter we need sys helper "inherit"
-var moment = require('moment'); //Format dates to human readable
+var moment      = require('moment'); //Format dates to human readable
 
 //Session setup
 var ami = new AsteriskAmi({ 
@@ -256,7 +256,6 @@ gcs_ami.prototype.connect = function () {
 		switch (ami_datos.event) {
 			case 'CoreShowChannel':
         getCallersId(ami_datos);
-				//self.emit('gcs_talking', ami_datos);
 				break;
       case 'QueueParams':
         updateQueue(ami_datos);
@@ -281,13 +280,11 @@ gcs_ami.prototype.connect = function () {
 
         TODO, see if this is correct
       */
-        //updateAgent(ami_datos, ami_datos.queue);
-        var addAgentMsg = {
-          order: 'addAgent',
+        var payload = {
           name: ami_datos.membername,
           queue: ami_datos.queue
         };
-        self.emit('newAgent', addAgentMsg)
+        self.emit('newAgent', payload)
         break;
 
       case 'QueueMemberRemoved':

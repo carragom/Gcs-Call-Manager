@@ -117,7 +117,7 @@ block content
 			//-div.emptyAlert(data-bind="visible: agents().length < 1")
 				//-| Empty Queue
 			div.agentsContainer(data-bind='foreach: agents')
-				div.agent(data-bind="css: {selectedAgent: selected}")
+				div.agent
 					div.agentTop(data-bind="click: markSelectedItem")
 						div.agentStatus
 							button.btn-gcs(data-bind="visible: selected")

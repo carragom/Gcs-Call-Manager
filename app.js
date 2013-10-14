@@ -90,6 +90,11 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.send({order: "spyAgent", payload: pkg});
 	});
 
+	gcsAmi.on('newAgent', function(payload) {
+		// payload has all data needed to send the clients
+		socket.emit('newAgent', payload);
+	});
+
 	gcsAmi.on('agentRemoved', function(payload) {
 		// payload has all data needed to send the clients
 		socket.emit('agentRemoved', payload);

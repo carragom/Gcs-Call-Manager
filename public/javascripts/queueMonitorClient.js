@@ -250,15 +250,12 @@ function toggleSpyForm(data, evt) {
 	$('#spyForm').toggle('slow');
 };
 
-function amISelected(data, evt) {
-	if (AppViewModel.selectedAgent() == data) {
-		alertify.log(data.name+' está seleccionado');
-		return true;
-	} else {
-		return false;
-	}
-};
-
+/**
+ * Apply special style to selected agent and clear all other agentTops
+ * 
+ * -- If the clicked agent is currently selected, then unselect all
+ *
+ **/
 function markSelectedItem(data, evt) {
 	//data.selected(!data.selected());	
 	if (AppViewModel.selectedAgent() != data) {
@@ -266,7 +263,9 @@ function markSelectedItem(data, evt) {
 		$('.agentTop').not(evt.currentTarget).removeClass('selectedAgent');
 		$(evt.currentTarget).addClass('selectedAgent');
 		AppViewModel.selectedAgent(data);
-	};	
+	} else {
+		clearAgentData();
+	}
 };
 
 socket.on('generalMsg', function(msg){
@@ -285,5 +284,8 @@ socket.on('agentRemoved', function(data){
 	};
 });
 
+socket.on('newAgent', function(data) {
+	alertify.log('Agent '+data.name+' added to queue '+data.queue);
+});
 
 ko.applyBindings(AppViewModel);
