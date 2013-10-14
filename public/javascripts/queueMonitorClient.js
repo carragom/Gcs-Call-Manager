@@ -127,24 +127,19 @@ function hideQueue(data, evt) {
 	$(evt.currentTarget).parent().not(this).siblings().slideToggle('slow');
 };
 
-/** showDropUl and displayAgentData might not be needed anymore
-	function showDropUl(data, evt) {
-		var ul = $(evt.currentTarget).siblings(); //TODO revisar que esto funcione
-		if (ul.is(':visible')) {
-			ul.slideToggle('slow');
-		} else {
-			$(".agentDrop").not(this).slideUp('slow');
-			ul.slideDown('slow');
-		};
+function showDropUl(data, evt) {
+	var agentTop = evt.currentTarget
+	var ul = $(agentTop).siblings();	
+	if (ul.is(':visible')) {
+		ul.slideUp('slow');
+		$('.agentTop').removeClass('selectedAgent');
+	} else {
+		$(".agentDrop").not(this).slideUp('slow');
+		$('.agentTop').not(agentTop).removeClass('selectedAgent');
+		$(agentTop).addClass('selectedAgent');
+		ul.slideDown('slow');
 	};
-
-	function displayAgentData(data, evt) {
-		console.log(data.id());
-		queueArray.selectedAgent('Nueva Paja');
-		console.log(queueArray.selectedAgent);
-		ko.viewmodel.updateFromModel(AppViewModel, queueArray)
-	};
-**/
+};
 
 /**
  * Fade Out the selected agent and then reset the selectedAgent observable
@@ -257,15 +252,18 @@ function toggleSpyForm(data, evt) {
  *
  **/
 function markSelectedItem(data, evt) {
-	//data.selected(!data.selected());	
-	if (AppViewModel.selectedAgent() != data) {
-		var clickedElement = $('evt.currentTarget');
-		$('.agentTop').not(evt.currentTarget).removeClass('selectedAgent');
-		$(evt.currentTarget).addClass('selectedAgent');
-		AppViewModel.selectedAgent(data);
+	if ($('.infoContainer').is(':visible')) {
+		if (AppViewModel.selectedAgent() != data) {
+			var clickedElement = $('evt.currentTarget');
+			$('.agentTop').not(evt.currentTarget).removeClass('selectedAgent');
+			$(evt.currentTarget).addClass('selectedAgent');
+			AppViewModel.selectedAgent(data);
+		} else {
+			clearAgentData();
+		};
 	} else {
-		clearAgentData();
-	}
+		showDropUl(data, evt);
+	};
 };
 
 socket.on('generalMsg', function(msg){
