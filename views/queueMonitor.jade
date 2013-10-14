@@ -72,39 +72,49 @@ block content
 									span(data-bind="visible: paused() == 1")
 										| &nbsp;--> Paused
 						div.agentDrop
-							ul.agentsUl
+							ul.agentsUl.infoContainerUl
 								li.agentName
 									i.icon-user 
-									span(data-bind="text: name")
-								li
-									button.actionBtn(data-bind="click: removeAgent")
-										span.icon-stack
-											i.icon-circle.icon-stack-base.actionBtnBase
-											i.icon-remove.actionBtn
-									button.actionBtn(data-bind="click: pauseAgent")
-										span.icon-stack
-											i.icon-circle.icon-stack-base.actionBtnBase
-											i.icon-pause.actionBtn
-									button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
-										span.icon-stack
-											i.icon-circle.icon-stack-base.actionBtnBase
-											i.icon-headphones.actionBtn
+									span(data-bind="text: name")								
 								li(data-bind="visible: paused() == 1")
 									i.icon-pause
 									|&nbsp;Paused
 								li
-									span(data-bind="statusIcon: status()")
-									|Status: 
+									span.infoLabel The agent is now:&nbsp
 									span(data-bind="text: statusName")
-								li Hablando con alguien
+									span.infoIcon(data-bind="statusIcon: status()")
 								li
-									i.icon-ok 
-									|Calls Taken: 
-									span(data-bind="text: taken")
+									span.infoLabel And is talking to:&nbsp;
+									span(data-bind="text: caller")
+									span.infoIcon.icon-stack
+										i.icon-circle-blank.icon-stack-base
+										i.icon-comments-alt						
 								li
-									i.icon-time 
-									|Last Call: 
+									span.infoLabel The last call was:&nbsp;
 									span(data-bind="text: lastCall")
+									span.infoIcon.icon-stack
+										i.icon-circle-blank.icon-stack-base
+										i.icon-time
+								li
+									span.infoLabel Has taken:&nbsp;
+									span(data-bind="text: taken")
+									span.infoLabel &nbsp;calls
+									span.infoIcon.icon-stack
+										i.icon-circle-blank.icon-stack-base
+										i.icon-check
+								
+							button.actionBtn(data-bind="click: removeAgent")
+								span.icon-stack
+									i.icon-circle.icon-stack-base.actionBtnBase
+									i.icon-remove.actionBtn
+							button.actionBtn(data-bind="click: pauseAgent")
+								span.icon-stack
+									i.icon-circle.icon-stack-base.actionBtnBase
+									i.icon-pause.actionBtn
+							button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
+								span.icon-stack
+									i.icon-circle.icon-stack-base.actionBtnBase
+									i.icon-headphones.actionBtn
 			<!-- /ko -->
 			<!-- /ko -->
 		div.col-md-4.col-sm-6.hidden-xs.infoContainer(data-bind="with: selectedAgent")
