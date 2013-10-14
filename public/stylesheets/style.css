@@ -21,7 +21,7 @@ body {
 	background-attachment: fixed;
 	background-color: #63DB93;
   padding: 20px;
-  padding-top: 0px;
+  padding-top: 55px; /*for bootstrap navbar*/
   color: #ffe761;
   margin: 0px;
   font: 14px DroidSans, Helvetica, Arial, sans-serif;
