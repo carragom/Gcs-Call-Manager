@@ -3,11 +3,6 @@
  * Module dependencies.
  **/
 
-// development only
-/*if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}*/
-
 var express = require('express'),
 	http = require('http'),
 	fs = require('fs'),
@@ -43,6 +38,11 @@ gcsAmi.on('error', function(error){
 });
 
 
+
+/**
+ * Authorize socket.io for logged users only
+ *
+ **/
 var io = require('socket.io').listen(server, {log: false});
 
 io.set('authorization', function (handshakeData, accept) {
@@ -64,20 +64,24 @@ io.set('authorization', function (handshakeData, accept) {
   accept(null, true);
 });
 
+/**
+ * React to client events from socket.io
+ *
+ **/
 io.sockets.on('connection', function(socket){
 	socket.on('my event', function(data){
 		console.log(data);
 	});
 
-	socket.on('pauseAgent', function(data){
+	socket.on('pauseAgent', function(data){ //Toggle Paused state for an agent in a queue
 		gcsAmi.send({action: 'QueuePause', queue: data.queue, interface: data.interface, paused: data.paused});
 	});
 
-	socket.on('removeAgent', function(data){
+	socket.on('removeAgent', function(data){ //Remove an agent from a queue
 		gcsAmi.send({action: 'QueueRemove', queue: data.queue, interface: data.interface});
 	});
 
-	socket.on('spyAgent', function(data){
+	socket.on('spyAgent', function(data){ //Create ChannelSpy channel for the supervisor
 		var pkg = {
 			action: 'Originate',
 			application: 'ExtenSpy',
@@ -90,17 +94,17 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.send({order: "spyAgent", payload: pkg});
 	});
 
-	gcsAmi.on('newAgent', function(payload) {
+	gcsAmi.on('newAgent', function(payload) { //If a new agent is found in a queue, alert the clients
 		// payload has all data needed to send the clients
 		socket.emit('newAgent', payload);
 	});
 
-	gcsAmi.on('agentRemoved', function(payload) {
+	gcsAmi.on('agentRemoved', function(payload) { //If an agent is removed from a queue, alert the clients
 		// payload has all data needed to send the clients
 		socket.emit('agentRemoved', payload);
 	});
 
-	gcsAmi.on('freshData', function(ami_data){
+	gcsAmi.on('freshData', function(ami_data){ //If gcsAmi gets fresh queue data, send it to the clients
 		socket.emit('freshData', ami_data);
 	});
 

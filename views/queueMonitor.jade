@@ -55,8 +55,8 @@ block content
 						div.stat
 							|Wait Time:
 							span.statValue(data-bind="text: waiting_calls")
-				//-div.emptyAlert(data-bind="visible: agents().length < 1")
-					//-| Empty Queue
+				div.emptyAlert(data-bind="visible: agents().length < 1")
+					| Empty Queue
 				div.agentsContainer(data-bind='foreach: agents')
 					div.agent
 						div.agentTop(data-bind="click: markSelectedItem")
@@ -72,6 +72,8 @@ block content
 									span(data-bind="visible: paused() == 1")
 										| &nbsp;--> Paused
 						div.agentDrop
+						//-agentDrop should only be sent to mobile clients, View renderer needs to be upgraded
+                        
 							ul.agentsUl.infoContainerUl
 								li.agentName
 									i.icon-user 
@@ -117,7 +119,9 @@ block content
 									i.icon-headphones.actionBtn
 			<!-- /ko -->
 			<!-- /ko -->
+		//-This info Window should only be sent to desktop and tablet users, View renderer needs to be upgraded
 		div.col-md-4.col-sm-6.hidden-xs.infoContainer(data-bind="with: selectedAgent")
+			//-selectedAgent is an extended observable that will hold the selected agent information
 			div#infoAgentData
 				center					
 					h1

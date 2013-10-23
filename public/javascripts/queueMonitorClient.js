@@ -124,7 +124,7 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
  **/
 function hideQueue(data, evt) {
 	$(evt.currentTarget).siblings().toggle('slow');
-	$(evt.currentTarget).parent().not(this).siblings().slideToggle('slow');
+	$(evt.currentTarget).parent().siblings().not('.emptyAlert').slideToggle('slow');
 };
 
 function showDropUl(data, evt) {

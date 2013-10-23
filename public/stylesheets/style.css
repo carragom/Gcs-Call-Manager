@@ -339,7 +339,6 @@ input:not([type=submit]) {
 }
 
 .emptyAlert {
-  display: none;
   font-size: 30px;
   text-align: center;
   padding-bottom: 5px;
