@@ -318,14 +318,23 @@ gcs_ami.prototype.connect = function () {
 };
 
 gcs_ami.prototype.send = function (req) {
-	//TODO Check if req.action is valid and allowed
+  //req must have an "order" field and a "payload" with all the properties needed for asterisk to perform the action
 	if ('spyAgent' == req.order) {
-    var pkg=req.payload;
-		ami.send({action: pkg.action, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
-		console.log({action: pkg.action, context: pkg.context, channel: pkg.supervisor, application: pkg.application, data: pkg.agent+','+pkg.options});
+    //We originate a ChanSpy with the data in payload
+    ami.send({
+      action: req.payload.action,
+      channel: req.payload.channel,
+      exten: req.payload.exten,
+      timeout: req.payload.timeout,
+      priority: req.payload.priority,
+      variable: req.payload.variable,
+      context: req.payload.context
+    });
+	} else if (('QueuePause' == req.order) || ('QueueRemove' == req.order)) {
+		ami.send(req.payload);
 	} else {
-		ami.send(req);
-	};
+    console.log('gcs_ami: Invalid action recieved');
+  };
 };
 
 process.on('SIGINT', function() { //Clean Logout when node process shuts down

@@ -1,4 +1,4 @@
-/** 	Greencore Solutions SRL
+/** 	     Greencore Solutions SRL
  * Client side script for Greencore's Queue Manager
  *
  * Uses knockout.js, knockout viewmodel plugin, alertify
@@ -85,8 +85,20 @@ ko.bindingHandlers.checkStatusForSpy = {
 //var queueArray = {queues:[{id: 'default', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[{id:'0', location:''}],age:'0'}]};
 var queueArray = {queues:[]};
 
+/**
+ * Connect to the socket.io server
+ *
+ **/
 var socket = io.connect('http://10.42.20.55:3001');
 
+
+/**
+ * Create and expand the KnockOut viewmodel
+ *
+ * The selectedAgent expansion is for the infoWindow, and the agent.selected expansion is for adding or removing
+ * selected class to the View
+ *
+ **/
 var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 	arrayChildId: {
 		"{root}.queues":"id",
@@ -127,6 +139,10 @@ function hideQueue(data, evt) {
 	$(evt.currentTarget).parent().siblings().not('.emptyAlert').slideToggle('slow');
 };
 
+/**
+ * When client is mobile instead of the info Window we use a dropdown that we show with this function
+ *
+ **/
 function showDropUl(data, evt) {
 	var agentTop = evt.currentTarget
 	var ul = $(agentTop).siblings();	
@@ -139,31 +155,6 @@ function showDropUl(data, evt) {
 		$(agentTop).addClass('selectedAgent');
 		ul.slideDown('slow');
 	};
-};
-
-/**
- * Fade Out the selected agent and then reset the selectedAgent observable
- *
- **/
-function clearAgentData(data, evt) {
-	$('#infoAgentData').fadeOut('400', function(){		
-		AppViewModel.selectedAgent({name: "Select an agent",
-			queue: false,
-			location:'',
-			stInterface:'',
-			membership:'',
-			lastCall:'',
-			status:ko.observable(), //needs to be observable from the start
-			statusName:'',
-			paused:ko.observable(),
-			taken:'',
-			penalty:'',
-			caller:'',
-			id:'',
-			age:''
-		});
-	});
-	$('.agentTop').removeClass('selectedAgent');
 };
 
 /**
@@ -206,7 +197,7 @@ function pauseAgent(data) {
  *
  **/
 function removeAgent(data) {
-	alertify.log(data.name()+' '+data.id()+' '+data.queue());
+	alertify.log('Request to remove '+data.name()+' '+data.id()+' from queue '+data.queue());
 	var pkg = {
 		queue: data.queue(),
 		interface: data.location()
@@ -227,7 +218,7 @@ function spyAgent(form) {
 	console.log('create chanspy with: '+AppViewModel.selectedAgent().location()+' and Local/'+form.supExtension.value);
 	var pkg = {
 		agentId: AppViewModel.selectedAgent().stInterface(),
-		supervisorId: "SIP/"+form.supExtension.value
+		supervisorId: form.supExtension.value
 	};
 	$('#spyForm').toggle('slow');
 	if (isTalking(AppViewModel.selectedAgent().status())) {
@@ -251,12 +242,12 @@ function toggleSpyForm(data, evt) {
  * -- If the clicked agent is currently selected, then unselect all
  *
  **/
-function markSelectedItem(data, evt) {
+function markSelectedAgent(data, evt) {
 	if ($('.infoContainer').is(':visible')) {
 		if (AppViewModel.selectedAgent() != data) {
-			var clickedElement = $('evt.currentTarget');
-			$('.agentTop').not(evt.currentTarget).removeClass('selectedAgent');
-			$(evt.currentTarget).addClass('selectedAgent');
+			var clickedElement = $(evt.currentTarget);
+			$('.agentTop').not(clickedElement).removeClass('selectedAgent');
+			$(clickedElement).addClass('selectedAgent');
 			AppViewModel.selectedAgent(data);
 		} else {
 			clearAgentData();
@@ -265,6 +256,32 @@ function markSelectedItem(data, evt) {
 		showDropUl(data, evt);
 	};
 };
+
+/**
+ * Fade Out the selected agent and then reset the selectedAgent observable
+ *
+ **/
+function clearAgentData(data, evt) {
+	$('#infoAgentData').fadeOut('400', function(){		
+		AppViewModel.selectedAgent({name: "Select an agent",
+			queue: false,
+			location:'',
+			stInterface:'',
+			membership:'',
+			lastCall:'',
+			status:ko.observable(), //needs to be observable from the start
+			statusName:'',
+			paused:ko.observable(),
+			taken:'',
+			penalty:'',
+			caller:'',
+			id:'',
+			age:''
+		});
+	});
+	$('.agentTop').removeClass('selectedAgent');
+};
+
 
 socket.on('generalMsg', function(msg){
 	alertify.log(msg.msg);

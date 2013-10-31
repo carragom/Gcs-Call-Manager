@@ -3,36 +3,62 @@ extends layout
 block gcsCss
 	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
 	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
-	link(rel='stylesheet', href='/stylesheets/gcsOmniWindow.css')
+	//-link(rel='stylesheet', href='/stylesheets/gcsOmniWindow.css')
 
 block gcsNavbarItems
 	ul.nav.navbar-nav
-		li
-			a(href="/")
-				i.icon-home.icon-large
-				|&nbsp;Home
+		//-li
+			//-a(href="/")
+				//-i.icon-home.icon-large
+				//-|&nbsp;Home
 		li.active
 			a(href="#")
 				i.icon-desktop.icon-large 
 				|&nbsp;Queues
-		li
-			a(href="/profile")
-				i.icon-user.icon-large 
-				|&nbsp;Profile
+		//-li
+			//-a(href="/profile")
+				//-i.icon-user.icon-large 
+				//-|&nbsp;Profile
 		li
 			a(href="/logout")
 				i.icon-off.icon-large 
 				|&nbsp;Logout
 		li
-			a(href="#")
+			a(data-toggle="modal" href="#helpModal")
 				i.icon-question-sign.icon-large
 				|&nbsp;Help
 
 block content
-	div.ow-overlay.ow-closed
-	div.modal.ow-closed
-		| Esta es una prueba de modal
-
+	div.modal.fade#helpModal(tabindex="-1" role="dialog" aria-labeledby="helpModalLabel" aria-hidden="true")
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button.close(type="button" data-dismiss="modal" aria-hidden="true")
+						&times;
+					h4#helpModalLabel
+						|GCS QueueMonitor Help
+				div.modal-body
+					ul
+						li To Hide a full Queue Click on the Queue's top label
+						li To Select an Agent Click on the agent's icon
+						li To Remove an Agent from a Queue, select it and click the remove button
+						li To Pause an Agent in a Queue, select it and click the pause button
+						li To Monitor an Agent, select it, click the Monitor button, enter the Supervisor's extension and click "Create", a call will be sent to the Supervisor with the Agent's audio
+				div.modal-footer
+					button.btn.btn-default(type="button" data-dismiss="modal")
+						|Close
+	div.modal.fade#chanspyModal(tabindex="-1" role="dialog" aria-labeledby="chanspyModalLabel" aria-hidden="true")
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button.close(type="button" data-dismiss="modal" aria-hidden="true")
+				h4#chanspyModalLabel
+					|Please enter the supervisor's extension
+				div.modal-body
+					|Aqui va el form
+				div.modal-footer
+					button.btn.btn-default(type="button" data-dismiss="modal")
+						|Close
 	div.row#dataContainer
 		div.col-md-8.col-sm-6
 			<!-- ko foreach: $data.queues -->
@@ -59,7 +85,7 @@ block content
 					| Empty Queue
 				div.agentsContainer(data-bind='foreach: agents')
 					div.agent
-						div.agentTop(data-bind="click: markSelectedItem")
+						div.agentTop(data-bind="click: markSelectedAgent")
 							div.agentStatus
 								button.btn-gcs(data-bind="visible: selected")
 									i.icon-arrow-right
@@ -72,8 +98,6 @@ block content
 									span(data-bind="visible: paused() == 1")
 										| &nbsp;--> Paused
 						div.agentDrop
-						//-agentDrop should only be sent to mobile clients, View renderer needs to be upgraded
-                        
 							ul.agentsUl.infoContainerUl
 								li.agentName
 									i.icon-user 
@@ -113,7 +137,7 @@ block content
 								span.icon-stack
 									i.icon-circle.icon-stack-base.actionBtnBase
 									i.icon-pause.actionBtn
-							button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
+							button.actionBtn(data-bind="enable: isTalking(status())" data-toggle="modal" href="#chanspyModal")
 								span.icon-stack
 									i.icon-circle.icon-stack-base.actionBtnBase
 									i.icon-headphones.actionBtn
@@ -162,10 +186,7 @@ block content
 							span.infoLabel &nbsp;calls
 							span.infoIcon.icon-stack
 								i.icon-circle-blank.icon-stack-base
-								i.icon-check
-					center
-						
-
+								i.icon-check						
 						
 			div#actionData
 				center
@@ -210,5 +231,5 @@ block gcsScripts
 	script(src="/javascripts/knockout-2.3.0.js")
 	script(src="/javascripts/knockout.viewmodel.min.js")
 	script(src="/socket.io/socket.io.js")
-	script(src="/javascripts/jquery.omniwindow.js")
+	//-script(src="/javascripts/jquery.omniwindow.js")
 	script(src="/javascripts/queueMonitorClient.js")	
