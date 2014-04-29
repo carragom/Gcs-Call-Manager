@@ -3,15 +3,153 @@ extends layout
 block gcsCss
 	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
 	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
-	link(rel='stylesheet', href='/stylesheets/gcsOmniWindow.css')
+	//-link(rel='stylesheet', href='/stylesheets/gcsOmniWindow.css')
+
+block gcsNavbarItems
+	ul.nav.navbar-nav
+		//-li
+			//-a(href="/")
+				//-i.icon-home.icon-large
+				//-|&nbsp;Home
+		li.active
+			a(href="#")
+				i.icon-desktop.icon-large 
+				|&nbsp;Queues
+		//-li
+			//-a(href="/profile")
+				//-i.icon-user.icon-large 
+				//-|&nbsp;Profile
+		li
+			a(href="/userAdmin")
+				i.icon-user.icon-large 
+				|&nbsp;Users
+		li
+			a(href="/logout")
+				i.icon-off.icon-large 
+				|&nbsp;Logout
+		li
+			a(data-toggle="modal" href="#helpModal")
+				i.icon-question-sign.icon-large
+				|&nbsp;Help
 
 block content
-	div.ow-overlay.ow-closed
-	div.modal.ow-closed
-		| Esta es una prueba de modal
-
-	div#dataContainer
-		div.infoContainer(data-bind="with: selectedAgent")
+	div.modal.fade#helpModal(tabindex="-1" role="dialog" aria-labeledby="helpModalLabel" aria-hidden="true")
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button.close(type="button" data-dismiss="modal" aria-hidden="true")
+						&times;
+					h4#helpModalLabel
+						|GCS QueueMonitor Help
+				div.modal-body
+					ul
+						li To Hide a full Queue Click on the Queue's top label
+						li To Select an Agent Click on the agent's icon
+						li To Remove an Agent from a Queue, select it and click the remove button
+						li To Pause an Agent in a Queue, select it and click the pause button
+						li To Monitor an Agent, select it, click the Monitor button, enter the Supervisor's extension and click "Create", a call will be sent to the Supervisor with the Agent's audio
+				div.modal-footer
+					button.btn.btn-default(type="button" data-dismiss="modal")
+						|Close
+	div.modal.fade#chanspyModal(tabindex="-1" role="dialog" aria-labeledby="chanspyModalLabel" aria-hidden="true")
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button.close(type="button" data-dismiss="modal" aria-hidden="true")
+				h4#chanspyModalLabel
+					|Please enter the supervisor's extension
+				div.modal-body
+					|Aqui va el form
+				div.modal-footer
+					button.btn.btn-default(type="button" data-dismiss="modal")
+						|Close
+	div.row#dataContainer
+		div.col-md-8.col-sm-6
+			<!-- ko foreach: $data.queues -->
+			<!-- ko if: "default" != id() -->
+			div.queueHead
+				div.queueStats
+					div.queueID(data-bind="click: hideQueue")
+						|Agents in Queue 
+						span(data-bind="text: id")
+					div.statsData
+						div.stat
+							|Completed: 
+							span.statValue(data-bind="text: completed")
+						div.stat
+							|Abandoned: 
+							span.statValue(data-bind="text: abandoned")
+						div.stat
+							|Hold Time: 
+							span.statValue(data-bind="text: holdtime")
+						div.stat
+							|Wait Time:
+							span.statValue(data-bind="text: waiting_calls")
+				div.emptyAlert(data-bind="visible: agents().length < 1")
+					| Empty Queue
+				div.agentsContainer(data-bind='foreach: agents')
+					div.agent
+						div.agentTop(data-bind="click: markSelectedAgent")
+							div.agentStatus
+								button.btn-gcs(data-bind="visible: selected")
+									i.icon-arrow-right
+								div.agentIcon(data-bind="statusIcon: status()")							
+								div.agentTopName
+									span(data-bind="text: name")
+								div.agentTopId
+									|ext.
+									span(data-bind="text: id")
+									span(data-bind="visible: paused() == 1")
+										| &nbsp;--> Paused
+						div.agentDrop
+							ul.agentsUl.infoContainerUl
+								li.agentName
+									i.icon-user 
+									span(data-bind="text: name")								
+								li(data-bind="visible: paused() == 1")
+									i.icon-pause
+									|&nbsp;Paused
+								li
+									span.infoLabel The agent is now:&nbsp
+									span(data-bind="text: statusName")
+									span.infoIcon(data-bind="statusIcon: status()")
+								li
+									span.infoLabel And is talking to:&nbsp;
+									span(data-bind="text: caller")
+									span.infoIcon.icon-stack
+										i.icon-circle-blank.icon-stack-base
+										i.icon-comments-alt						
+								li
+									span.infoLabel The last call was:&nbsp;
+									span(data-bind="text: lastCall")
+									span.infoIcon.icon-stack
+										i.icon-circle-blank.icon-stack-base
+										i.icon-time
+								li
+									span.infoLabel Has taken:&nbsp;
+									span(data-bind="text: taken")
+									span.infoLabel &nbsp;calls
+									span.infoIcon.icon-stack
+										i.icon-circle-blank.icon-stack-base
+										i.icon-check
+								
+							button.actionBtn(data-bind="click: removeAgent")
+								span.icon-stack
+									i.icon-circle.icon-stack-base.actionBtnBase
+									i.icon-remove.actionBtn
+							button.actionBtn(data-bind="click: pauseAgent")
+								span.icon-stack
+									i.icon-circle.icon-stack-base.actionBtnBase
+									i.icon-pause.actionBtn
+							button.actionBtn(data-bind="enable: isTalking(status())" data-toggle="modal" href="#chanspyModal")
+								span.icon-stack
+									i.icon-circle.icon-stack-base.actionBtnBase
+									i.icon-headphones.actionBtn
+			<!-- /ko -->
+			<!-- /ko -->
+		//-This info Window should only be sent to desktop and tablet users, View renderer needs to be upgraded
+		div.col-md-4.col-sm-6.hidden-xs.infoContainer(data-bind="with: selectedAgent")
+			//-selectedAgent is an extended observable that will hold the selected agent information
 			div#infoAgentData
 				center					
 					h1
@@ -52,10 +190,7 @@ block content
 							span.infoLabel &nbsp;calls
 							span.infoIcon.icon-stack
 								i.icon-circle-blank.icon-stack-base
-								i.icon-check
-					center
-						
-
+								i.icon-check						
 						
 			div#actionData
 				center
@@ -92,87 +227,13 @@ block content
 							label Supervisor Extension:
 							input(type="text" id="spyDst" name="supExtension" placeholder="Enter the Supervisor Extension")
 						button.gcsBtn(type="submit") Create
-						button.gcsBtn(data-bind="click: toggleSpyForm") Cancel
-
-		<!-- ko foreach: $data.queues -->
-		<!-- ko if: "default" != id() -->
-		div.queueHead
-			div.queueStats
-				div.queueID(data-bind="click: hideQueue")
-					|Agents in Queue 
-					span(data-bind="text: id")
-				div.statsData
-					div.stat
-						|Completed: 
-						span.statValue(data-bind="text: completed")
-					div.stat
-						|Abandoned: 
-						span.statValue(data-bind="text: abandoned")
-					div.stat
-						|Hold Time: 
-						span.statValue(data-bind="text: holdtime")
-					div.stat
-						|Wait Time:
-						span.statValue(data-bind="text: waiting_calls")
-			//-div.emptyAlert(data-bind="visible: agents().length < 1")
-				//-| Empty Queue
-			div.agentsContainer(data-bind='foreach: agents')
-				div.agent
-					div.agentTop(data-bind="click: markSelectedItem")
-						div.agentStatus
-							button.btn-gcs(data-bind="visible: selected")
-								i.icon-arrow-right
-							div.agentIcon(data-bind="statusIcon: status()")							
-							div.agentTopName
-								span(data-bind="text: name")
-							div.agentTopId
-								|ext.
-								span(data-bind="text: id")
-								span(data-bind="visible: paused() == 1")
-									| &nbsp;--> Paused
-					div.agentDrop
-						ul.agentsUl
-							li.agentName
-								i.icon-user 
-								span(data-bind="text: name")
-							li
-								button.actionBtn(data-bind="click: removeAgent")
-									span.icon-stack
-										i.icon-circle.icon-stack-base.actionBtnBase
-										i.icon-remove.actionBtn
-								button.actionBtn(data-bind="click: pauseAgent")
-									span.icon-stack
-										i.icon-circle.icon-stack-base.actionBtnBase
-										i.icon-pause.actionBtn
-								button.actionBtn(data-bind="click: spyAgent, enable: isTalking(status())")
-									span.icon-stack
-										i.icon-circle.icon-stack-base.actionBtnBase
-										i.icon-headphones.actionBtn
-							li(data-bind="visible: paused() == 1")
-								i.icon-pause
-								|&nbsp;Paused
-							li
-								span(data-bind="statusIcon: status()")
-								|Status: 
-								span(data-bind="text: statusName")
-							li Hablando con alguien
-							li
-								i.icon-ok 
-								|Calls Taken: 
-								span(data-bind="text: taken")
-							li
-								i.icon-time 
-								|Last Call: 
-								span(data-bind="text: lastCall")
-		<!-- /ko -->
-		<!-- /ko -->
+						button.gcsBtn(data-bind="click: toggleSpyForm") Cancel		
 
 
 block gcsScripts
-	script(src="/javascripts/jquery-2.0.3.min.js")
 	script(src="/javascripts/alertify.min.js")
 	script(src="/javascripts/knockout-2.3.0.js")
 	script(src="/javascripts/knockout.viewmodel.min.js")
 	script(src="/socket.io/socket.io.js")
-	script(src="/javascripts/jquery.omniwindow.js")
+	//-script(src="/javascripts/jquery.omniwindow.js")
 	script(src="/javascripts/queueMonitorClient.js")	

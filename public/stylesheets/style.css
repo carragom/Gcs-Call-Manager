@@ -1,8 +1,7 @@
 /* Greencore SRL CSS standard stylesheet*/
 
 html {
-	height: 90%;
-	width: 99%;
+	height: 100%;
 }
 
 
@@ -20,14 +19,13 @@ body {
 	background: url(../images/gcs-logo.png) bottom right no-repeat;
 	background-attachment: fixed;
 	background-color: #63DB93;
-  padding: 20px;
-  padding-top: 0px;
-  color: #ffe761;
-  margin: 0px;
-  font: 14px DroidSans, Helvetica, Arial, sans-serif;
-  position: relative;
-  width: 98%;
-  height: 99%;
+	padding: 20px;
+	padding-top: 55px; /*for bootstrap navbar*/
+	color: #ffe761;
+	margin: 0px;
+	font: 14px DroidSans, Helvetica, Arial, sans-serif;
+	position: relative;
+	height: 99%;
 }
 
 label{
@@ -88,7 +86,7 @@ input:not([type=submit]) {
   width: 350px;
   padding: 15px 15px;
   background-color: rgba(0,0,0,0.5);
-  border-radius: 5px;
+  border-radius: 50% / 15px;
   border: 2px solid;
   border-color: #fff;
 }
@@ -106,20 +104,21 @@ input:not([type=submit]) {
 /*-- Greencore QueueMonitor Style --*/
 
 #dataContainer {
-  width: 100%;
   height: 100%;
+  padding-right: 10px;
 }
 
 .infoContainer {
   float: right;
-  width: 33%;
   height: 88%;
   background-color: rgba(0,0,0,0.7);
-  border-radius: 15px;
+  border-radius: 50% / 15px;
   border: 2px solid #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,5);
   margin-top: 10px;
   text-shadow: 0px 2px 1px rgba(0,0,0, 0.3);
+  position: fixed;
+  right: 7px;
 }
 
 #infoAgentData {
@@ -172,7 +171,6 @@ input:not([type=submit]) {
   display: none;
 }
 
-
 .queueHead {
   border-radius: 10px;
   background-color: rgba(75,183,119,0.6);
@@ -183,9 +181,9 @@ input:not([type=submit]) {
   padding-left: 5px;
   margin-top: 10px;
   margin-bottom: 10px;  
-  width: 64%;
   float: left;
   position: relative;
+  transition: all 300ms ease-in-out;
 }
 
 .queueStats {
@@ -315,7 +313,7 @@ input:not([type=submit]) {
   padding-bottom: 5px;
   text-align: center;
   background-color: #000;
-  opacity: 0.7;
+  opacity: 0.85;
   margin: 5px 10px;
   width: 246px;
   box-shadow: 0 2px 2px rgba(0,0,0,0.4);
@@ -343,7 +341,6 @@ input:not([type=submit]) {
 }
 
 .emptyAlert {
-  display: none;
   font-size: 30px;
   text-align: center;
   padding-bottom: 5px;
@@ -416,4 +413,122 @@ span .icon-stack {
   -moz-transform: rotate(30deg) rotate(-39deg) rotate(39deg);
 }
 
+.user-options {
+  width: auto;
+}
+
+.user-form-container {
+  padding: 2em;
+  height: auto;
+  position: relative;
+  width: 40%;
+}
+
+.user-list-container {
+  padding: 2em;
+  width: 58%;
+}
+
+.user-list-ul {
+  border-radius: 10px;
+  padding: 0;
+  list-style: none;
+  background-color: rgba(0,0,0,0.8);
+  padding: 2em 1em;
+}
+
+.user-list-ul li {
+  padding: 10px;
+}
+
+.user-list-ul li:first-child {
+  background-color: black;
+}
+
+.user-list-ul li:last-child {
+  height: 4.5em;
+  background-color: black;
+  border-top: 1px solid #fff;
+}
+
+.user-list-ul li:nth-child(odd) {
+  background-color: rgba(0,0,0,0.5);
+}
+
+.user-list-header {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #fff;
+}
+
+.user-list-user {
+  color: #ffe761;
+  padding-bottom: 5px;
+}
+
+.user-list-user:hover {
+  background-color: rgba(200,200,200,0.5) !important;
+}
+
+.user-list-user.isSelected {
+  font-weight: bold;
+}
+
+.user-list-control-add {
+  float: right;
+  color: #fff;
+}
+
+.user-field {
+  width: 150px;
+  display: inline-block;
+}
+
 /*-- End of Greencore QueueMonitor style --*/
+
+/*-- Bootstrap Modifications --*/
+/*body.modal-open {
+	overflow: hidden;
+}*/
+
+.modal-content {
+  background-color: rgba(0,0,0,0.7);
+  border-radius: 15px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,5);
+  margin-top: 10px;
+}
+
+/** Media Queries **/
+@media(max-width:767px){
+  #barLogo {
+    font-size: 12px;
+  }
+  h1 {
+    font-size: 20px;
+  }
+  .infoLabel {
+    font-size: 12px;
+  }
+  .infoContainerUl {
+    font-size: 14px;
+  }
+  .user-list-container, .user-form-container {
+    float: none;
+    width: 90%;
+  }
+}
+@media(min-width:768px){
+  #barLogo {
+    font-size: 12px;
+  }
+}
+@media(min-width:992px){
+  #barLogo {
+    font-size: 20px;
+  }
+}
+@media(min-width:1200px){
+}

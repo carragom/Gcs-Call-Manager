@@ -1,0 +1,86 @@
+extends layout
+
+block gcsNavbarItems
+	ul.nav.navbar-nav
+		//-li
+			//-a(href="/")
+				//-i.icon-home.icon-large
+				//-|&nbsp;Home
+		li
+			a(href="/queueMonitor")
+				i.icon-desktop.icon-large 
+				|&nbsp;Queues
+		li.active
+			a(href="#")
+				i.icon-user.icon-large 
+				|&nbsp;Users
+		li
+			a(href="/logout")
+				i.icon-off.icon-large 
+				|&nbsp;Logout
+		li
+			a(data-toggle="modal" href="#helpModal")
+				i.icon-question-sign.icon-large
+				|&nbsp;Help
+
+block content
+	div.user-list-container.queueHead
+		ul.user-list-ul
+			li.user-list-header
+				span.user-field
+					|Nombre
+				span.user-field
+					|Usuario
+				span.user-field
+					|E-mail
+			<!-- ko foreach: users -->
+			li.user-list-user(data-bind="click: markSelectedUser, css: {isSelected: id === $root.selectedUser().id}")
+				span.user-field.user-list-name(data-bind="text: name")
+					|&nbsp;--&nbsp;
+				span.user-field.user-list-username(data-bind="text: username")
+					|&nbsp;--&nbsp;
+				span.user-field.user-list-email(data-bind="text: email")
+			<!-- /ko -->
+			li.user-list-controls
+				span.user-list-control-add.gcsBtn(data-bind="click: newUser")
+					i.icon-plus.icon-2x
+	div.user-form-container.infoContainer(data-bind="with: selectedUser")
+		h1(data-bind="visible: !id") Elija un usuario
+		h1(data-bind="visible: id") Usuario&nbsp;
+			span(data-bind="text: name")
+		form#createUser(data-bind="visible: id")
+			div.user-name
+				label(for='name')
+					|Nombre:
+				input#name(name='name', placeholder='Nombre' data-bind="value: name")
+			div.user-username
+				label#username(for='username')
+					|Usuario:
+				input(name='username' placeholder='Usuario' data-bind="value: username")
+			div.user-password
+				label(for='password')
+					|Password:
+				input(type='password' name='password' placeholder='Password' data-bind="value: password")
+			div.user-email
+				label(for='email')
+					|E-mail:
+				input(type='email' name='email' placeholder='E-mail' data-bind="value: email")
+			div.user-role
+				label(for='role')
+					|Crear como Administrador:
+				label.user-options No
+					input(type='radio' name='role' value='0' data-bind="checked: role")
+				label.user-options Si
+					input(type='radio' name='role' value='1' data-bind="checked: role")
+			div.user-controls
+				a.gcsBtn#save(data-bind="click: saveUser")
+					|Salvar
+				a.gcsBtn#delete(data-bind="click: deleteUser")
+					|Borrar
+				a.gcsBtn#cancel(data-bind="click: clearSelectedUser")
+					|Cancelar
+
+block gcsScripts
+	script(src="/javascripts/knockout-2.3.0.js")
+	script(src="/javascripts/knockout.viewmodel.min.js")
+	script(src="/javascripts/userAdmin.js")

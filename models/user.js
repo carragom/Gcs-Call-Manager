@@ -7,6 +7,7 @@ var mongoose = require('mongoose'),
 // User Schema 
 var UserSchema = new Schema({
 	name: {type: String, default: ''},
+	role: {type: Boolean, default:'false'},
 	email: {type: String, default: ''},
 	username: {type: String, default: ''},
 	provider: {type: String, default: ''},
@@ -26,6 +27,18 @@ UserSchema
 	})
 	.get(function(){
 		return this._password
+	})
+
+UserSchema
+	.virtual('userinfo')
+	.get(function() {
+		return {
+			'id': this._id,
+			'name': this.name,
+			'username': this.username,
+			'role': this.role,
+			'email': this.email
+		}
 	})
 
 //Validations
