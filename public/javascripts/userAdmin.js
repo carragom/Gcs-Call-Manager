@@ -37,6 +37,30 @@ var userViewModel = userViewModel = ko.viewmodel.fromModel({users: []}, {
 	}
 });
 
+function parseMongooseErrorMsg(err) {
+	var alertText = [];
+	Object.keys(err).forEach(function(key) {
+		switch(key) {
+			case 'name':
+				$('.user-name').addClass('has-error');
+				alertify.log('Error: '+err[key].type, "error");
+				break;
+			case 'email':
+				$('.user-email').addClass('has-error');
+				alertify.log('Error: '+err[key].type, "error");
+				break;
+			case 'username':
+				$('.user-username').addClass('has-error');
+				alertify.log('Error: '+err[key].type, "error");
+				break;
+			case 'hashed_password':
+				$('.user-password').addClass('has-error');
+				alertify.log('Error: '+err[key].type, "error");
+				break;
+		}
+	});	
+}
+
 function getUserList() {
 	$.get('/api/users', function(data) {
 		ko.viewmodel.updateFromModel(userViewModel, {users: data});
@@ -71,7 +95,8 @@ function clearSelectedUser(newId) {
 		email: '',
 		password: '',
 		role: '0'
-	})
+	});
+	$('.form-group').removeClass('has-error');
 }
 
 function newUser () {
@@ -86,11 +111,12 @@ function saveUser() {
 		delete userData.id
 		$.post('/api/users', userData, function(msg) {
 			if (1 === msg.ok) {
-				alertify.log('User created succesfully');
+				alertify.log('User created succesfully', "success");
 				getUserList();
 				clearSelectedUser();				
+			} else {
+				parseMongooseErrorMsg(msg.errors);
 			}
-			console.log(msg);
 		})
 	} else {
 		$.ajax({
@@ -99,13 +125,13 @@ function saveUser() {
 			data: JSON.stringify(userData),
 			contentType: 'application/json'
 		}).error(function(obj) {
-			console.log(obj.responseJSON);
+			parseMongooseErrorMsg(obj.responseJSON.errors);
 		}).done(function(msg) {
 			if (1 === msg.ok) {
+				alertify.log('User updated succesfully', "success");
 				getUserList();
 				clearSelectedUser();
 			}
-			console.log(msg);
 		});
 	}
 }
@@ -119,13 +145,13 @@ function deleteUser() {
 			data: JSON.stringify(userData),
 			contentType: 'application/json'
 		}).error(function(obj) {
-			console.log(obj.responseJSON);
+			parseMongooseErrorMsg(obj.responseJSON.errors);
 		}).done(function(msg) {
 			if (1 === msg.ok) {
+				alertify.log('User deleted succesfully', "success");
 				getUserList();
 				clearSelectedUser();
 			}
-			console.log(msg);
 		});
 	}
 }

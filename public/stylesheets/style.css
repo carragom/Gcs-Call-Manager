@@ -486,6 +486,14 @@ span .icon-stack {
   display: inline-block;
 }
 
+.user-controls {
+  clear: both;
+}
+
+.user-controls a {
+  margin: 0 3px;
+}
+
 /*-- End of Greencore QueueMonitor style --*/
 
 /*-- Bootstrap Modifications --*/
