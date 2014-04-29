@@ -117,6 +117,8 @@ input:not([type=submit]) {
   box-shadow: 0 2px 10px rgba(0,0,0,5);
   margin-top: 10px;
   text-shadow: 0px 2px 1px rgba(0,0,0, 0.3);
+  position: fixed;
+  right: 7px;
 }
 
 #infoAgentData {
@@ -411,6 +413,79 @@ span .icon-stack {
   -moz-transform: rotate(30deg) rotate(-39deg) rotate(39deg);
 }
 
+.user-options {
+  width: auto;
+}
+
+.user-form-container {
+  padding: 2em;
+  height: auto;
+  position: relative;
+  width: 40%;
+}
+
+.user-list-container {
+  padding: 2em;
+  width: 58%;
+}
+
+.user-list-ul {
+  border-radius: 10px;
+  padding: 0;
+  list-style: none;
+  background-color: rgba(0,0,0,0.8);
+  padding: 2em 1em;
+}
+
+.user-list-ul li {
+  padding: 10px;
+}
+
+.user-list-ul li:first-child {
+  background-color: black;
+}
+
+.user-list-ul li:last-child {
+  height: 4.5em;
+  background-color: black;
+  border-top: 1px solid #fff;
+}
+
+.user-list-ul li:nth-child(odd) {
+  background-color: rgba(0,0,0,0.5);
+}
+
+.user-list-header {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #fff;
+}
+
+.user-list-user {
+  color: #ffe761;
+  padding-bottom: 5px;
+}
+
+.user-list-user:hover {
+  background-color: rgba(200,200,200,0.5) !important;
+}
+
+.user-list-user.isSelected {
+  font-weight: bold;
+}
+
+.user-list-control-add {
+  float: right;
+  color: #fff;
+}
+
+.user-field {
+  width: 150px;
+  display: inline-block;
+}
+
 /*-- End of Greencore QueueMonitor style --*/
 
 /*-- Bootstrap Modifications --*/
@@ -439,6 +514,10 @@ span .icon-stack {
   }
   .infoContainerUl {
     font-size: 14px;
+  }
+  .user-list-container, .user-form-container {
+    float: none;
+    width: 90%;
   }
 }
 @media(min-width:768px){

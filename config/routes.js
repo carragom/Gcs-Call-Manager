@@ -16,6 +16,7 @@ var async = require('async')
  **/
 
 var auth = require('./middleware/authorization');
+var users = require('./middleware/users');
 
 /** Finally Expose routes
  *
@@ -36,6 +37,19 @@ module.exports = function (app, passport) {
 			res.redirect('/queueMonitor');
 		}
 	);
+
+	app.get('/userAdmin', auth.requiresLogin, function(req, res) {
+		res.render('users', {user: req.user});
+	});
+
+	app.get('/api/users', auth.requiresLogin, users.list);
+
+	app.post('/api/users', auth.requiresLogin, users.add, function(req, res) {
+		res.render('users');
+	});
+
+	app.put('/api/users', auth.requiresLogin, users.set);
+	app.delete('/api/users', auth.requiresLogin, users.remove);
 
 	app.get('/queueMonitor', auth.requiresLogin, function(req, res){
 		res.render('queueMonitor', {title: 'Greencore Solutions Queue Monitor'});
