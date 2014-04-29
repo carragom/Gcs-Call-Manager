@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
 	crypto = require('crypto'),
 	_ = require('underscore')
 
+var emailRegexp = new RegExp('^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$', 'i');
 
 // User Schema 
 var UserSchema = new Schema({
@@ -51,8 +52,8 @@ UserSchema.path('name').validate(function (name){
 }, 'Name cannot be blank');
 
 UserSchema.path('email').validate(function (email){
-	return email.length;
-}, 'Email cannot be blank');
+	return emailRegexp.test(email);
+}, 'Email is not valid');
 
 UserSchema.path('email').validate(function (email, fn){
 	var User = mongoose.model('User')

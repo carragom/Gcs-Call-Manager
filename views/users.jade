@@ -52,6 +52,8 @@ block content
 		div.user-form-container.infoContainer(data-bind="with: selectedUser")
 			h1(data-bind="visible: !id") Select a user
 			h1(data-bind="visible: id") User:&nbsp;
+				span(data-bind="visible: 'new' == id")
+					|New
 				span(data-bind="text: name")
 			form#createUser(data-bind="visible: id" role="form")
 				div.form-group.user-name
