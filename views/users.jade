@@ -1,5 +1,9 @@
 extends layout
 
+block gcsCss
+	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
+	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
+
 block gcsNavbarItems
 	ul.nav.navbar-nav
 		//-li
@@ -28,9 +32,9 @@ block content
 		ul.user-list-ul
 			li.user-list-header
 				span.user-field
-					|Nombre
+					|Name
 				span.user-field
-					|Usuario
+					|User
 				span.user-field
 					|E-mail
 			<!-- ko foreach: users -->
@@ -45,18 +49,18 @@ block content
 				span.user-list-control-add.gcsBtn(data-bind="click: newUser")
 					i.icon-plus.icon-2x
 	div.user-form-container.infoContainer(data-bind="with: selectedUser")
-		h1(data-bind="visible: !id") Elija un usuario
-		h1(data-bind="visible: id") Usuario&nbsp;
+		h1(data-bind="visible: !id") Select a user
+		h1(data-bind="visible: id") User:&nbsp;
 			span(data-bind="text: name")
 		form#createUser(data-bind="visible: id")
 			div.user-name
 				label(for='name')
-					|Nombre:
-				input#name(name='name', placeholder='Nombre' data-bind="value: name")
+					|Name:
+				input#name(name='name', placeholder='Name' data-bind="value: name")
 			div.user-username
 				label#username(for='username')
-					|Usuario:
-				input(name='username' placeholder='Usuario' data-bind="value: username")
+					|User:
+				input(name='username' placeholder='User' data-bind="value: username")
 			div.user-password
 				label(for='password')
 					|Password:
@@ -67,20 +71,21 @@ block content
 				input(type='email' name='email' placeholder='E-mail' data-bind="value: email")
 			div.user-role
 				label(for='role')
-					|Crear como Administrador:
+					|Is this an administrator?:
 				label.user-options No
 					input(type='radio' name='role' value='0' data-bind="checked: role")
-				label.user-options Si
+				label.user-options Yes
 					input(type='radio' name='role' value='1' data-bind="checked: role")
 			div.user-controls
 				a.gcsBtn#save(data-bind="click: saveUser")
-					|Salvar
+					|Save
 				a.gcsBtn#delete(data-bind="click: deleteUser")
-					|Borrar
+					|Delete
 				a.gcsBtn#cancel(data-bind="click: clearSelectedUser")
-					|Cancelar
+					|Cancel
 
 block gcsScripts
+	script(src="/javascripts/alertify.min.js")
 	script(src="/javascripts/knockout-2.3.0.js")
 	script(src="/javascripts/knockout.viewmodel.min.js")
 	script(src="/javascripts/userAdmin.js")

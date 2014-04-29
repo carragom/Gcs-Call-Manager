@@ -86,8 +86,9 @@ function saveUser() {
 		delete userData.id
 		$.post('/api/users', userData, function(msg) {
 			if (1 === msg.ok) {
+				alertify.log('User created succesfully');
 				getUserList();
-				clearSelectedUser();
+				clearSelectedUser();				
 			}
 			console.log(msg);
 		})

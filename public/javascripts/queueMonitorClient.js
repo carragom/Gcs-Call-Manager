@@ -83,30 +83,13 @@ ko.bindingHandlers.checkStatusForSpy = {
 
 
 //var queueArray = {queues:[{id: 'default', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[{id:'0', location:''}],age:'0'}]};
-var queueArray = {queues:[
-		{
-			name: "Test", 
-			queue:false,
-			location:'',
-			stInterface:'',
-			membership:'',
-			lastCall:'',
-			status:ko.observable(), //needs to be observable from the start
-			statusName:'',
-			paused:ko.observable(),
-			taken:'',
-			penalty:'',
-			caller:'',
-			id:'',
-			age:''
-		}
-	]};
+var queueArray = {queues:[]};
 
 /**
  * Connect to the socket.io server
  *
  **/
-var socket = io.connect('http://10.42.20.55:3001');
+var socket = io.connect('/');
 
 
 /**
