@@ -68,6 +68,18 @@ UserSchema.path('username').validate(function (username){
 	return username.length;
 }, 'Username cannot be blank');
 
+UserSchema.path('username').validate(function (username, fn) {
+	var User = mongoose.model('User')
+
+	if (this.isNew || this.isModified('username')) {
+		User.find({username: username}).exec(function(err, users) {
+			fn(!err && users.length === 0)
+		})
+	} else {
+		fn(true);
+	}
+}, 'Username already exists');
+
 UserSchema.path('hashed_password').validate(function (hashed_password){
 	return hashed_password.length;
 }, 'Password cannot be blank');
