@@ -62,7 +62,7 @@ exports.list = function (req, res, next) {
 		} else {
 			var userList = [];
 			users.forEach(function(user) {
-				userList.push(user.userinfo);
+				userList.push(user.userInfo);
 			});
 			res.json(userList);
 		}

@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 	_ = require('underscore')
 
 var emailRegexp = new RegExp('^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$', 'i');
+var queueViews = ['ignored', 'colapsed', 'normal'];
 
 // User Schema 
 var UserSchema = new Schema({
@@ -15,7 +16,10 @@ var UserSchema = new Schema({
 	hashed_password: {type: String, default: ''},
 	salt: {type: String, default: ''},
 	authToken: {type: String, default: ''},
-	queues: [String]
+	queues: {
+		queueId: {type: String},
+		view: {type: String, enum: queueViews}
+	}
 });
 
 //Virtuals
@@ -31,14 +35,15 @@ UserSchema
 	})
 
 UserSchema
-	.virtual('userinfo')
+	.virtual('userInfo')
 	.get(function() {
 		return {
 			'id': this._id,
 			'name': this.name,
 			'username': this.username,
 			'role': this.role,
-			'email': this.email
+			'email': this.email,
+			'queues': this.queues
 		}
 	})
 

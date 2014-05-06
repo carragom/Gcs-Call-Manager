@@ -15,8 +15,9 @@ var async = require('async')
  *
  **/
 
-var auth = require('./middleware/authorization');
-var users = require('./middleware/users');
+var auth = require('./middleware/authorization'),
+	users = require('./middleware/users'),
+	userCookie = require('./middleware/userCookie')
 
 /** Finally Expose routes
  *
@@ -32,7 +33,11 @@ module.exports = function (app, passport) {
 		res.render('login', {user: req.user, message: req.flash('error')});
 	});
 
-	app.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: 'Invalid username or password'}),
+	app.post('/login', passport.authenticate('local', 
+			{
+				failureRedirect: '/login', 
+				failureFlash: 'Invalid username or password'
+			}),
 		function (req, res) {
 			res.redirect('/queueMonitor');
 		}
@@ -51,7 +56,7 @@ module.exports = function (app, passport) {
 	app.put('/api/users', auth.requiresLogin, users.set);
 	app.delete('/api/users', auth.requiresLogin, users.remove);
 
-	app.get('/queueMonitor', auth.requiresLogin, function(req, res){
+	app.get('/queueMonitor', auth.requiresLogin, userCookie.set, function(req, res){
 		res.render('queueMonitor', {title: 'Greencore Solutions Queue Monitor'});
 	});
 

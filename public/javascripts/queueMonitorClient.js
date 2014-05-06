@@ -81,8 +81,26 @@ ko.bindingHandlers.checkStatusForSpy = {
 	}
 };
 
+/**
+ * Cookie getter by name, helper function
+ *
+ **/
+function getCookie(cookiename) {
+  // Get name followed by anything except a semicolon
+  var cookiestring=RegExp(""+cookiename+"[^;]+").exec(document.cookie);
+  // Return everything after the equal sign
+  return unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+}
 
-//var queueArray = {queues:[{id: 'default', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[{id:'0', location:''}],age:'0'}]};
+/*var queueArray = {queues:[
+	{id: 'default2', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[
+		{id:'0',name: 'fede', location:'', status: 1, paused: 0, statusName:'', caller:'', lastCall:'', taken:'', queue:'default2'},
+		{id:'1',name: 'Conde de Romanones Calientes', location:'', status: 1, paused: 1, statusName:'', caller:'', lastCall:'', taken:'', queue:'default2'}]
+		,age:'0'},
+	{id: 'default3', completed:'0', abandoned:'0', holdtime:'0', waiting_calls:'0', agents:[
+		{id:'0',name: 'fede', location:'', status: 1, paused: 1, statusName:'', caller:'', lastCall:'', taken:'', queue:'default3'}]
+		,age:'0'}
+	]};*/
 var queueArray = {queues:[]};
 
 /**
@@ -302,4 +320,8 @@ socket.on('newAgent', function(data) {
 	alertify.log('Agent '+data.name+' added to queue '+data.queue);
 });
 
-ko.applyBindings(AppViewModel);
+$(document).ready(function() {
+	var user = JSON.parse(getCookie('user'));
+	user.name = decodeURI(user.name);
+	ko.applyBindings(AppViewModel);
+})
