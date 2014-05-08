@@ -16,10 +16,10 @@ var UserSchema = new Schema({
 	hashed_password: {type: String, default: ''},
 	salt: {type: String, default: ''},
 	authToken: {type: String, default: ''},
-	queues: {
+	queues: [{
 		queueId: {type: String},
 		view: {type: String, enum: queueViews}
-	}
+	}]
 });
 
 //Virtuals

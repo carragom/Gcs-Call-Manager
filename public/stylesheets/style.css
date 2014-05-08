@@ -172,6 +172,7 @@ input:not([type=submit]) {
 }
 
 .queueHead {
+  width: 100%;
   border-radius: 10px;
   background-color: rgba(75,183,119,0.6);
   box-shadow: 0 2px 10px rgba(0,0,0,5);

@@ -200,7 +200,7 @@ function pauseAgent(data) {
 		interface: data.location(),
 		paused: data.paused()
 	};
-	if (0 === pkg.paused) { //send a one to pause, zero to unPause
+	if (0 == pkg.paused) { //send a one to pause, zero to unPause
 		pkg.paused = 1;
 	} else {
 		pkg.paused = 0;
