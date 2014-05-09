@@ -81,6 +81,20 @@ ko.bindingHandlers.checkStatusForSpy = {
 	}
 };
 
+ko.bindingHandlers.updateViewPrefs = {
+	init: function(element, valueAccessor) {
+		if ((user[valueAccessor()]) && ('minimized' == user[valueAccessor()])) {
+			evtMock = {};
+			evtMock.currentTarget = element;
+			dataMock = {};
+			dataMock.id = function() {return valueAccessor()};
+			dataMock.fromViewPrefs = true;
+
+			hideQueue(dataMock, evtMock);
+		}
+	}
+}
+
 var user = {}; //Global user preferences
 
 /**
@@ -160,6 +174,22 @@ function hideQueue(data, evt) {
 	$(evt.currentTarget).parentsUntil('queueHead').toggleClass('minimized');
 	$(evt.currentTarget).siblings().toggle('slow');
 	$(evt.currentTarget).parent().siblings().slideToggle('slow');
+
+	if (!data.fromViewPrefs) {
+		var pkg = {
+			userId: user['userId'],
+			queueId: data.id(),
+			view: ''
+		}
+
+		if ('minimized' === user[data.id()]) {
+			pkg.view = 'normal';
+		} else {
+			pkg.view = 'minimized';
+		}
+
+		socket.emit('userPrefs', pkg);
+	}
 }
 
 /**
@@ -328,7 +358,14 @@ socket.on('newAgent', function(data) {
 });
 
 $(document).ready(function() {
-	user = JSON.parse(getCookie('user')); //global user object
-	user.name = decodeURI(user.name);
+	var userPrefs = JSON.parse(getCookie('user'));
+	userPrefs.name = decodeURI(userPrefs.name);
+	
 	ko.applyBindings(AppViewModel);
+
+	user['userId'] = userPrefs.id;
+	user['userName'] = userPrefs.name;
+	userPrefs.queues.forEach(function(queue, index) {
+		user[queue.queueId] = queue.view;
+	});
 });

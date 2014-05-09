@@ -73,6 +73,25 @@ io.sockets.on('connection', function(socket){
 		console.log(data);
 	});
 
+	socket.on('userPrefs', function	(data) {
+		var User = mongoose.model('User');
+		User.findById(data.userId, function(err, user) {
+			if (!err) {
+				var index = user.queues.map(function(q) {return q.queueId}).indexOf(data.queueId);
+				if (-1 !== index) {
+					user.queues[index].view = data.view;
+				} else {
+					user.queues.push({queueId: data.queueId, view: data.view});
+				}
+				user.save(function(err, user) {
+					if (err) {
+						console.log('error saving user prefs '+error);
+					}
+				});
+			}
+		});
+	});
+
 	socket.on('pauseAgent', function(data){ //Toggle Paused state for an agent in a queue
 		var pkg = {
 			action: 'QueuePause', 

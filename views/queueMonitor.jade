@@ -67,9 +67,9 @@ block content
 		div.col-md-8.col-sm-6
 			<!-- ko foreach: $data.queues -->
 			<!-- ko if: "default" != id() -->
-			div.queueHead
+			div.queueHead(data-bind="attr: {'id': id}")
 				div.queueStats
-					div.queueID(data-bind="click: hideQueue")
+					div.queueID(data-bind="click: hideQueue, updateViewPrefs: id()")
 						|Agents in Queue 
 						span(data-bind="text: id")
 					div.statsData
