@@ -1,15 +1,11 @@
 /** Greencore Solutions QueueMonitor Router
  *
- * / for login
- * /queueMonitor authenticated 
+ * 
+ * 
  *
  **/
 
-var async = require('async')
-
-/** Add controllers here
- *
- **/
+//var async = require('async')
 
 /** Route Middlewares
  *

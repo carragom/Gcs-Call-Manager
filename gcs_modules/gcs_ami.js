@@ -140,9 +140,9 @@ function isAgentInQueue (id, arr) { //Returns the index if the agent exists in t
 };
 
 function sortQueueArray (a, b) {
-  if (a.id < b.id) {
+  if (a.id > b.id) {
     return -1
-  } else if (a.id > b.id) {
+  } else if (a.id < b.id) {
     return 1
   } else {
     return 0

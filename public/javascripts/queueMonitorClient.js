@@ -81,6 +81,8 @@ ko.bindingHandlers.checkStatusForSpy = {
 	}
 };
 
+var user = {}; //Global user preferences
+
 /**
  * Cookie getter by name, helper function
  *
@@ -115,6 +117,8 @@ var socket = io.connect('/');
  *
  * The selectedAgent expansion is for the infoWindow, and the agent.selected expansion is for adding or removing
  * selected class to the View
+ *
+ * viewPreferences is to be extracted from the server
  *
  **/
 var AppViewModel = ko.viewmodel.fromModel(queueArray, {
@@ -308,7 +312,7 @@ socket.on('generalMsg', function(msg){
 });
 
 socket.on('freshData', function(data){
-	queueArray.queues = data.sort();
+	queueArray.queues = data;
 	ko.viewmodel.updateFromModel(AppViewModel, queueArray);
 });
 
@@ -324,7 +328,7 @@ socket.on('newAgent', function(data) {
 });
 
 $(document).ready(function() {
-	var user = JSON.parse(getCookie('user'));
+	user = JSON.parse(getCookie('user')); //global user object
 	user.name = decodeURI(user.name);
 	ko.applyBindings(AppViewModel);
-})
+});

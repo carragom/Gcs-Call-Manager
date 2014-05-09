@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 	_ = require('underscore')
 
 var emailRegexp = new RegExp('^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$', 'i');
-var queueViews = ['ignored', 'colapsed', 'normal'];
+var queueViews = ['ignored', 'minimized', 'normal'];
 
 // User Schema 
 var UserSchema = new Schema({
