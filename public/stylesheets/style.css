@@ -345,10 +345,6 @@ input:not([type=submit]) {
   font-size: 16px;
 }
 
-.minimized>.emptyAlert {
-  width: auto;
-}
-
 .emptyAlert {
   font-size: 30px;
   text-align: center;

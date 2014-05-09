@@ -308,7 +308,7 @@ socket.on('generalMsg', function(msg){
 });
 
 socket.on('freshData', function(data){
-	queueArray.queues = data;
+	queueArray.queues = data.sort();
 	ko.viewmodel.updateFromModel(AppViewModel, queueArray);
 });
 

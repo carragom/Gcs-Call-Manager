@@ -139,6 +139,16 @@ function isAgentInQueue (id, arr) { //Returns the index if the agent exists in t
   return -1;
 };
 
+function sortQueueArray (a, b) {
+  if (a.id < b.id) {
+    return -1
+  } else if (a.id > b.id) {
+    return 1
+  } else {
+    return 0
+  }
+}
+
 updateQueue = function (datos) {
   tmpQueue = new makeQueue (datos.queue, datos.completed, datos.abandoned, datos.holdtime, datos.calls); //format the raw data
   var ind = isQueueInArray(tmpQueue.id);
@@ -151,6 +161,7 @@ updateQueue = function (datos) {
     queueArray[ind].age           = 0; //Age is back to 0 to keep it safe from the garbage collector
   } else {
     queueArray.push(tmpQueue);
+    queueArray.sort(sortQueueArray);
   };
 };
 
