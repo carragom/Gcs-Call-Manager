@@ -9,7 +9,7 @@ var events      = require('events'); // required	for Event Emitting
 var sys         = require('sys'); // In order of expanding event emitter we need sys helper "inherit"
 var moment      = require('moment'); //Format dates to human readable
 
-//Session setup
+//Default AMI Connection setup (will be overwritten with conf info before ami.connect())
 var ami = new AsteriskAmi({ 
 	host: '127.0.0.1',
 	username: 'dev',
@@ -246,6 +246,7 @@ sys.inherits(gcs_ami, events.EventEmitter);
 gcs_ami.prototype.connect = function (conf) {
 	var self = this;
 
+  //Overwrite default ami connection information from config file if present
   if (conf) {
     if (conf.host) ami.host = conf.host;
     if (conf.username) ami.username = conf.username;
@@ -278,7 +279,7 @@ gcs_ami.prototype.connect = function (conf) {
 			case 'CoreShowChannel':
         getCallersId(ami_datos);
 				break;
-      
+
       case 'QueueParams':
         updateQueue(ami_datos);
         break;
