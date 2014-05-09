@@ -23,6 +23,7 @@ module.exports = {
 		},
 		ami: {
 			host: '10.42.20.20',
+			port: 'default',
 			username: 'dev',
 			password: 'phos7oH6'
 		}
@@ -35,6 +36,7 @@ module.exports = {
 		},
 		ami: {
 			host: '10.42.20.20',
+			port: 'default',
 			username: 'dev',
 			password: 'phos7oH6'
 		}

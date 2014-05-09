@@ -32,7 +32,7 @@ server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-gcsAmi.connect(); //This call opens the connection to asterisk AMI
+gcsAmi.connect(config.ami); //This call opens the connection to asterisk AMI
 gcsAmi.on('error', function(error){
 	console.log('AMI error: '+error);
 });

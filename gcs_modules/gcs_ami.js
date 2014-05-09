@@ -11,9 +11,9 @@ var moment      = require('moment'); //Format dates to human readable
 
 //Session setup
 var ami = new AsteriskAmi({ 
-	host: '10.42.20.20',
+	host: '127.0.0.1',
 	username: 'dev',
-	password: 'phos7oH6',
+	password: 'defaultPassword',
 	reconnect: true,
 	reconnect_after: '1500'
 });
@@ -243,10 +243,20 @@ function getCallersId(ami_datos) {
 
 sys.inherits(gcs_ami, events.EventEmitter);
  
-gcs_ami.prototype.connect = function () {
+gcs_ami.prototype.connect = function (conf) {
 	var self = this;
 
+  if (conf) {
+    if (conf.host) ami.host = conf.host;
+    if (conf.username) ami.username = conf.username;
+    if (conf.password) ami.password = conf.password;
+    if (conf.port && 'default' != conf.port) ami.port = conf.port;
+  }
+
+  console.log('Trying to connect to asterisk AMI at '+ami.host+':'+ami.port);
+
 	ami.connect(function(){
+    console.log('Connected to AMI');
 		setInterval(function (){
 			incAge();
 			ami.send({action: 'QueueStatus'});
@@ -268,6 +278,7 @@ gcs_ami.prototype.connect = function () {
 			case 'CoreShowChannel':
         getCallersId(ami_datos);
 				break;
+      
       case 'QueueParams':
         updateQueue(ami_datos);
         break;
