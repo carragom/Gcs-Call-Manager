@@ -26,7 +26,11 @@ var auth = require('./middleware/authorization'),
 module.exports = function (app, passport) {
 
 	app.get('/', function(req, res){
-		res.redirect('/login');
+		if (req.user) {
+			res.redirect('/queueMonitor')
+		} else {
+			res.redirect('/login');
+		}
 	});
 
 	app.get('/login', function(req, res){
