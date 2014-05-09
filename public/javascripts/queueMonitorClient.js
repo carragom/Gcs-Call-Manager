@@ -153,8 +153,9 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
  *
  **/
 function hideQueue(data, evt) {
+	$(evt.currentTarget).parentsUntil('queueHead').toggleClass('minimized');
 	$(evt.currentTarget).siblings().toggle('slow');
-	$(evt.currentTarget).parent().siblings().not('.emptyAlert').slideToggle('slow');
+	$(evt.currentTarget).parent().siblings().slideToggle('slow');
 }
 
 /**
@@ -202,7 +203,9 @@ function pauseAgent(data) {
 	};
 	if (0 == pkg.paused) { //send a one to pause, zero to unPause
 		pkg.paused = 1;
+		alertify.log('Request to Pause '+data.name()+ ' in queue '+data.queue());
 	} else {
+		alertify.log('Request to Resume '+data.name()+ ' in queue '+data.queue());
 		pkg.paused = 0;
 	}
 	socket.emit('pauseAgent', pkg);

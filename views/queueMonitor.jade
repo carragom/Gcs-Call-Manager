@@ -85,8 +85,12 @@ block content
 						div.stat
 							|Wait Time:
 							span.statValue(data-bind="text: waiting_calls")
+
+				<!-- ko if: agents().length < 1 -->
 				div.emptyAlert(data-bind="visible: agents().length < 1")
 					| Empty Queue
+				<!-- /ko -->
+				
 				div.agentsContainer(data-bind='foreach: agents')
 					div.agent
 						div.agentTop(data-bind="click: markSelectedAgent")

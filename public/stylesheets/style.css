@@ -187,6 +187,10 @@ input:not([type=submit]) {
   transition: all 300ms ease-in-out;
 }
 
+.queueHead.minimized {
+  width: auto;
+}
+
 .queueStats {
   margin: 3px;
   margin-right: auto;
@@ -341,10 +345,14 @@ input:not([type=submit]) {
   font-size: 16px;
 }
 
+.minimized>.emptyAlert {
+  width: auto;
+}
+
 .emptyAlert {
   font-size: 30px;
   text-align: center;
-  padding-bottom: 5px;
+  padding: 5px;
   float: left;
   background-color: rgba(128,80,80,0.5);
   font-weight: bold;
