@@ -28,9 +28,10 @@ require('./config/express')(app, config, passport);
 require('./config/routes')(app, passport);
 
 
-server = http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+// server = http.createServer(app).listen(app.get('port'), function(){
+//   console.log('Express server listening on port ' + app.get('port'));
+// });
+server = http.createServer(app);
 
 gcsAmi.connect(config.ami); //This call opens the connection to asterisk AMI
 gcsAmi.on('error', function(error){
@@ -149,3 +150,8 @@ io.sockets.on('connection', function(socket){
 
 });
 
+exports = module.exports = server;
+
+exports.use = function() {
+	app.use.apply(app, arguments);
+};
