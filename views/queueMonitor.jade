@@ -38,7 +38,7 @@ block content
 			div.modal-content
 				div.modal-header
 					button.close(type="button" data-dismiss="modal" aria-hidden="true")
-						&times;
+						i.icon-remove
 					h4#helpModalLabel
 						|GCS QueueMonitor Help
 				div.modal-body
@@ -109,7 +109,7 @@ block content
 							ul.agentsUl.infoContainerUl
 								li.agentName
 									i.icon-user 
-									span(data-bind="text: name")								
+									span(data-bind="text: name")
 								li(data-bind="visible: paused() == 1")
 									i.icon-pause
 									|&nbsp;Paused
@@ -122,7 +122,7 @@ block content
 									span(data-bind="text: caller")
 									span.infoIcon.icon-stack
 										i.icon-circle-blank.icon-stack-base
-										i.icon-comments-alt						
+										i.icon-comments-alt
 								li
 									span.infoLabel The last call was:&nbsp;
 									span(data-bind="text: lastCall")
@@ -155,16 +155,16 @@ block content
 		div.col-md-4.col-sm-6.hidden-xs.infoContainer(data-bind="with: selectedAgent")
 			//-selectedAgent is an extended observable that will hold the selected agent information
 			div#infoAgentData
-				center					
+				center
 					h1
 						span(data-bind="fadeVisible: queue")
 							i.icon-user &nbsp;
 						span(data-bind="text: name")
 				div.infoValidData(data-bind="fadeVisible: queue")
 					center
-						h4							
+						h4
 							span.infoLabel Information for queue:&nbsp;
-							span(data-bind="text: queue")							
+							span(data-bind="text: queue")
 						h2
 							span(data-bind="text: id")
 							span(data-bind="fadeVisible: paused() == 1")
@@ -181,7 +181,7 @@ block content
 							span(data-bind="text: caller")
 							span.infoIcon.icon-stack
 								i.icon-circle-blank.icon-stack-base
-								i.icon-comments-alt						
+								i.icon-comments-alt
 						li
 							span.infoLabel The last call was:&nbsp;
 							span(data-bind="text: lastCall")
@@ -194,11 +194,11 @@ block content
 							span.infoLabel &nbsp;calls
 							span.infoIcon.icon-stack
 								i.icon-circle-blank.icon-stack-base
-								i.icon-check						
+								i.icon-check
 						
 			div#actionData
 				center
-					table#actionBtnTable						
+					table#actionBtnTable
 						tr
 							td
 								button.actionBtn(data-bind="click: removeAgent, enable: queue")
