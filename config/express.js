@@ -35,6 +35,8 @@ module.exports = function (app, config, passport) {
 			store: new mongoStore({
 				url: config.db,
 				collection: 'sessions'
+			}, function(ret) {
+				console.log('Mongo Store up');
 			})
 		}));
 

@@ -16,6 +16,7 @@ var path = require('path'),
 
 module.exports = {
 	development: {
+		port: 3001,
 		db: 'mongodb://localhost/queueMonitorDB_dev',
 		root: rootPath,
 		app: {
@@ -29,6 +30,7 @@ module.exports = {
 		}
 	},
 	production: {
+		port: 3001,
 		db: 'mongodb://localhost/queueMonitorDB',
 		root: rootPath,
 		app: {

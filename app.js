@@ -162,8 +162,13 @@ io.sockets.on('connection', function(socket){
 
 });
 
-exports = module.exports = server;
+server.listen(config.port, function () {
+  console.log('Express server listening on port %d in %s mode', config.port, app.get('env'));
+});
+
+
+/*exports = module.exports = server;
 
 exports.use = function() {
 	app.use.apply(app, arguments);
-};
+};*/
