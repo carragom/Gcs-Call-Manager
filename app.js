@@ -131,22 +131,33 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.send({order: "spyAgent", payload: pkg});
 	});
 
-	gcsAmi.on('newAgent', function(payload) { //If a new agent is found in a queue, alert the clients
-		// payload has all data needed to send the clients
+	/**
+	 *  In order to safely unbind the listeners when the user disconnect, they must be called with a named callback
+	 *   not an anonymous function, so here are the callbacks
+	 *
+	 */
+	function freshData(payload) {
+		socket.emit('freshData', payload);
+	}
+
+	function newAgent(payload) {
 		socket.emit('newAgent', payload);
-	});
+	}
 
-	gcsAmi.on('agentRemoved', function(payload) { //If an agent is removed from a queue, alert the clients
-		// payload has all data needed to send the clients
+	function agentRemoved(payload) {
 		socket.emit('agentRemoved', payload);
-	});
+	}
 
-	gcsAmi.on('freshData', function(ami_data){ //If gcsAmi gets fresh queue data, send it to the clients
-		socket.emit('freshData', ami_data);
-	});
+	/** Then we add the listeners **/
+	gcsAmi.on('newAgent', newAgent);
+	gcsAmi.on('agentRemoved', agentRemoved);
+	gcsAmi.on('freshData', freshData);
 
 	socket.on('disconnect', function(data) {
-		console.log('disconnected');
+		/** All non socket.io listeners must be cleaned at disconnect **/
+		gcsAmi.removeListener('newAgent', newAgent);
+		gcsAmi.removeListener('agentRemoved', agentRemoved);
+		gcsAmi.removeListener('freshData', freshData);
 	});
 
 });
