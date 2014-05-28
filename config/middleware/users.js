@@ -4,10 +4,9 @@ var mongoose = require('mongoose'),
 exports.add = function(req, res, next) {
 	var user = new User(req.body)
 	user.provider = 'local';
-	//user.name = req.body.username;
+
 	user.save(function(err) {
 		if (err) {
-			console.log(err)
 			res.json(err)
 		} else {
 			res.json({ok:1})

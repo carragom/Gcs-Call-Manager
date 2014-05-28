@@ -70,9 +70,6 @@ io.set('authorization', function (handshakeData, accept) {
  *
  **/
 io.sockets.on('connection', function(socket){
-	socket.on('my event', function(data){
-		console.log(data);
-	});
 
 	socket.on('userPrefs', function	(data) {
 		var User = mongoose.model('User');
@@ -146,6 +143,10 @@ io.sockets.on('connection', function(socket){
 
 	gcsAmi.on('freshData', function(ami_data){ //If gcsAmi gets fresh queue data, send it to the clients
 		socket.emit('freshData', ami_data);
+	});
+
+	socket.on('disconnect', function(data) {
+		console.log('disconnected');
 	});
 
 });

@@ -23,8 +23,10 @@ module.exports = function (app, config, passport) {
 
 	app.configure(function () {
 		app.set('port', process.env.PORT || 3001);
+		//multipart not needed, so instead of body parser, we use json() and urlencoded() only for better security
+		app.use(express.json());
+		app.use(express.urlencoded());
 		app.use(express.cookieParser());
-		app.use(express.bodyParser()); //TODO: Check if we need this
 		app.use(express.methodOverride());
 
 		//Store sessions in Mongo 
