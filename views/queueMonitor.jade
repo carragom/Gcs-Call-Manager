@@ -53,13 +53,19 @@ block content
 						|Close
 	div.modal.fade#chanspyModal(tabindex="-1" role="dialog" aria-labeledby="chanspyModalLabel" aria-hidden="true")
 		div.modal-dialog
-			div.modal-content
+			div.modal-content(data-bind="with: selectedAgent")
 				div.modal-header
 					button.close(type="button" data-dismiss="modal" aria-hidden="true")
 				h4#chanspyModalLabel
 					|Please enter the supervisor's extension
 				div.modal-body
-					|Aqui va el form
+					div.spyAgentFormContainer
+						form#spyFormMobil(data-bind="submit: spyAgent, checkStatusForSpy: status()")
+							div
+								label Supervisor Extension:
+								input(type="text" id="spyDstMobil" name="supExtension" placeholder="Enter the Supervisor Extension")
+							button.gcsBtn(type="submit") Create
+							button.gcsBtn(data-dismiss="modal") Cancel
 				div.modal-footer
 					button.btn.btn-default(type="button" data-dismiss="modal")
 						|Close
