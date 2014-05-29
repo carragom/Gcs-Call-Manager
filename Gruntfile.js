@@ -31,10 +31,11 @@ module.exports = function (grunt) {
           'routes/*.js',
           'config/**/*.js'
         ],
-        tasks: ['develop', 'delayed-livereload']
+        tasks: ['newer:jshint', 'develop', 'delayed-livereload']
       },
       clientJs: {
-      	files: ['public/javascripts/*.js']
+      	files: ['public/javascripts/app/*.js'],
+        tasks: ['newer:jshint:client']
       },
       css: {
       	files: ['public/stylesheets/*.css']
@@ -42,7 +43,29 @@ module.exports = function (grunt) {
       jade: {
         files: ['views/**/*.jade']
       }
-    }
+    },
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: require('jshint-stylish')
+      },
+      server: {
+        src: [
+          'app.js',
+          //'app/**/*.js',
+          'gcs_modules/*.js',
+          'models/*.js',
+          'routes/*.js',
+          'config/**/*.js'
+        ]
+      },
+      client: {
+        options: {
+          unused: false
+        },
+        src: ['public/javascripts/app/*.js']
+      }
+    },
   });
 
   grunt.config.requires('watch.js.files');

@@ -4,6 +4,17 @@
  * Uses knockout.js, knockout viewmodel plugin, alertify
  *
  **/
+/*global $:false */
+/*global ko:false */
+/*global alertify:false */
+/*global io:fasle */
+/*global unescape:false */
+
+
+'use strict';
+
+
+var user = {}; //Global user preferences
 
 
 /**
@@ -13,10 +24,12 @@
 ko.bindingHandlers.fadeVisible = {
     init: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
+        /*jshint expr:true */
         shouldDisplay ? $(element).fadeIn('slow') : $(element).hide();
     },
     update: function(element, valueAccessor) {
         var shouldDisplay = valueAccessor();
+        /*jshint expr:true */
         shouldDisplay ? $(element).fadeIn('slow') : $(element).fadeOut();
     }
 };
@@ -74,7 +87,7 @@ ko.bindingHandlers.statusIcon = {
  **/
 ko.bindingHandlers.checkStatusForSpy = {
 	update: function(element, valueAccessor) {
-		if (!isTalking(valueAccessor()) && $(element).is(":visible")) {
+		if (!isTalking(valueAccessor()) && $(element).is(':visible')) {
 			$(element).fadeOut('200');
 			alertify.log('The Call has ended, monitor canceled');
 		}
@@ -83,19 +96,17 @@ ko.bindingHandlers.checkStatusForSpy = {
 
 ko.bindingHandlers.updateViewPrefs = {
 	init: function(element, valueAccessor) {
-		if ((user[valueAccessor()]) && ('minimized' == user[valueAccessor()])) {
-			evtMock = {};
+		if ((user[valueAccessor()]) && ('minimized' === user[valueAccessor()])) {
+			var evtMock = {};
 			evtMock.currentTarget = element;
-			dataMock = {};
-			dataMock.id = function() {return valueAccessor()};
+			var dataMock = {};
+			dataMock.id = function() {return valueAccessor();};
 			dataMock.fromViewPrefs = true;
 
 			hideQueue(dataMock, evtMock);
 		}
 	}
-}
-
-var user = {}; //Global user preferences
+};
 
 /**
  * Cookie getter by name, helper function
@@ -103,9 +114,9 @@ var user = {}; //Global user preferences
  **/
 function getCookie(cookiename) {
   // Get name followed by anything except a semicolon
-  var cookiestring=RegExp(""+cookiename+"[^;]+").exec(document.cookie);
+  var cookiestring = new RegExp(''+cookiename+'[^;]+').exec(document.cookie);
   // Return everything after the equal sign
-  return unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,"") : "");
+  return unescape(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./,'') : '');
 }
 
 /*var queueArray = {queues:[
@@ -137,13 +148,13 @@ var socket = io.connect('/');
  **/
 var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 	arrayChildId: {
-		"{root}.queues":"id",
-		"{root}.queues[i].agents": "id"
+		'{root}.queues':'id',
+		'{root}.queues[i].agents': 'id'
 	},
 	extend: {
-		"{root}": function(root) {
+		'{root}': function(root) {
 			root.selectedAgent = ko.observable({
-				name: "Select an agent", 
+				name: 'Select an agent', 
 				queue:false,
 				location:'',
 				stInterface:'',
@@ -160,7 +171,7 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 			});			
 		},
 
-		"{root}.queues[i].agents[i]": function(agent) {
+		'{root}.queues[i].agents[i]': function(agent) {
 			agent.selected = ko.observable(false);
 		}
 	}
@@ -177,10 +188,10 @@ function hideQueue(data, evt) {
 
 	if (!data.fromViewPrefs) {
 		var pkg = {
-			userId: user['userId'],
+			userId: user.userId,
 			queueId: data.id(),
 			view: ''
-		}
+		};
 
 		if ('minimized' === user[data.id()]) {
 			pkg.view = 'normal';
@@ -202,7 +213,8 @@ function showDropUl(data, evt) {
 		ul.slideUp('slow');
 		$('.agentTop').removeClass('selectedAgent');
 	} else {
-		$(".agentDrop").not(this).slideUp('slow');
+		/* jshint validthis: true */
+		$('.agentDrop').not(this).slideUp('slow');
 		$('.agentTop').not(agentTop).removeClass('selectedAgent');
 		$(agentTop).addClass('selectedAgent');
 		ul.slideDown('slow');
@@ -228,6 +240,7 @@ function isTalking(data) {
  * Pause an Agent in the selected Queue
  *
  **/
+/* exported pauseAgent */ //needed for JsHint
 function pauseAgent(data) {
 	var pkg = {
 		id: data.id(),
@@ -235,7 +248,8 @@ function pauseAgent(data) {
 		interface: data.location(),
 		paused: data.paused()
 	};
-	if (0 == pkg.paused) { //send a one to pause, zero to unPause
+	console.log(pkg.paused);
+	if ('0' === pkg.paused) { //send a one to pause, zero to unPause
 		pkg.paused = 1;
 		alertify.log('Request to Pause '+data.name()+ ' in queue '+data.queue());
 	} else {
@@ -250,6 +264,7 @@ function pauseAgent(data) {
  * Remove an Agent from the selected Queue
  *
  **/
+/* exported removeAgent */ //needed for JsHint
 function removeAgent(data) {
 	alertify.log('Request to remove '+data.name()+' '+data.id()+' from queue '+data.queue());
 	var pkg = {
@@ -267,6 +282,7 @@ function removeAgent(data) {
  * extension number to send the monitoring channel
  *
  **/
+/* exported spyAgent */ //needed for JsHint
 function spyAgent(form) {
 	console.log('Inputted extension: '+form.supExtension.value);
 	console.log('create chanspy with: '+AppViewModel.selectedAgent().location()+' and Local/'+form.supExtension.value);
@@ -286,7 +302,9 @@ function spyAgent(form) {
  * Toggle visibility on ChanSpy Form 
  *
  **/
+/* exported toggleSpyForm */ //needed for JsHint
 function toggleSpyForm(data, evt) {
+	/* jshint unused:false */
 	$('#spyForm').toggle('slow');
 }
 
@@ -296,9 +314,10 @@ function toggleSpyForm(data, evt) {
  * -- If the clicked agent is currently selected, then unselect all
  *
  **/
+/* exported markSelectedAgent */ //needed for JsHint
 function markSelectedAgent(data, evt) {
 	if ($('.infoContainer').is(':visible')) {
-		if (AppViewModel.selectedAgent() != data) {
+		if (AppViewModel.selectedAgent() !== data) {
 			var clickedElement = $(evt.currentTarget);
 			$('.agentTop').not(clickedElement).removeClass('selectedAgent');
 			$(clickedElement).addClass('selectedAgent');
@@ -316,8 +335,9 @@ function markSelectedAgent(data, evt) {
  *
  **/
 function clearAgentData(data, evt) {
+	/* jshint unused:false */
 	$('#infoAgentData').fadeOut('400', function(){
-		AppViewModel.selectedAgent({name: "Select an agent",
+		AppViewModel.selectedAgent({name: 'Select an agent',
 			queue: false,
 			location:'',
 			stInterface:'',
@@ -348,7 +368,7 @@ socket.on('freshData', function(data){
 
 socket.on('agentRemoved', function(data){
 	alertify.log('Agent '+data.name+' removed from queue '+data.queue);
-	if ((AppViewModel.selectedAgent().id() == data.id) && (AppViewModel.selectedAgent().queue() == data.queue)) {
+	if ((AppViewModel.selectedAgent().id() === data.id) && (AppViewModel.selectedAgent().queue() === data.queue)) {
 		clearAgentData(null, null);
 	}
 });
@@ -363,9 +383,10 @@ $(document).ready(function() {
 	
 	ko.applyBindings(AppViewModel);
 
-	user['userId'] = userPrefs.id;
-	user['userName'] = userPrefs.name;
+	user.userId = userPrefs.id;
+	user.userName = userPrefs.name;
 	userPrefs.queues.forEach(function(queue, index) {
+		/* jshint unused:false */
 		user[queue.queueId] = queue.view;
 	});
 });

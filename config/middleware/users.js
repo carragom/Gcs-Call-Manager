@@ -1,8 +1,10 @@
+'use strict';
+
 var mongoose = require('mongoose'),
 	User = mongoose.model('User');
 
-exports.add = function(req, res, next) {
-	var user = new User(req.body)
+exports.add = function(req, res) {
+	var user = new User(req.body);
 	user.provider = 'local';
 
 	user.save(function(err) {
@@ -14,7 +16,7 @@ exports.add = function(req, res, next) {
 	});
 };
 
-exports.set = function(req, res, next) {
+exports.set = function(req, res) {
 	var userData = req.body;
 	User.findById(userData.id, function(err, user) {
 		if (err) {
@@ -29,16 +31,16 @@ exports.set = function(req, res, next) {
 			}
 			user.save(function(err) {
 				if (err) {
-					res.json(400, err)
+					res.json(400, err);
 				} else {
 					res.json({ok:1});
 				}
 			});
 		}
-	}) 
-}
+	});
+};
 
-exports.remove = function(req, res, next) {
+exports.remove = function(req, res) {
 	User.findById(req.body.id, function(err, user) {
 		if (err) {
 			res.json(400, err);
@@ -51,10 +53,10 @@ exports.remove = function(req, res, next) {
 				}
 			});
 		}
-	})
-}
+	});
+};
 
-exports.list = function (req, res, next) {
+exports.list = function (req, res) {
 	User.find({}, function(err, users) {
 		if (err) {
 			res.send(400, err);
@@ -66,4 +68,4 @@ exports.list = function (req, res, next) {
 			res.json(userList);
 		}
 	});
-}
+};

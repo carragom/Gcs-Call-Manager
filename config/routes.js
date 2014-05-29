@@ -4,7 +4,7 @@
  * 
  *
  **/
-
+'use strict';
 //var async = require('async')
 
 /** Route Middlewares
@@ -13,7 +13,7 @@
 
 var auth = require('./middleware/authorization'),
 	users = require('./middleware/users'),
-	userCookie = require('./middleware/userCookie')
+	userCookie = require('./middleware/userCookie');
 
 /** Finally Expose routes
  *
@@ -23,7 +23,7 @@ module.exports = function (app, passport) {
 
 	app.get('/', function(req, res){
 		if (req.user) {
-			res.redirect('/queueMonitor')
+			res.redirect('/queueMonitor');
 		} else {
 			res.redirect('/login');
 		}

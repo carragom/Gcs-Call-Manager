@@ -43,4 +43,4 @@ module.exports = {
 			password: 'phos7oH6'
 		}
 	}
-}
+};

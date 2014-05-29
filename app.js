@@ -1,14 +1,14 @@
-
+'use strict';
 /**
  * Module dependencies.
  **/
 
 var express = require('express'),
 	http = require('http'),
-	fs = require('fs'),
+//	fs = require('fs'),
 	passport = require('passport'),
-	Gcs_Ami = require('./gcs_modules/gcs_ami'),
-	gcsAmi = new Gcs_Ami();
+	GcsAmi = require('./gcs_modules/gcs_ami'),
+	gcsAmi = new GcsAmi();
 
 var env = process.env.NODE_ENV || 'development',
 	config = require('./config/config')[env],
@@ -31,7 +31,7 @@ require('./config/routes')(app, passport);
 // server = http.createServer(app).listen(app.get('port'), function(){
 //   console.log('Express server listening on port ' + app.get('port'));
 // });
-server = http.createServer(app);
+var server = http.createServer(app);
 
 gcsAmi.connect(config.ami); //This call opens the connection to asterisk AMI
 gcsAmi.on('error', function(error){
@@ -54,7 +54,7 @@ io.set('authorization', function (handshakeData, accept) {
 
     handshakeData.sessionID = connect.utils.parseSignedCookie(handshakeData.cookie['connect.sid'], 'We4aN6chi7');
 
-    if (handshakeData.cookie['connect.sid'] == handshakeData.sessionID) {
+    if (handshakeData.cookie['connect.sid'] === handshakeData.sessionID) {
       return accept('Cookie is invalid.', false);
     }
 
@@ -75,15 +75,15 @@ io.sockets.on('connection', function(socket){
 		var User = mongoose.model('User');
 		User.findById(data.userId, function(err, user) {
 			if (!err) {
-				var index = user.queues.map(function(q) {return q.queueId}).indexOf(data.queueId);
+				var index = user.queues.map(function(q) {return q.queueId;}).indexOf(data.queueId);
 				if (-1 !== index) {
 					user.queues[index].view = data.view;
 				} else {
 					user.queues.push({queueId: data.queueId, view: data.view});
 				}
-				user.save(function(err, user) {
+				user.save(function(err) {
 					if (err) {
-						console.log('error saving user prefs '+error);
+						console.log('error saving user prefs '+err);
 					}
 				});
 			}
@@ -128,7 +128,7 @@ io.sockets.on('connection', function(socket){
 			variable: 'agent='+data.agentId,
 			context: 'from-internal'
 		};
-		gcsAmi.send({order: "spyAgent", payload: pkg});
+		gcsAmi.send({order: 'spyAgent', payload: pkg});
 	});
 
 	/**
@@ -153,7 +153,7 @@ io.sockets.on('connection', function(socket){
 	gcsAmi.on('agentRemoved', agentRemoved);
 	gcsAmi.on('freshData', freshData);
 
-	socket.on('disconnect', function(data) {
+	socket.on('disconnect', function() {
 		/** All non socket.io listeners must be cleaned at disconnect **/
 		gcsAmi.removeListener('newAgent', newAgent);
 		gcsAmi.removeListener('agentRemoved', agentRemoved);

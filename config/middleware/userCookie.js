@@ -1,3 +1,4 @@
+'use strict';
 
 exports.set = function (req, res, next) {
 	if (req.user) {
@@ -6,4 +7,4 @@ exports.set = function (req, res, next) {
 		res.cookie('user', JSON.stringify(userInfo));
 	}
 	next();
-}
+};

@@ -1,6 +1,7 @@
+'use strict';
 var express = require('express'),
 	mongoStore = require('connect-mongo')(express),
-	flash = require('connect-flash')
+	flash = require('connect-flash');
 
 module.exports = function (app, config, passport) {
 	app.set('showStackError', true);
@@ -8,17 +9,17 @@ module.exports = function (app, config, passport) {
 	//Compress needs to be called high in the stack
 	app.use(express.compress ({
 		filter: function(req, res) {
-			return /json|text|javascript|css/.test(res.getHeader('Content-Type'))
+			return /json|text|javascript|css/.test(res.getHeader('Content-Type'));
 		},
 		level: 9
 	}));
 
-	app.use(express.favicon(config.root + "/public/images/favicon.ico"));
-	app.use(express.static(config.root + "/public"));
+	app.use(express.favicon(config.root + '/public/images/favicon.ico'));
+	app.use(express.static(config.root + '/public'));
 
 	app.use(express.logger('dev'));
 
-	app.set('views', config.root+ "/views");
+	app.set('views', config.root+ '/views');
 	app.set('view engine', 'jade');
 
 	app.configure(function () {
@@ -35,7 +36,7 @@ module.exports = function (app, config, passport) {
 			store: new mongoStore({
 				url: config.db,
 				collection: 'sessions'
-			}, function(ret) {
+			}, function() {
 				console.log('Mongo Store up');
 			})
 		}));
@@ -58,5 +59,5 @@ module.exports = function (app, config, passport) {
 		app.configure('development', function () {
 			app.locals.pretty = true;
 		});
-	})
-}
+	});
+};

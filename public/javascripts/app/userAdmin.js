@@ -1,27 +1,31 @@
+/*global $:false */
+/*global ko:false */
+/*global alertify:false */
 
-function parseForm (form) {
-	var obj = {};
-	var formArray = $(form).serializeArray()
-	$.each(formArray, function(index, input) {
-		obj[input.name] = input.value
-	})
-	;
-	return obj
-}
+'use strict';
 
-function autoUsername (source, dst) {
-	var source = $(source),
-		dst = $(dst);
+// function parseForm (form) {
+// 	var obj = {};
+// 	var formArray = $(form).serializeArray();
+// 	$.each(formArray, function(index, input) {
+// 		obj[input.name] = input.value;
+// 	});
+// 	return obj;
+// }
 
-	if (!dst.val()) {
-		var value = source.val();
-		dst.val(value);
-	}
-}
+// function autoUsername (source, dst) {
+// 	source = $(source);
+// 	dst = $(dst);
 
-var userViewModel = userViewModel = ko.viewmodel.fromModel({users: []}, {
+// 	if (!dst.val()) {
+// 		var value = source.val();
+// 		dst.val(value);
+// 	}
+// }
+
+var userViewModel = ko.viewmodel.fromModel({users: []}, {
 	arrayChildId: {
-		"{root}.users": "id"
+		'{root}.users': 'id'
 	},
 	extend: {
 		'{root}': function(root) {
@@ -38,24 +42,24 @@ var userViewModel = userViewModel = ko.viewmodel.fromModel({users: []}, {
 });
 
 function parseMongooseErrorMsg(err) {
-	var alertText = [];
+	//var alertText = [];
 	Object.keys(err).forEach(function(key) {
 		switch(key) {
 			case 'name':
 				$('.user-name').addClass('has-error');
-				alertify.log('Error: '+err[key].message, "error");
+				alertify.log('Error: '+err[key].message, 'error');
 				break;
 			case 'email':
 				$('.user-email').addClass('has-error');
-				alertify.log('Error: '+err[key].message, "error");
+				alertify.log('Error: '+err[key].message, 'error');
 				break;
 			case 'username':
 				$('.user-username').addClass('has-error');
-				alertify.log('Error: '+err[key].message, "error");
+				alertify.log('Error: '+err[key].message, 'error');
 				break;
 			case 'hashed_password':
 				$('.user-password').addClass('has-error');
-				alertify.log('Error: '+err[key].message, "error");
+				alertify.log('Error: '+err[key].message, 'error');
 				break;
 		}
 	});	
@@ -69,25 +73,8 @@ function getUserList() {
 
 getUserList();
 
-function markSelectedUser(data, evt) {
-	if (userViewModel.selectedUser() != data) {
-		if (!data.password) {
-			data.password = null;
-		}
-		userViewModel.selectedUser(data);
-	} else {
-		clearSelectedUser();
-	}
-}
-
-function isSelected(data) {
-	if (userViewModel.selectedUser().id == data.id) {
-		return 'isSelected'
-	}
-}
-
 function clearSelectedUser(newId) {
-	newId = newId == 'new' ? newId : false
+	newId = newId === 'new' ? newId : false;
 	userViewModel.selectedUser({
 		id: newId,
 		name: '',
@@ -99,25 +86,46 @@ function clearSelectedUser(newId) {
 	$('.form-group').removeClass('has-error');
 }
 
+/* exported markSelectedUser */ //needed for JsHint
+function markSelectedUser(data) {
+	if (userViewModel.selectedUser() !== data) {
+		if (!data.password) {
+			data.password = null;
+		}
+		userViewModel.selectedUser(data);
+	} else {
+		clearSelectedUser();
+	}
+}
+
+/* exported isSelected */ //needed for JsHint
+function isSelected(data) {
+	if (userViewModel.selectedUser().id === data.id) {
+		return 'isSelected';
+	}
+}
+
+/* exported newUser */ //needed for JsHint
 function newUser () {
 	if ('new' !== userViewModel.selectedUser().id) {
 		clearSelectedUser('new');
 	}
 }
 
+/* exported saveUser */ //needed for JsHint
 function saveUser() {
 	var userData = ko.toJS(userViewModel.selectedUser);
 	if ('new' === userData.id) {
-		delete userData.id
+		delete userData.id;
 		$.post('/api/users', userData, function(msg) {
 			if (1 === msg.ok) {
-				alertify.log('User created succesfully', "success");
+				alertify.log('User created succesfully', 'success');
 				getUserList();
 				clearSelectedUser();				
 			} 
 		}).error(function(obj) {
 			parseMongooseErrorMsg(obj.responseJSON.errors);
-		})
+		});
 	} else {
 		$.ajax({
 			type: 'PUT',
@@ -128,7 +136,7 @@ function saveUser() {
 			parseMongooseErrorMsg(obj.responseJSON.errors);
 		}).done(function(msg) {
 			if (1 === msg.ok) {
-				alertify.log('User updated succesfully', "success");
+				alertify.log('User updated succesfully', 'success');
 				getUserList();
 				clearSelectedUser();
 			}
@@ -136,6 +144,7 @@ function saveUser() {
 	}
 }
 
+/* exported deleteUser */ //needed for JsHint
 function deleteUser() {
 	var userData = ko.toJS(userViewModel.selectedUser);
 	if ((false !== userData.id) && ('new' !== userData.id)) {
@@ -148,7 +157,7 @@ function deleteUser() {
 			parseMongooseErrorMsg(obj.responseJSON.errors);
 		}).done(function(msg) {
 			if (1 === msg.ok) {
-				alertify.log('User deleted succesfully', "success");
+				alertify.log('User deleted succesfully', 'success');
 				getUserList();
 				clearSelectedUser();
 			}
