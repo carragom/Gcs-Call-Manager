@@ -43,19 +43,19 @@ function parseMongooseErrorMsg(err) {
 		switch(key) {
 			case 'name':
 				$('.user-name').addClass('has-error');
-				alertify.log('Error: '+err[key].type, "error");
+				alertify.log('Error: '+err[key].message, "error");
 				break;
 			case 'email':
 				$('.user-email').addClass('has-error');
-				alertify.log('Error: '+err[key].type, "error");
+				alertify.log('Error: '+err[key].message, "error");
 				break;
 			case 'username':
 				$('.user-username').addClass('has-error');
-				alertify.log('Error: '+err[key].type, "error");
+				alertify.log('Error: '+err[key].message, "error");
 				break;
 			case 'hashed_password':
 				$('.user-password').addClass('has-error');
-				alertify.log('Error: '+err[key].type, "error");
+				alertify.log('Error: '+err[key].message, "error");
 				break;
 		}
 	});	
@@ -114,9 +114,9 @@ function saveUser() {
 				alertify.log('User created succesfully', "success");
 				getUserList();
 				clearSelectedUser();				
-			} else {
-				parseMongooseErrorMsg(msg.errors);
-			}
+			} 
+		}).error(function(obj) {
+			parseMongooseErrorMsg(obj.responseJSON.errors);
 		})
 	} else {
 		$.ajax({

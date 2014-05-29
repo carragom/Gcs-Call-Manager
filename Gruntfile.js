@@ -29,9 +29,15 @@ module.exports = function (grunt) {
           'gcs_modules/*.js',
           'models/*.js',
           'routes/*.js',
-          'config/*.js'
+          'config/**/*.js'
         ],
         tasks: ['develop', 'delayed-livereload']
+      },
+      clientJs: {
+      	files: ['public/javascripts/*.js']
+      },
+      css: {
+      	files: ['public/stylesheets/*.css']
       },
       jade: {
         files: ['views/**/*.jade']

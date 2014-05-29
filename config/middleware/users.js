@@ -7,9 +7,9 @@ exports.add = function(req, res, next) {
 
 	user.save(function(err) {
 		if (err) {
-			res.json(err)
+			res.json(400, err);
 		} else {
-			res.json({ok:1})
+			res.json({ok:1});
 		}
 	});
 };
@@ -18,7 +18,7 @@ exports.set = function(req, res, next) {
 	var userData = req.body;
 	User.findById(userData.id, function(err, user) {
 		if (err) {
-			res.json(500, err);
+			res.json(400, err);
 		} else {
 			user.name = userData.name;
 			user.username = userData.username;
@@ -29,7 +29,7 @@ exports.set = function(req, res, next) {
 			}
 			user.save(function(err) {
 				if (err) {
-					res.json(500, err)
+					res.json(400, err)
 				} else {
 					res.json({ok:1});
 				}
@@ -41,11 +41,11 @@ exports.set = function(req, res, next) {
 exports.remove = function(req, res, next) {
 	User.findById(req.body.id, function(err, user) {
 		if (err) {
-			res.json(500, err);
+			res.json(400, err);
 		} else {
 			user.remove(function(err) {
 				if (err) {
-					res.json(500, err);
+					res.json(400, err);
 				} else {
 					res.json({ok:1});
 				}
@@ -57,7 +57,7 @@ exports.remove = function(req, res, next) {
 exports.list = function (req, res, next) {
 	User.find({}, function(err, users) {
 		if (err) {
-			res.send(500, err);
+			res.send(400, err);
 		} else {
 			var userList = [];
 			users.forEach(function(user) {
