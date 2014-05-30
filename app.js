@@ -22,6 +22,19 @@ require('./models/user'); //If more models change to "for *js"
 
 require('./config/passport')(passport, config);
 
+
+/**
+ * To ease development process, we create some initial users, don't use them in production before changing their passwords or 
+ *  creating your own users
+ *
+ * set env var GCS_NODEREFRESH to the string 'true' if you want to leave the database as is
+ *
+ */
+if ('development' === env && 'true' !== process.env.GCS_NOREFRESH) {
+	console.log('Data is beeing loaded into database, all prev data in the collections is lost');
+	require('./config/initDevData');
+}
+
 var app = express();
 
 require('./config/express')(app, config, passport);

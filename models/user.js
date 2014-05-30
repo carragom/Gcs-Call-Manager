@@ -1,11 +1,10 @@
 'use strict';
 
-/* jshint camelcase: false */
-
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto');
 
+//email validation regexp, use at your own risk
 var emailRegexp = new RegExp('^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\\.)+[A-Z]{2,4}$', 'i');
 var queueViews = ['ignored', 'minimized', 'normal'];
 
@@ -16,7 +15,7 @@ var UserSchema = new Schema({
 	email: {type: String, default: ''},
 	username: {type: String, default: ''},
 	provider: {type: String, default: ''},
-	hashed_password: {type: String, default: ''},
+	hashedPassword: {type: String, default: ''},
 	salt: {type: String, default: ''},
 	authToken: {type: String, default: ''},
 	queues: [{
@@ -31,7 +30,7 @@ UserSchema
 	.set(function(password){
 		this._password = password;
 		this.salt = this.makeSalt();
-		this.hashed_password = this.encryptPassword(password);
+		this.hashedPassword = this.encryptPassword(password);
 	})
 	.get(function(){
 		return this._password;
@@ -91,8 +90,8 @@ UserSchema.path('username').validate(function (username, fn) {
 	}
 }, 'Username already exists');
 
-UserSchema.path('hashed_password').validate(function (hashed_password){
-	return hashed_password.length;
+UserSchema.path('hashedPassword').validate(function (hashedPassword){
+	return hashedPassword.length;
 }, 'Password cannot be blank');
 
 /** Pre Save hook **/
@@ -107,44 +106,45 @@ UserSchema.pre('save', function(next){
 	}
 });
 
+/**
+ * Methods
+ */
 UserSchema.methods = {
-	/** Authenticate if passwords are the same
-	 * @param {String} plainText
-	 * @return {Boolean}
-	 * @api public
-	 */
+  /**
+   * Authenticate - check if the passwords are the same
+   *
+   * @param {String} plainText
+   * @return {Boolean}
+   * @api public
+   */
+  authenticate: function(plainText) {
+  	console.log('revisando');
+    return this.encryptPassword(plainText) === this.hashedPassword;
+  },
 
-	 authenticate: function(plainText) {
-	 	return this.encryptPassword(plainText) === this.hashed_password;
-	 },
+  /**
+   * Make salt
+   *
+   * @return {String}
+   * @api public
+   */
+  makeSalt: function() {
+    return crypto.randomBytes(16).toString('base64');
+  },
 
-	 /** Make Salt
-	  *
-	  * @return {String}
-	  * @api public
-	  */
-
-	makeSalt: function() {
-		return Math.round((new Date().valueOf() * Math.random())) + '';
-	},
-
-	/** Encrypt password
-	 *
-	 * @param {String}
-	 * @return {String}
-	 * @api public
-	 */
-
-	encryptPassword: function(password) {
-		if (!password) {return '';}
-		var encrypted;
-		try {
-			encrypted = crypto.createHmac('sha1', this.salt).update(password).digest('hex');
-			return encrypted;			
-		} catch (err) {
-			return '';
-		}
-	}
+  /**
+   * Encrypt password
+   *
+   * @param {String} password
+   * @return {String}
+   * @api public
+   */
+  encryptPassword: function(password) {
+    if (!password || !this.salt) {return '';}
+    var salt = new Buffer(this.salt, 'base64');
+    return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+  }
 };
+
 
 mongoose.model('User', UserSchema);
