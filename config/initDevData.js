@@ -9,16 +9,19 @@ User.find({}).remove(function() {
 		provider: 'local',
 		name: 'Admin Sample User',
 		username: 'admin',
-		email: 'admin@nowher.com',
+		email: 'admin@nowhere.com',
 		role: true,
 		password: 'greencoreAdmin'
 	}, function(){console.log('Sample admin user added - admin/greencoreAdmin');});
 	User.create({
 		provider: 'local',
-		name: 'Admin Sample User',
-		username: 'admin',
-		email: 'admin@nowher.com',
-		role: true,
-		password: 'greencoreAdmin'
-	}, function() {console.log('finished populating users');});
+		name: 'Sample User',
+		username: 'greencore',
+		email: 'greencore@nowhere.com',
+		role: false,
+		password: 'greencore'
+	}, function() {
+		console.log('Sample normal user added - greencore/greencore');
+		console.log('finished populating users');
+	});
 });
