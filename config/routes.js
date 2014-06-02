@@ -43,18 +43,18 @@ module.exports = function (app, passport) {
 		}
 	);
 
-	app.get('/userAdmin', auth.requiresLogin, function(req, res) {
+	app.get('/userAdmin', auth.requiresLogin, auth.ensureAdmin, function(req, res) {
 		res.render('users', {user: req.user});
 	});
 
-	app.get('/api/users', auth.requiresLogin, users.list);
+	app.get('/api/users', auth.requiresLogin, auth.ensureAdmin, users.list);
 
-	app.post('/api/users', auth.requiresLogin, users.add, function(req, res) {
+	app.post('/api/users', auth.requiresLogin, auth.ensureAdmin, users.add, function(req, res) {
 		res.render('users');
 	});
 
-	app.put('/api/users', auth.requiresLogin, users.set);
-	app.delete('/api/users', auth.requiresLogin, users.remove);
+	app.put('/api/users', auth.requiresLogin, auth.ensureAdmin, users.set);
+	app.delete('/api/users', auth.requiresLogin, auth.ensureAdmin, users.remove);
 
 	app.get('/queueMonitor', auth.requiresLogin, userCookie.set, function(req, res){
 		res.render('queueMonitor', {title: 'Greencore Solutions Queue Monitor'});

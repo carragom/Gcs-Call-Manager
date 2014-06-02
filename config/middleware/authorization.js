@@ -10,3 +10,11 @@ exports.requiresLogin = function (req, res, next) {
 	}
 	next();
 };
+
+exports.ensureAdmin = function (req, res, next) {
+	if (req.user && req.user.role) {
+		next();
+	} else {
+		res.send(401, 'Unauthorized');
+	}
+};
