@@ -120,6 +120,17 @@ input:not([type=submit]) {
   position: fixed;
   right: 7px;
 }
+.infoQueueContainer {
+  float: right;
+  height: 88%;
+  border-radius: 50% / 15px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,5);
+  margin-top: 10px;
+  text-shadow: 0px 2px 1px rgba(0,0,0, 0.3);
+  position: fixed;
+  right: 7px;
+}
 
 #infoAgentData {
   height: 65%;
@@ -148,6 +159,27 @@ input:not([type=submit]) {
 
 .infoContainerUl .icon-stack-base {
   color: #fff3ad;
+}
+
+.infoQueueLi {
+  float:left;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.liLeft{
+  width: 227px; 
+
+}
+
+.liRigth{
+  width: 210px; 
+}
+
+.abandonedCalls{
+  width: 450px; 
+  height:460px; 
+  overflow:auto;
 }
 
 .infoIcon {
@@ -515,6 +547,35 @@ span .icon-stack {
 }
 
 /** Media Queries **/
+
+
+@media(max-width:1510px){
+  .liLeft{
+    width: 200px; 
+
+  }
+  .liRigth{
+    width: 170px; 
+  }
+}
+@media(max-width:1300px){
+  .liLeft{
+    width: 180px; 
+
+  }
+  .liRigth{
+    width: 150px; 
+  }
+}
+@media(max-width:1170px){
+  .liLeft{
+    width: 160px; 
+
+  }
+  .liRigth{
+    width: 120px; 
+  }
+}
 @media(max-width:767px){
   #barLogo {
     font-size: 12px;
@@ -543,5 +604,23 @@ span .icon-stack {
     font-size: 20px;
   }
 }
-@media(min-width:1200px){
+
+
+
+@media(max-height: 720px){
+  .abandonedCalls {
+    height: 380px;
+  }
+}
+
+@media(max-height: 650px){
+  .abandonedCalls {
+    height: 320px;
+  }
+}
+
+@media(max-height: 580px){
+  .abandonedCalls {
+    height: 270px;
+  }
 }

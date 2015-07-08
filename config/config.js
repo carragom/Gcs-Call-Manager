@@ -23,7 +23,7 @@ module.exports = {
 			name: 'Greencore Solutions Queue Monitor'
 		},
 		ami: {
-			host: '10.42.20.20',
+			host: '10.42.30.20',
 			port: 'default',
 			username: 'dev',
 			password: 'phos7oH6'
@@ -37,7 +37,7 @@ module.exports = {
 			name: 'Greencore Solutions Queue Monitor'
 		},
 		ami: {
-			host: '10.42.20.20',
+			host: '10.42.30.20',
 			port: 'default',
 			username: 'dev',
 			password: 'phos7oH6'

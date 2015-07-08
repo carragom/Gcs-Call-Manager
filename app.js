@@ -16,11 +16,12 @@ var env = process.env.NODE_ENV || 'development',
 	connect = require('express/node_modules/connect'),
 	mongoose = require('mongoose');
 
+
 mongoose.connect(config.db);
 
 require('./models/user'); //If more models change to "for *js" 
 
-require('./config/passport')(passport, config);
+require('./config/passport')(passport);
 
 
 /**
@@ -30,10 +31,10 @@ require('./config/passport')(passport, config);
  * set env var GCS_NODEREFRESH to the string 'true' if you want to leave the database as is
  *
  */
-if ('development' === env && 'true' !== process.env.GCS_NOREFRESH) {
+/*if ('development' === env && 'true' !== process.env.GCS_NOREFRESH) {
 	console.log('Data is beeing loaded into database, all prev data in the collections is lost');
 	require('./config/initDevData');
-}
+}*/
 
 var app = express();
 
@@ -80,9 +81,11 @@ io.set('authorization', function (handshakeData, accept) {
 
 /**
  * React to client events from socket.io
- *
  **/
 io.sockets.on('connection', function(socket){
+	socket.on('login', function	() {
+		gcsAmi.send({order: 'QueueLogin'})
+	});
 
 	socket.on('userPrefs', function	(data) {
 		var User = mongoose.model('User');
@@ -143,13 +146,13 @@ io.sockets.on('connection', function(socket){
 		};
 		gcsAmi.send({order: 'spyAgent', payload: pkg});
 	});
-
+	
 	/**
 	 *  In order to safely unbind the listeners when the user disconnect, they must be called with a named callback
 	 *   not an anonymous function, so here are the callbacks
 	 *
 	 */
-	function freshData(payload) {
+	function freshData(payload) {	
 		socket.emit('freshData', payload);
 	}
 
@@ -176,7 +179,7 @@ io.sockets.on('connection', function(socket){
 });
 
 server.listen(config.port, function () {
-  console.log('Express server listening on port %d in %s mode', config.port, app.get('env'));
+	console.log('Express server listening on port %d in %s mode', config.port, app.get('env'));
 });
 
 
