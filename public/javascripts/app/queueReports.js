@@ -29,9 +29,13 @@ var queueViewModel = ko.viewmodel.fromModel(queueArray, {
 				abandoned: '',
 				holdtime: '',
 				waiting_calls: '',
-				abandonedCalls: ko.observableArray()
+				statsCalls: ko.observableArray()
 			});
-			root.selectedStat =  ko.observableArray();
+			root.selectedStat =  ko.observable({
+				calls: ko.observableArray(),
+				length: '',
+				name: ''
+			});
 		}
 	}
 });
@@ -52,6 +56,7 @@ socket.on('queueReport', function(data){
 
 function markSelectedQueue(data, evt) {
 	var parent = $(evt.currentTarget).parent();
+	clearSelectedStat();
 	if (queueViewModel.selectedQueue() !== data) {
 		var siblings = $(parent).siblings();
 		$(siblings).removeClass('active');
@@ -71,7 +76,7 @@ function clearSelectedQueue() {
 		abandoned: '',
 		holdtime: '',
 		waiting_calls: '',
-		abandonedCalls: ko.observableArray()
+		statsCalls: ko.observableArray()
 	});
 }
 
@@ -79,9 +84,10 @@ function clearSelectedQueue() {
 function markSelectedStat(data, evt) {
 	var stat = evt.currentTarget;
 	if (queueViewModel.selectedStat() !== data) {
-		$(stat).removeClass('selectedAgent');
+		var siblings = $(stat).siblings();
+		$(siblings).removeClass('selectedAgent');
 		$(stat).addClass('selectedAgent');
-		queueViewModel.selectedStat(data.abandonedCalls);
+		queueViewModel.selectedStat(data);
 	} else {
 		$(stat).removeClass('selectedAgent');
 		clearSelectedStat();
@@ -89,7 +95,12 @@ function markSelectedStat(data, evt) {
 }
 
 function clearSelectedStat() {
-	queueViewModel.selectedStat();
+	queueViewModel.selectedStat({
+		calls: ko.observableArray(),
+		length: '',
+		name: ''
+	});
+	queueViewModel.selectedStat().calls.removeAll();
 }
 
 ko.applyBindings(queueViewModel);

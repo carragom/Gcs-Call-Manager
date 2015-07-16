@@ -494,7 +494,7 @@ span .icon-stack {
   width: 100%;
 }
 
-.user-list-ul {
+.user-list-ul, .call-list-ul {
   border-radius: 10px;
   padding: 0;
   list-style: none;
@@ -502,11 +502,11 @@ span .icon-stack {
   padding: 2em 1em;
 }
 
-.user-list-ul li {
+.user-list-ul li, .call-list-ul li {
   padding: 10px;
 }
 
-.user-list-ul li:first-child {
+.user-list-ul li:first-child, .call-list-ul li:first-child {
   background-color: black;
 }
 
@@ -516,7 +516,7 @@ span .icon-stack {
   border-top: 1px solid #fff;
 }
 
-.user-list-ul li:nth-child(odd) {
+.user-list-ul li:nth-child(odd), .call-list-ul li:nth-child(odd) {
   background-color: rgba(0,0,0,0.5);
 }
 
@@ -551,12 +551,34 @@ span .icon-stack {
   display: inline-block;
 }
 
+.call-field {
+  width: 30%;
+  display: inline-block;
+}
 .user-controls {
   clear: both;
 }
 
 .user-controls a {
   margin: 0 3px;
+}
+
+.queue{
+  color: #007730;
+  font-size: 16px;
+}
+
+.queue:hover{
+  color: #0C8F41;
+}
+
+.nav-pills > li.active > .queue, .nav-pills > li.active > .queue:hover, .nav-pills > li.active > .queue:focus {
+    color: #63DB93;
+    background-color: #0C8F41;
+}
+
+.nav > li > .queue:hover, .nav > li > .queue:focus {
+    background-color: #45B472;
 }
 
 /*-- End of Greencore QueueMonitor style --*/
@@ -567,7 +589,7 @@ span .icon-stack {
 }*/
 
 .modal-content {
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0,0,0,0.5);
   border-radius: 15px;
   border: 2px solid #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,5);

@@ -151,6 +151,13 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.send({order: 'queueReport'});
 	});
 
+	socket.on('agentReport', function(extenUser){ 
+		var Events = require('./config/Events');
+		Events.agentReport(extenUser, function(calls) {
+			socket.emit('agentReport', calls);
+		})
+	});
+
 	/**
 	 *  In order to safely unbind the listeners when the user disconnect, they must be called with a named callback
 	 *   not an anonymous function, so here are the callbacks

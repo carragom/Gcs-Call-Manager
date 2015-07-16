@@ -1,0 +1,44 @@
+extends layout
+
+block gcsCss
+	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
+	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
+
+block gcsNavbarItems
+	ul.nav.navbar-nav
+		if(role)
+			li
+				a(href="/queueMonitor")
+					i.icon-desktop.icon-large 
+					|&nbsp;Queues
+			li
+				a(href="/userAdmin")
+					i.icon-user.icon-large 
+					|&nbsp;Users
+			li
+				a(href="/reports")
+					i.icon-file-text.icon-large 
+					|&nbsp;Reports
+		li.active
+			a(href="#")
+				i.icon-archive.icon-large 
+				|&nbsp;Agents
+				button#agentReport(hidden value=exten)
+		li
+			a(href="/logout")
+				i.icon-off.icon-large 
+				|&nbsp;Logout
+		li
+			a(data-toggle="modal" href="#helpModal")
+				i.icon-question-sign.icon-large
+				|&nbsp;Help
+block content
+
+
+
+block gcsScripts
+	script(src="/javascripts/components/alertify.min.js")
+	script(src="/javascripts/components/knockout-2.3.0.js")
+	script(src="/javascripts/components/knockout.viewmodel.min.js")
+	script(src="/socket.io/socket.io.js")
+	script(src="/javascripts/app/agentsReports.js")

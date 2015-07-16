@@ -34,8 +34,7 @@ function MakeQueue (id, completed, abandoned, holdtime, waiting_calls) {
 	this.agents         = []; //An array of members
 	this.age            = 0; //If age > 0 then is not in asterisk anymore
 	this.queue          = true; 
-	this.abandonedCalls = []; //An array of abandoned calls
-	this.completedCalls  = []; //An array of complete calls
+	this.statsCalls     = []; //An array of abandoned calls
 }
 
 function makeAgent (queue, name, location, stInterface, membership, lastcall, status, paused, taken, penalty ) {
@@ -163,8 +162,7 @@ var updateQueue = function (datos) {
 		queueArray[ind].waiting_calls  = tmpQueue.waiting_calls;
 		queueArray[ind].age            = 0; //Age is back to 0 to keep it safe from the garbage collector
 		queueArray[ind].queue          = true; 
-		queueArray[ind].abandonedCalls = []; 
-		queueArray[ind].completedCalls  = []; 
+		queueArray[ind].statsCalls     = []; 
 	} else {
 		queueArray.push(tmpQueue);
 		queueArray.sort(sortQueueArray);

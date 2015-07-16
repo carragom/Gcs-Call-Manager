@@ -203,10 +203,10 @@ function abandonedCalls (queueArray, cb){
 			// console.log("abandonedCalls function ----------------------------------------------------");
 				
 		}
-		var k = 5;
-		for (var j = 1; j < queueArray.length; j++) {
-			queueArray[j].abandonedCalls = abandonedCalls[k];
-			queueArray[j].abandonedDay = abandonedCalls[k--].length;
+		
+		for (var j = 1, k = queueArray.length - 2; j < queueArray.length; j++, k--) {
+			queueArray[j].statsCalls   = abandonedCalls[k];
+			queueArray[j].abandonedDay = abandonedCalls[k].length;
 		};
 		return cb(queueArray);
 	});//eventos
@@ -216,7 +216,7 @@ exports.queueReport = function (queueArray, cb){
 	// console.log(queueArray);
 
 	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}]}).exec( function (err, abandoned){
-		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.name': 'Up'}, {'events.name': 'Hangup'}]}).exec( function (err, completed){
+		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': 'Up'}, {'events.name': 'Hangup'}]}).exec( function (err, completed){
 
 			if(err) return cb(queueArray);
 			//var abandonedCalls = [ [], [], [], [], [] ];
@@ -257,13 +257,67 @@ exports.queueReport = function (queueArray, cb){
 				// console.log("abandonedCalls function ----------------------------------------------------");	
 			}
 
-			var k = 5;
-			for (var j = 1; j < queueArray.length; j++) {
-				queueArray[j].completedCalls = completedCalls[k];
-				queueArray[j].abandonedCalls = abandonedCalls[k];
-				queueArray[j].abandonedDay = abandonedCalls[k--].length;
+			for (var j = 1, k = queueArray.length - 2; j < queueArray.length; j++, k--) {
+				queueArray[j].statsCalls.push({calls: completedCalls[k], name: "Completed: ", length: completedCalls[k].length});
+				queueArray[j].statsCalls.push({calls: abandonedCalls[k], name: "Abandoned: ", length: abandonedCalls[k].length});
+				queueArray[j].abandonedDay = abandonedCalls[k].length;
 			};
 			return cb(queueArray);
+		});//eventos
+	});//eventos
+}
+
+exports.agentReport = function (extenUser, cb){
+	// console.log(queueArray);
+
+	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}]}).exec( function (err, abandoned){
+		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': 'Up'}, {'events.name': 'Hangup'}]}).exec( function (err, completed){
+
+			if(err) return cb(queueArray);
+			//var abandonedCalls = [ [], [], [], [], [] ];
+			var abandonedCalls = new Array(6);
+			var completedCalls = new Array(6);
+			for (var i = 0; i < 6; i++) {
+				var qi = new Array();
+				abandonedCalls[i] = qi;
+				completedCalls[i] = new Array();
+			}
+			
+			for (var i = 0; i < abandoned.length; i++) {
+
+				var splitConnectedName = abandoned[i].connectedlinename.split('-');
+				if(splitConnectedName.length > 1){
+					splitConnectedName[0] == 'RE' ? abandonedCalls[0].push( abandoned[i] ) : // 0 :
+					splitConnectedName[0] == 'ST' ? abandonedCalls[1].push( abandoned[i] ) : // 0 :
+					splitConnectedName[0] == 'VE' ? abandonedCalls[2].push( abandoned[i] ) : // 0 :
+					splitConnectedName[0] == 'CU' ? abandonedCalls[3].push( abandoned[i] ) : // 0 :
+					splitConnectedName[0] == 'CO' ? abandonedCalls[4].push( abandoned[i] ) : // 0 :
+										    /*UNA*/	abandonedCalls[5].push( abandoned[i] ) ; // 0 ;
+				}
+				// console.log("abandonedCalls function ----------------------------------------------------");	
+			}
+
+			
+			for (var i = 0; i < completed.length; i++) {
+
+				var splitConnectedName = completed[i].connectedlinename.split('-');
+				if(splitConnectedName.length > 1){
+					splitConnectedName[0] == 'RE' ? completedCalls[0].push( completed[i] ) : // 0 :
+					splitConnectedName[0] == 'ST' ? completedCalls[1].push( completed[i] ) : // 0 :
+					splitConnectedName[0] == 'VE' ? completedCalls[2].push( completed[i] ) : // 0 :
+					splitConnectedName[0] == 'CU' ? completedCalls[3].push( completed[i] ) : // 0 :
+					splitConnectedName[0] == 'CO' ? completedCalls[4].push( completed[i] ) : // 0 :
+										    /*UNA*/	completedCalls[5].push( completed[i] ) ; // 0 ;
+				}
+				// console.log("abandonedCalls function ----------------------------------------------------");	
+			}
+			var statsCalls = [];
+			// for (var j = 1, k = queueArray.length - 2; j < queueArray.length; j++, k--) {
+				statsCalls.push({calls: completedCalls[5], name: "Completed: ", length: completedCalls[5].length});
+				statsCalls.push({calls: abandonedCalls[5], name: "Abandoned: ", length: abandonedCalls[5].length});
+				// queueArray[j].abandonedDay = abandonedCalls[k].length;
+			// };
+			return cb(statsCalls);
 		});//eventos
 	});//eventos
 }

@@ -172,8 +172,9 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 
 			root.selectedQueue = ko.observable({
 				queue:false,
-				abandoned:'',
-				id: ''
+				abandonedDay:'',
+				id: '',
+				statsCalls: ko.observableArray()
 			});
 		},
 		'{root}.queues[i].agents[i]': function(agent) {
@@ -436,8 +437,9 @@ function clearQueueData(data, evt) {
 	$('#infoQueueData').fadeOut('400', function(){
 		AppViewModel.selectedQueue({
 			queue:false,
-			abandoned:'',
-			id: ''
+			abandonedDay:'',
+			id: '',
+			statsCalls: ko.observableArray()
 		});
 	});
 	$('.statsData').removeClass('selectedAgent');

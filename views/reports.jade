@@ -6,18 +6,23 @@ block gcsCss
 
 block gcsNavbarItems
 	ul.nav.navbar-nav
+		if(role)
+			li
+				a(href="/queueMonitor")
+					i.icon-desktop.icon-large 
+					|&nbsp;Queues
+			li
+				a(href="/userAdmin")
+					i.icon-user.icon-large 
+					|&nbsp;Users
+			li.active
+				a(href="#")
+					i.icon-file-text.icon-large 
+					|&nbsp;Reports
 		li
-			a(href="/queueMonitor")
-				i.icon-desktop.icon-large 
-				|&nbsp;Queues
-		li.active
-			a(href="#")
-				i.icon-file-text.icon-large 
-				|&nbsp;Reports
-		li
-			a(href="/userAdmin")
-				i.icon-user.icon-large 
-				|&nbsp;Users
+			a(href="/reportsAgents")
+				i.icon-archive.icon-large 
+				|&nbsp;Agents
 		li
 			a(href="/logout")
 				i.icon-off.icon-large 
@@ -31,54 +36,46 @@ block gcsNavbarItems
 		<!-- ko foreach: $data.queues -->
 		<!-- ko if: "default" != id() -->
 		li
-			a(data-bind="attr: {'id': id}, text: id, click: markSelectedQueue")
+			a.queue(data-bind="attr: {'id': id}, text: id, click: markSelectedQueue")
 		<!-- /ko -->
 		<!-- /ko -->
 block content
 	br
 	br
 	br
-	div.col-md-8.col-sm-6.queueHead(data-bind="with: selectedQueue")
-		div.queueID
-			|Agents in Queue 
-			span(data-bind="text: id")
-		div.statsDataReports
-			li.liHover
-				|Completed: 
-				span.statValue(data-bind="text: completed")
-			li.liHover(data-bind="attr: {'abandonedCalls': abandonedCalls}, click: markSelectedStat")
-				|Abandoned: 
-				span.statValue(data-bind="text: abandoned")
-			li.liHover
-				|Hold Time: 
-				span.statValue(data-bind="text: holdtime")
-			li.liHover
-				|Wait Time: 
-				span.statValue(data-bind="text: waiting_calls")
+	div.col-md-8.col-sm-6.queueHead
+		div(data-bind="with: selectedQueue")
+			div.queueID
+				|Agents in Queue 
+				span(data-bind="text: id")
+			div.statsDataReports
+				<!-- ko foreach: statsCalls -->
+				li.liHover(data-bind="click: markSelectedStat")
+					span(data-bind="text: name")
+					span.statValue(data-bind="text: length")
+				<!-- /ko -->
 
-		<!-- ko if: selectedStat().length < 1 -->
-		div.info-queue-container
+		
+		div.info-queue-container(data-bind="with: selectedStat")
 			div.queue-list-container
-				ul.user-list-ul
+				ul.call-list-ul
 					li.user-list-header
-						span.user-field
+						span.call-field
 							|Date
-						span.user-field
-							|Hour
-						span.user-field
+						span.call-field
 							|Origin
-						span.user-field
+						span.call-field
 							|Destiny
-						span.user-field
-							|Duration
-						span.user-field
-							|Type
-					<!-- ko foreach: selectedStat -->
+					<!-- ko foreach: calls -->
 					li.user-list-user
-						span.user-field.user-list-name(data-bind="text: date")
-							|&nbsp;--&nbsp;
+						span.call-field.user-list-name(data-bind="text: date")
+							|&nbsp;&nbsp;
+						span.call-field.user-list-name(data-bind="text: connectedlinenum")
+							|&nbsp;&nbsp;
+						span.call-field.user-list-name(data-bind="text: calleridnum")
+							|&nbsp;&nbsp;
 					<!-- /ko -->
-		<!-- /ko -->
+
 
 block gcsScripts
 	script(src="/javascripts/components/alertify.min.js")
