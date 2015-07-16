@@ -60,6 +60,10 @@ module.exports = function (app, passport) {
 		res.render('queueMonitor', {title: 'Greencore Solutions Queue Monitor'});
 	});
 
+	app.get('/reports', auth.requiresLogin, userCookie.set, function(req, res){
+		res.render('reports', {title: 'Greencore Solutions Queue Monitor'});
+	});
+
 	app.get('/logout', function(req, res){
 		req.logout();
 		res.redirect('/login');

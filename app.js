@@ -84,7 +84,7 @@ io.set('authorization', function (handshakeData, accept) {
  **/
 io.sockets.on('connection', function(socket){
 	socket.on('login', function	() {
-		gcsAmi.send({order: 'QueueLogin'})
+		gcsAmi.send({order: 'QueueLogin'});
 	});
 
 	socket.on('userPrefs', function	(data) {
@@ -146,7 +146,11 @@ io.sockets.on('connection', function(socket){
 		};
 		gcsAmi.send({order: 'spyAgent', payload: pkg});
 	});
-	
+
+	socket.on('queueReport', function(){ 
+		gcsAmi.send({order: 'queueReport'});
+	});
+
 	/**
 	 *  In order to safely unbind the listeners when the user disconnect, they must be called with a named callback
 	 *   not an anonymous function, so here are the callbacks
@@ -164,16 +168,23 @@ io.sockets.on('connection', function(socket){
 		socket.emit('agentRemoved', payload);
 	}
 
+	function queueReport(payload) {
+		// console.log(payload);
+		socket.emit('queueReport', payload);
+	}
+
 	/** Then we add the listeners **/
 	gcsAmi.on('newAgent', newAgent);
 	gcsAmi.on('agentRemoved', agentRemoved);
 	gcsAmi.on('freshData', freshData);
+	gcsAmi.on('queueReport', queueReport);
 
 	socket.on('disconnect', function() {
 		/** All non socket.io listeners must be cleaned at disconnect **/
 		gcsAmi.removeListener('newAgent', newAgent);
 		gcsAmi.removeListener('agentRemoved', agentRemoved);
 		gcsAmi.removeListener('freshData', freshData);
+		gcsAmi.removeListener('queueReport', queueReport);
 	});
 
 });

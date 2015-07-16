@@ -146,7 +146,7 @@ input:not([type=submit]) {
   color: #fff3ad;
 }
 
-.infoContainerUl {
+.infoContainerUl, .infoAbandonedCalls {
   font-size: 20px;
   line-height: 31px;
   list-style: none;
@@ -159,6 +159,9 @@ input:not([type=submit]) {
 
 .infoContainerUl .icon-stack-base {
   color: #fff3ad;
+}
+.infoAbandonedCalls li, .infoACDrop li{
+  border-bottom: 1px dotted #fff;
 }
 
 .infoQueueLi {
@@ -173,7 +176,7 @@ input:not([type=submit]) {
 }
 
 .liRigth{
-  width: 210px; 
+  width: 215px; 
 }
 
 .abandonedCalls{
@@ -246,21 +249,37 @@ input:not([type=submit]) {
   margin-right: auto;
 }
 
-.statsData {
+.statsData, .statsDataReports {
   float: right;
   padding: 5px 5px;
   display: inline-block;
+}
+
+.statsDataReports {
+  padding: 0;
+}
+
+.statsData, .liHover {
   background-color: #007730;
   margin-right: 15px;
   border-radius: 15px 0 15px 0;
   box-shadow: 0 2px 2px rgba(0,0,0,1);
 }
 
-.stat {
+.stat, .liHover {
   display: inline-block;
   padding-left: 2px;
   padding-right: 2px;
   color: #63DB93;
+}
+
+.liHover {
+  padding: 5px;
+}
+
+.liHover:hover {
+  background-color: #0C8F41;
+  border-radius: 15px 0 15px 0;
 }
 
 .statValue {
@@ -344,7 +363,7 @@ input:not([type=submit]) {
   overflow: hidden;
 }
 
-.agentDrop {
+.agentDrop, .queueDrop {
   display: none;
   position: absolute;
   padding-bottom: 5px;
@@ -358,7 +377,9 @@ input:not([type=submit]) {
   border: solid 2px #fff;
   z-index: 8;
 }
-
+.queueDrop {
+  width: 100%;
+}
 .agentsUl {
   list-style: none;
   display: inline;
@@ -461,9 +482,16 @@ span .icon-stack {
   width: 40%;
 }
 
-.user-list-container {
+.user-list-container, .queue-list-container {
   padding: 2em;
+}
+
+.user-list-container{
   width: 58%;
+}
+
+.queue-list-container {
+  width: 100%;
 }
 
 .user-list-ul {
@@ -572,8 +600,17 @@ span .icon-stack {
     width: 160px; 
 
   }
-  .liRigth{
-    width: 120px; 
+  .liRigth {
+    width: 131px;
+  }
+}
+@media(max-width:992px){
+  .liLeft{
+    width: 188px; 
+
+  }
+  .liRigth {
+    width: 160px;
   }
 }
 @media(max-width:767px){

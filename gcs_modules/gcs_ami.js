@@ -20,6 +20,7 @@ var ami = new AsteriskAmi({
 	reconnect: true,
 	reconnect_after: '1500'
 });
+var reports = false;
 
 var queueArray = [new MakeQueue('default',0,0,0,0,[],[])];
 
@@ -27,12 +28,14 @@ function MakeQueue (id, completed, abandoned, holdtime, waiting_calls) {
 	this.id             = id; //Queue Number
 	this.completed      = completed; //Completed Calls
 	this.abandoned      = abandoned; //Abandoned Calls
+	this.abandonedDay   = 0; //Abandoned Calls by Day
 	this.holdtime       = holdtime; //Hold time
 	this.waiting_calls  = waiting_calls; //Calls on hold
 	this.agents         = []; //An array of members
 	this.age            = 0; //If age > 0 then is not in asterisk anymore
 	this.queue          = true; 
-	// this.abandonedCalls = []; //An array of abandoned calls
+	this.abandonedCalls = []; //An array of abandoned calls
+	this.completedCalls  = []; //An array of complete calls
 }
 
 function makeAgent (queue, name, location, stInterface, membership, lastcall, status, paused, taken, penalty ) {
@@ -155,13 +158,13 @@ var updateQueue = function (datos) {
 		//Queue exists, just Update the Values
 		queueArray[ind].completed      = tmpQueue.completed;
 		queueArray[ind].abandoned      = tmpQueue.abandoned;
+		queueArray[ind].abandonedDay   = 0; //Abandoned Calls by Day
 		queueArray[ind].holdtime       = tmpQueue.holdtime;
 		queueArray[ind].waiting_calls  = tmpQueue.waiting_calls;
 		queueArray[ind].age            = 0; //Age is back to 0 to keep it safe from the garbage collector
 		queueArray[ind].queue          = true; 
-		/*Events.abandonedCalls(datos.queue, function (queues){
-			queueArray[ind].abandonedCalls = queues; //An array of abandoned calls
-		});*/
+		queueArray[ind].abandonedCalls = []; 
+		queueArray[ind].completedCalls  = []; 
 	} else {
 		queueArray.push(tmpQueue);
 		queueArray.sort(sortQueueArray);
@@ -301,13 +304,23 @@ gcs_ami.prototype.connect = function (conf) {
 				//   order: 'qStatusFresh',
 				//   data: queueArray
 				// };
-				Events.abandoned(function (){
-					Events.freshData(queueArray, function (payload){
-						// console.log(payload);
-						self.emit('freshData', payload);
+				if(reports == false){
+					Events.abandoned(function (){
+						// console.log("entro al freshData");
+						Events.freshData(queueArray, function (payload){
+							// console.log(queueArray);
+								self.emit('freshData', payload);
+							queueGarbageCollector();
+						});
+					});
+				} else { 
+					reports = false;
+					Events.queueReport(queueArray, function (payload){
+						// console.log(queueArray);
+						self.emit('queueReport', queueArray);
 						queueGarbageCollector();
 					});
-				});
+				 }
 				break;
 
 			case 'QueueMemberAdded':
@@ -410,8 +423,11 @@ gcs_ami.prototype.send = function (req) {
 	} else if('QueueLogin' === req.order){
 		setInterval(function (){
 			Events.mergeEvents();
-			//Events.abandoned();
 		}, 5000);
+		ami.send({action: 'QueueStatus'});
+		ami.send({action: 'CoreShowChannels'});
+	} else if('queueReport' === req.order){
+		reports = true;
 		ami.send({action: 'QueueStatus'});
 		ami.send({action: 'CoreShowChannels'});
 	} else {

@@ -187,41 +187,6 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 });
 
 
-/*var queues = {
-	{id: 'default2', abandoned:'0', abandonedCalls:[
-		{id:'0',calleridnum: 0, calleridname:'', connectedlinenum: 0, connectedlinename: '', epoch:'', queue:'default2'},
-		{id:'0',calleridnum: 0, calleridname:'', connectedlinenum: 0, connectedlinename: '', epoch:'', queue:'default2'},
-	{id: 'default3', abandoned:'0', abandonedCalls:[
-		{id:'0',calleridnum: 0, calleridname:'', connectedlinenum: 0, connectedlinename: '', epoch:'', queue:'default3'}
-	};*/
-
-var QueueViewModel = function QueueViewModel() {
-    // Data
-    var self = this;
-    self.queues = ko.observable();
-    self.chosenQueueId = ko.observable();
-    self.chosenQueueData = ko.observable();
-
-    // Behaviours    
-    self.Queues = function(){
-    	$.get('/queues', self.queues);
-    }
-
-    self.showQueue = function(queue) {
-        if(self.chosenQueueId() !== queue) {
-            self.chosenQueueId(queue);
-            $.get('/abandonedCalls', { queue: '/' + queue + '/' }, self.chosenQueueData);
-        } else {
-            self.chosenQueueId(null);
-            self.chosenQueueData(null);
-        }
-    };
-
-    // Show inbox by default
-    self.Queues();
-};
-
-
 /**
  * Hide Queue div
  *
@@ -263,6 +228,21 @@ function showDropUl(data, evt) {
 		$('.agentTop').not(agentTop).removeClass('selectedAgent');
 		$(agentTop).addClass('selectedAgent');
 		ul.slideDown('slow');
+	}
+}
+
+function showQueueDropUl(data, evt) {
+	var statsData = evt.currentTarget;
+	var queueDrop = $(statsData).children().last();		
+	if (queueDrop.is(':visible')) {
+		queueDrop.slideUp('slow');
+		$('.statsData').removeClass('selectedAgent');
+	} else {
+		/* jshint validthis: true */
+		$('.queueDrop').not(this).slideUp('slow');
+		$('.statsData').not(statsData).removeClass('selectedAgent');
+		$(statsData).addClass('selectedAgent');
+		queueDrop.slideDown('slow');
 	}
 }
 
@@ -406,6 +386,32 @@ function clearAgentData(data, evt) {
 }
 
 
+/*function detailedQueue(data, evt) {
+	if (AppViewModel.selectedQueue() !== data) {
+		clearAgentData();
+		var clickedElement = $(evt.currentTarget);
+		$('.statsData').not(clickedElement).removeClass('selectedAgent');
+		$('.agentTop').not(clickedElement).removeClass('selectedAgent');
+		$(clickedElement).addClass('selectedAgent');
+		AppViewModel.selectedQueue(data);
+		if ($('.infoContainer').is(':visible')) {} else {
+			// similar behavior as an HTTP redirect
+			//window.location.replace("http://stackoverflow.com");
+			var parents = $(evt.currentTarget).parentsUntil('queueHead');
+			var queueHead = parents[1];
+			var idQueue = $(queueHead).attr('id');
+			//$.get('/abandonedCalls', {abandonedCalls: idQueue});
+			//socket.emit('abandonedCalls', idQueue);
+			//$('#abandonedCallsModal').modal('show');
+			// showQueueDropUl(data, evt);
+		}
+	} else {
+		clearQueueData();
+		clearAgentData();
+	}
+}*/
+
+
 function detailedQueue(data, evt) {
 	if ($('.infoContainer').is(':visible')) {
 		if (AppViewModel.selectedQueue() !== data) {
@@ -415,15 +421,15 @@ function detailedQueue(data, evt) {
 			$('.agentTop').not(clickedElement).removeClass('selectedAgent');
 			$(clickedElement).addClass('selectedAgent');
 			AppViewModel.selectedQueue(data);
-			//socket.emit('abandonedCalls', );
 		} else {
 			clearQueueData();
 			clearAgentData();
 		}
 	} else {
-		showDropUl(data, evt);
+		showQueueDropUl(data, evt);
 	}
 }
+
 
 function clearQueueData(data, evt) {
 	/* jshint unused:false */
@@ -459,9 +465,6 @@ socket.on('newAgent', function(data) {
 	alertify.log('Agent '+data.name+' added to queue '+data.queue);
 });
 
-socket.on('abandonedCalls', function(data) {
-	alertify.log('do the quest');
-});
 
 $(document).ready(function() {
 	var userPrefs = JSON.parse(getCookie('user'));
@@ -475,6 +478,4 @@ $(document).ready(function() {
 	});
 
 	ko.applyBindings(AppViewModel);
-	//ko.applyBindings(QueueViewModel, document.getElementById("queue"));
-
 });

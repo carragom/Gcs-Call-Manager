@@ -7,18 +7,14 @@ block gcsCss
 
 block gcsNavbarItems
 	ul.nav.navbar-nav
-		//-li
-			//-a(href="/")
-				//-i.icon-home.icon-large
-				//-|&nbsp;Home
 		li.active
 			a(href="#")
 				i.icon-desktop.icon-large 
 				|&nbsp;Queues
-		//-li
-			//-a(href="/profile")
-				//-i.icon-user.icon-large 
-				//-|&nbsp;Profile
+		li
+			a(href="/reports")
+				i.icon-file-text.icon-large 
+				|&nbsp;Reports
 		li
 			a(href="/userAdmin")
 				i.icon-user.icon-large 
@@ -69,6 +65,7 @@ block content
 				div.modal-footer
 					button.btn.btn-default(type="button" data-dismiss="modal")
 						|Close
+
 	div.row#dataContainer
 		div.col-md-8.col-sm-6
 			<!-- ko foreach: $data.queues -->
@@ -92,11 +89,20 @@ block content
 							|Wait Time: 
 							span.statValue(data-bind="text: waiting_calls")
 
+	
+						div.agentDrop(data-bind="foreach: abandonedCalls")
+							ul.agentsUl.infoACDrop
+								li
+									span.infoLabel From:&nbsp
+									span(data-bind="text: connectedlinename")
+									span.infoLabel &nbspDate:&nbsp
+									span(data-bind="text: date")
+
 				<!-- ko if: agents().length < 1 -->
 				div.emptyAlert(data-bind="visible: agents().length < 1")
 					| Empty Queue
 				<!-- /ko -->
-				
+
 				div.agentsContainer(data-bind='foreach: agents')
 					div.agent
 						div.agentTop(data-bind="click: markSelectedAgent")
@@ -252,8 +258,8 @@ block content
 						center
 							button.gcsBtn(data-bind="click: clearQueueData")
 								|Dismiss
-						ul.infoContainerUl
-							li
+						ul.infoAbandonedCalls
+							li(style="border: none;")
 								span.infoLabel Abandoned calls:&nbsp
 								span(data-bind="text: abandoned")
 							br
@@ -265,7 +271,25 @@ block content
 									span.infoLabel Date:&nbsp
 									span(data-bind="text: date")
 
-
+		div.modal.fade#abandonedCallsModal(tabindex="-1" role="dialog" aria-labeledby="abandonedCallsModalLabel" aria-hidden="true")
+			div.modal-dialog
+				div.modal-content(data-bind="with: selectedQueue")
+					div.modal-header
+						button.close(type="button" data-dismiss="modal" aria-hidden="true")
+							i.icon-remove
+						h4#helpModalLabel
+							|GCS QueueMonitor abandoned calls
+					div.modal-body
+						div(data-bind='foreach: abandonedCalls')
+							li.infoQueueLi.liLeft
+								span.infoLabel From:&nbsp
+								span(data-bind="text: connectedlinename")
+							li.infoQueueLi.liRigth
+								span.infoLabel Date:&nbsp
+								span(data-bind="text: date")
+					div.modal-footer
+						button.btn.btn-default(type="button" data-dismiss="modal")
+							|Close
 
 block gcsScripts
 	script(src="/javascripts/components/alertify.min.js")

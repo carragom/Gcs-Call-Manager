@@ -1,0 +1,88 @@
+extends layout
+
+block gcsCss
+	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
+	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
+
+block gcsNavbarItems
+	ul.nav.navbar-nav
+		li
+			a(href="/queueMonitor")
+				i.icon-desktop.icon-large 
+				|&nbsp;Queues
+		li.active
+			a(href="#")
+				i.icon-file-text.icon-large 
+				|&nbsp;Reports
+		li
+			a(href="/userAdmin")
+				i.icon-user.icon-large 
+				|&nbsp;Users
+		li
+			a(href="/logout")
+				i.icon-off.icon-large 
+				|&nbsp;Logout
+		li
+			a(data-toggle="modal" href="#helpModal")
+				i.icon-question-sign.icon-large
+				|&nbsp;Help
+	div.nav.nav-pills
+		p.navbar-text Queues:
+		<!-- ko foreach: $data.queues -->
+		<!-- ko if: "default" != id() -->
+		li
+			a(data-bind="attr: {'id': id}, text: id, click: markSelectedQueue")
+		<!-- /ko -->
+		<!-- /ko -->
+block content
+	br
+	br
+	br
+	div.col-md-8.col-sm-6.queueHead(data-bind="with: selectedQueue")
+		div.queueID
+			|Agents in Queue 
+			span(data-bind="text: id")
+		div.statsDataReports
+			li.liHover
+				|Completed: 
+				span.statValue(data-bind="text: completed")
+			li.liHover(data-bind="attr: {'abandonedCalls': abandonedCalls}, click: markSelectedStat")
+				|Abandoned: 
+				span.statValue(data-bind="text: abandoned")
+			li.liHover
+				|Hold Time: 
+				span.statValue(data-bind="text: holdtime")
+			li.liHover
+				|Wait Time: 
+				span.statValue(data-bind="text: waiting_calls")
+
+		<!-- ko if: selectedStat().length < 1 -->
+		div.info-queue-container
+			div.queue-list-container
+				ul.user-list-ul
+					li.user-list-header
+						span.user-field
+							|Date
+						span.user-field
+							|Hour
+						span.user-field
+							|Origin
+						span.user-field
+							|Destiny
+						span.user-field
+							|Duration
+						span.user-field
+							|Type
+					<!-- ko foreach: selectedStat -->
+					li.user-list-user
+						span.user-field.user-list-name(data-bind="text: date")
+							|&nbsp;--&nbsp;
+					<!-- /ko -->
+		<!-- /ko -->
+
+block gcsScripts
+	script(src="/javascripts/components/alertify.min.js")
+	script(src="/javascripts/components/knockout-2.3.0.js")
+	script(src="/javascripts/components/knockout.viewmodel.min.js")
+	script(src="/socket.io/socket.io.js")
+	script(src="/javascripts/app/queueReports.js")
