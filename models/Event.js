@@ -13,6 +13,7 @@ var eventSchema = new Schema({
      },{_id:false}],
 	date: {type: String, default: ''},
 	uniqueid: {type: String, default: ''},
+	status: {type: String, default: ''},
 	channel: {type: String, default: ''},
 	calleridnum: {type: String, default:''},
 	calleridname: {type: String, default: ''},

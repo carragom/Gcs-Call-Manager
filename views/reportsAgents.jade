@@ -19,11 +19,12 @@ block gcsNavbarItems
 				a(href="/reports")
 					i.icon-file-text.icon-large 
 					|&nbsp;Reports
-		li.active
-			a(href="#")
-				i.icon-archive.icon-large 
-				|&nbsp;Agents
-				button#agentReport(hidden value=exten)
+		else
+			li.active
+				a(href="#")
+					i.icon-archive.icon-large 
+					|&nbsp;Agents
+					button#agentReport(hidden value=exten)
 		li
 			a(href="/logout")
 				i.icon-off.icon-large 
@@ -33,6 +34,46 @@ block gcsNavbarItems
 				i.icon-question-sign.icon-large
 				|&nbsp;Help
 block content
+	br
+	br
+	br
+	div.col-md-8.col-sm-6.queueHead
+		<!-- ko foreach: users -->
+		div.queueID
+			|Calls reports of 
+			span(data-bind="text: name")
+		div.statsDataReports
+			<!-- ko foreach: statsCalls -->
+			li.liHover(data-bind="click: markSelectedStat")
+				span(data-bind="text: name")
+				span.statValue(data-bind="text: length")
+			<!-- /ko -->
+		<!-- /ko -->
+
+		
+		div.info-queue-container(data-bind="with: selectedStat")
+			div.queue-list-container
+				ul.call-list-ul
+					li.user-list-header
+						span.call-field
+							|Date
+						span.call-field
+							|Origin
+						span.call-field
+							|Destiny
+						span.call-field
+							|Status
+					<!-- ko foreach: calls -->
+					li.user-list-user
+						span.call-field.user-list-name(data-bind="text: date")
+							|&nbsp;&nbsp;
+						span.call-field.user-list-name(data-bind="text: calleridnum")
+							|&nbsp;&nbsp;
+						span.call-field.user-list-name(data-bind="text: connectedlinenum")
+							|&nbsp;&nbsp;
+						span.call-field.user-list-name(data-bind="text: status")
+							|&nbsp;&nbsp;
+					<!-- /ko -->
 
 
 

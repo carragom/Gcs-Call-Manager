@@ -155,7 +155,13 @@ io.sockets.on('connection', function(socket){
 		var Events = require('./config/Events');
 		Events.agentReport(extenUser, function(calls) {
 			socket.emit('agentReport', calls);
-		})
+		});
+		setInterval(function (){
+			Events.agentReport(extenUser, function(calls) {
+				socket.emit('agentReport', calls);
+			});
+		}, 5000);
+		gcsAmi.send({order: 'QueueLogin'});
 	});
 
 	/**

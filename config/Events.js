@@ -3,7 +3,7 @@
 var Event = require('../models/Event');
 var queue = require('../models/queue');
 var moment = require('moment');
-
+var User = require('../models/user');
 
 exports.add = function (eventAMI) {
 	// console.log(eventAMI)
@@ -19,6 +19,7 @@ exports.add = function (eventAMI) {
 				name: eventAMI.event
 		     }],
 			date: momentDate,
+			status: "Abandoned",
 			channel: eventAMI.channel,
 			uniqueid: eventAMI.uniqueid,
 			calleridnum: eventAMI.calleridnum,
@@ -97,6 +98,7 @@ function merge (uniqueids, cb){
 						ev = new Event({
 							events: evnts[i].events,
 							date: evnts[i].date,
+							status: evnts[i].status,
 							channel: evnts[i].channel,
 							uniqueid: evnts[i].uniqueid,
 							calleridnum: evnts[i].calleridnum,
@@ -116,6 +118,10 @@ function merge (uniqueids, cb){
 						}
 						for (var j = 0; j < evnts[i].events.length; j++) {
 							ev.events.push(evnts[i].events[j])
+							console.log(evnts[i].events[j])
+							if(evnts[i].events[j].status == 'Up'){
+								ev.status = "Completed";
+							}
 						};
 					}
 					//console.log(ev)
@@ -268,56 +274,29 @@ exports.queueReport = function (queueArray, cb){
 }
 
 exports.agentReport = function (extenUser, cb){
-	// console.log(queueArray);
+	console.log(extenUser);
 
-	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}]}).exec( function (err, abandoned){
-		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': 'Up'}, {'events.name': 'Hangup'}]}).exec( function (err, completed){
+	User.find({exten : extenUser}).exec(function (err, usersResult){
+		var user = {
+			id: usersResult[0]._id,
+			exten: usersResult[0].exten,
+			name: usersResult[0].name,
+			role: usersResult[0].role,
+		};
+		
+		Event.find({channel: {'$regex': /SIP/}, 'connectedlinenum': extenUser}).exec( function (err, received){
+			Event.find({channel: {'$regex': /SIP/}, 'calleridnum': extenUser, '$and' : [{'events.exten': { '$not': /\*45/ }}, {'events.exten': { '$not': /555/ }}]}).exec( function (err, realized){
 
-			if(err) return cb(queueArray);
-			//var abandonedCalls = [ [], [], [], [], [] ];
-			var abandonedCalls = new Array(6);
-			var completedCalls = new Array(6);
-			for (var i = 0; i < 6; i++) {
-				var qi = new Array();
-				abandonedCalls[i] = qi;
-				completedCalls[i] = new Array();
-			}
-			
-			for (var i = 0; i < abandoned.length; i++) {
-
-				var splitConnectedName = abandoned[i].connectedlinename.split('-');
-				if(splitConnectedName.length > 1){
-					splitConnectedName[0] == 'RE' ? abandonedCalls[0].push( abandoned[i] ) : // 0 :
-					splitConnectedName[0] == 'ST' ? abandonedCalls[1].push( abandoned[i] ) : // 0 :
-					splitConnectedName[0] == 'VE' ? abandonedCalls[2].push( abandoned[i] ) : // 0 :
-					splitConnectedName[0] == 'CU' ? abandonedCalls[3].push( abandoned[i] ) : // 0 :
-					splitConnectedName[0] == 'CO' ? abandonedCalls[4].push( abandoned[i] ) : // 0 :
-										    /*UNA*/	abandonedCalls[5].push( abandoned[i] ) ; // 0 ;
+				if(!err){
+					var statsCalls = [];
+					statsCalls.push({calls: received, name: "Received: ", length: received.length});
+					statsCalls.push({calls: realized, name: "Realized: ", length: realized.length});
+					user.statsCalls = statsCalls;
+					console.log(user)
 				}
-				// console.log("abandonedCalls function ----------------------------------------------------");	
-			}
-
-			
-			for (var i = 0; i < completed.length; i++) {
-
-				var splitConnectedName = completed[i].connectedlinename.split('-');
-				if(splitConnectedName.length > 1){
-					splitConnectedName[0] == 'RE' ? completedCalls[0].push( completed[i] ) : // 0 :
-					splitConnectedName[0] == 'ST' ? completedCalls[1].push( completed[i] ) : // 0 :
-					splitConnectedName[0] == 'VE' ? completedCalls[2].push( completed[i] ) : // 0 :
-					splitConnectedName[0] == 'CU' ? completedCalls[3].push( completed[i] ) : // 0 :
-					splitConnectedName[0] == 'CO' ? completedCalls[4].push( completed[i] ) : // 0 :
-										    /*UNA*/	completedCalls[5].push( completed[i] ) ; // 0 ;
-				}
-				// console.log("abandonedCalls function ----------------------------------------------------");	
-			}
-			var statsCalls = [];
-			// for (var j = 1, k = queueArray.length - 2; j < queueArray.length; j++, k--) {
-				statsCalls.push({calls: completedCalls[5], name: "Completed: ", length: completedCalls[5].length});
-				statsCalls.push({calls: abandonedCalls[5], name: "Abandoned: ", length: abandonedCalls[5].length});
-				// queueArray[j].abandonedDay = abandonedCalls[k].length;
-			// };
-			return cb(statsCalls);
-		});//eventos
-	});//eventos
+				var users = [user];
+				return cb(users);
+			});//realized
+		});//received
+	});
 }

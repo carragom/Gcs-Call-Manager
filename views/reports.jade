@@ -19,10 +19,11 @@ block gcsNavbarItems
 				a(href="#")
 					i.icon-file-text.icon-large 
 					|&nbsp;Reports
-		li
-			a(href="/reportsAgents")
-				i.icon-archive.icon-large 
-				|&nbsp;Agents
+		else
+			li
+				a(href="/reportsAgents")
+					i.icon-archive.icon-large 
+					|&nbsp;Agents
 		li
 			a(href="/logout")
 				i.icon-off.icon-large 

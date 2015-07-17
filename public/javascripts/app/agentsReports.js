@@ -4,7 +4,7 @@
 	{calls: [], length:'0', name:''},
 	{calls: [], length:'0', name:''}
 	]};*/
-var calls = {statCalls:[]};
+var calls = {users: []};
 
 var queueViewModel = ko.viewmodel.fromModel(calls, {
 	extend: {
@@ -26,14 +26,14 @@ var socket = io.connect('/');
 
 function agentReport() {
 	var exten = $('#agentReport').val();	
-	socket.emit('agentReport');
+	socket.emit('agentReport', exten);
 }
 
 agentReport();
 
 socket.on('agentReport', function(data){
 	alertify.log('agentReport');
-	calls.statsCalls = data;
+	calls.users = data;
 	ko.viewmodel.updateFromModel(queueViewModel, calls);
 });
 
