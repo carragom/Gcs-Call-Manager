@@ -113,7 +113,7 @@ io.sockets.on('connection', function(socket){
 			interface: data.interface, 
 			paused: data.paused
 		};
-		gcsAmi.send({order: 'QueuePause', payload: pkg});
+		gcsAmi.send({order: 'QueuePause', payload: pkg, origin: data.origin, extenUser: data.id});
 	});
 
 	socket.on('removeAgent', function(data){ //Remove an agent from a queue
@@ -122,7 +122,7 @@ io.sockets.on('connection', function(socket){
 			queue: data.queue, 
 			interface: data.interface
 		};
-		gcsAmi.send({order: 'QueueRemove', payload: pkg});
+		gcsAmi.send({order: 'QueueRemove', payload: pkg, origin: data.origin, extenUser: data.id});
 	});
 
 	socket.on('spyAgent', function(data){ //Create ChannelSpy channel for the supervisor
@@ -152,16 +152,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('agentReport', function(extenUser){ 
-		var Events = require('./config/Events');
-		Events.agentReport(extenUser, function(calls) {
-			socket.emit('agentReport', calls);
-		});
-		setInterval(function (){
-			Events.agentReport(extenUser, function(calls) {
-				socket.emit('agentReport', calls);
-			});
-		}, 5000);
-		gcsAmi.send({order: 'QueueLogin'});
+		gcsAmi.send({order: 'agentReport', extenUser: extenUser});
 	});
 
 	/**
@@ -182,7 +173,6 @@ io.sockets.on('connection', function(socket){
 	}
 
 	function queueReport(payload) {
-		// console.log(payload);
 		socket.emit('queueReport', payload);
 	}
 

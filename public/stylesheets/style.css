@@ -275,12 +275,20 @@ input:not([type=submit]) {
 
 .liHover {
   padding: 5px;
-}
+} 
 
 .liHover:hover {
   background-color: #0C8F41;
   border-radius: 15px 0 15px 0;
 }
+
+.liButton {
+  color: #ffe761;
+}  
+
+.liDynamic {
+  padding: 10px;
+} 
 
 .statValue {
   color: #fff3ad;
@@ -555,6 +563,12 @@ span .icon-stack {
   width: 25%;
   display: inline-block;
 }
+
+.queueCall-field {
+  width: 32%;
+  display: inline-block;
+}
+
 .user-controls {
   clear: both;
 }

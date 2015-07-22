@@ -37,43 +37,62 @@ block content
 	br
 	br
 	br
-	div.col-md-8.col-sm-6.queueHead
+	div.col-md-8
 		<!-- ko foreach: users -->
-		div.queueID
-			|Calls reports of 
-			span(data-bind="text: name")
+
+		div.agentTop(style="float: left")
+			div.agentStatus
+				div.agentIcon(data-bind="statusIcon: status()")
+				div.agentTopName
+					span(data-bind="text: name")
+				div.agentTopId
+					|ext.
+					span(data-bind="text: id")
+					span(data-bind="visible: paused() == 1")
+						| &nbsp;--> Paused
+
 		div.statsDataReports
+			li.liHover.liDynamic
+				span Talking to 
+				span.statValue(data-bind="text: caller")
+			li.liHover
+				span Pause 
+					span.icon-stack.liButton(data-bind="click: pauseAgent")
+						i.icon-circle.icon-stack-base.actionBtnBase
+						i.icon-pause.actionBtnIcon
+
+
 			<!-- ko foreach: statsCalls -->
-			li.liHover(data-bind="click: markSelectedStat")
+			li.liHover.liDynamic(data-bind="click: markSelectedStat")
 				span(data-bind="text: name")
 				span.statValue(data-bind="text: length")
 			<!-- /ko -->
 		<!-- /ko -->
 
 		
-		div.info-queue-container(data-bind="with: selectedStat")
-			div.queue-list-container
-				ul.call-list-ul
-					li.user-list-header
-						span.call-field
-							|Date
-						span.call-field
-							|Origin
-						span.call-field
-							|Destiny
-						span.call-field
-							|Status
-					<!-- ko foreach: calls -->
-					li.user-list-user
-						span.call-field.user-list-name(data-bind="text: date")
-							|&nbsp;&nbsp;
-						span.call-field.user-list-name(data-bind="text: calleridnum")
-							|&nbsp;&nbsp;
-						span.call-field.user-list-name(data-bind="text: connectedlinenum")
-							|&nbsp;&nbsp;
-						span.call-field.user-list-name(data-bind="text: status")
-							|&nbsp;&nbsp;
-					<!-- /ko -->
+	div.info-queue-container.queueHead(data-bind="with: selectedStat")
+		div.queue-list-container
+			ul.call-list-ul
+				li.user-list-header
+					span.call-field
+						|Date
+					span.call-field
+						|Origin
+					span.call-field
+						|Destiny
+					span.call-field
+						|Status
+				<!-- ko foreach: calls -->
+				li.user-list-user
+					span.call-field.user-list-name(data-bind="text: date")
+						|&nbsp;&nbsp;
+					span.call-field.user-list-name(data-bind="text: calleridnum")
+						|&nbsp;&nbsp;
+					span.call-field.user-list-name(data-bind="text: connectedlinenum")
+						|&nbsp;&nbsp;
+					span.call-field.user-list-name(data-bind="text: status")
+						|&nbsp;&nbsp;
+				<!-- /ko -->
 
 
 

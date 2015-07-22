@@ -20,7 +20,9 @@ var ami = new AsteriskAmi({
 	reconnect: true,
 	reconnect_after: '1500'
 });
-var reports = false;
+
+var order = -1,
+	extenUser = '';
 
 var queueArray = [new MakeQueue('default',0,0,0,0,[],[])];
 
@@ -302,23 +304,24 @@ gcs_ami.prototype.connect = function (conf) {
 				//   order: 'qStatusFresh',
 				//   data: queueArray
 				// };
-				if(reports == false){
-					Events.abandoned(function (){
-						// console.log("entro al freshData");
-						Events.freshData(queueArray, function (payload){
-							// console.log(queueArray);
-								self.emit('freshData', payload);
-							queueGarbageCollector();
-						});
-					});
-				} else { 
-					reports = false;
+				// console.log(order)
+				// console.log(extenUser)
+				if(order == 1){
+					order = 0;
 					Events.queueReport(queueArray, function (payload){
 						// console.log(queueArray);
 						self.emit('queueReport', queueArray);
 						queueGarbageCollector();
 					});
-				 }
+				} else { 
+					Events.abandoned(function (){
+						Events.freshData(queueArray, extenUser, function (payload){
+								// console.log(payload);
+							self.emit('freshData', payload);
+							queueGarbageCollector();
+						});
+					});
+				}
 				break;
 
 			case 'QueueMemberAdded':
@@ -364,32 +367,30 @@ gcs_ami.prototype.connect = function (conf) {
 
 			case 'Newchannel':
 				if(!/Local/.test(ami_datos.channel)){
-					console.log(ami_datos);
+					// console.log(ami_datos);
 					Events.add(ami_datos);
 				}
 				break;
 
 			case 'Newstate':
 				if(!/Local/.test(ami_datos.channel)){
-					console.log(ami_datos);
+					// console.log(ami_datos);
 					Events.add(ami_datos);
 					ami.send({action: 'QueueStatus'});
 					ami.send({action: 'CoreShowChannels'})
 				}
 				break;
 
-			case 'Join':
-				if(!/Local/.test(ami_datos.channel)){
-					console.log(ami_datos);
-					Events.add(ami_datos);
-					ami.send({action: 'QueueStatus'});
-					ami.send({action: 'CoreShowChannels'})
-				}
-				break;
+			// case 'Join':
+			// 	if(!/Local/.test(ami_datos.channel)){
+			// 		// console.log(ami_datos);
+			// 		Events.add(ami_datos);
+			// 	}
+			// 	break;
 
 			case 'Hangup':
 				if(!/Local/.test(ami_datos.channel)){
-					console.log(ami_datos);
+					// console.log(ami_datos);
 					Events.add(ami_datos);
 				}
 				ami.send({action: 'QueueStatus'});
@@ -417,15 +418,16 @@ gcs_ami.prototype.send = function (req) {
 			context: req.payload.context
 		});
 	} else if (('QueuePause' === req.order) || ('QueueRemove' === req.order)) {
+		order = req.origin;
+		extenUser = req.extenUser;
 		ami.send(req.payload);
-	} else if('QueueLogin' === req.order){
+	} else if('QueueLogin' === req.order || 'queueReport' === req.order || 'agentReport' === req.order){
 		setInterval(function (){
 			Events.mergeEvents();
 		}, 5000);
-		ami.send({action: 'QueueStatus'});
-		ami.send({action: 'CoreShowChannels'});
-	} else if('queueReport' === req.order){
-		reports = true;
+		('QueueLogin' === req.order) ? order = 0 : ('queueReport' === req.order) ? order = 1 : order = 2;
+		('QueueLogin' === req.order) ? extenUser = '' : ('queueReport' === req.order) ? extenUser = '' : extenUser = req.extenUser;
+
 		ami.send({action: 'QueueStatus'});
 		ami.send({action: 'CoreShowChannels'});
 	} else {

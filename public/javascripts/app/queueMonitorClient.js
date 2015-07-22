@@ -269,10 +269,11 @@ function isTalking(data) {
 /* exported pauseAgent */ //needed for JsHint
 function pauseAgent(data) {
 	var pkg = {
-		id: data.id(),
+		id: '',
 		queue: data.queue(),
 		interface: data.location(),
-		paused: data.paused()
+		paused: data.paused(),
+		origin: 0
 	};
 	console.log(pkg.paused);
 	if ('0' === pkg.paused) { //send a one to pause, zero to unPause
@@ -294,8 +295,10 @@ function pauseAgent(data) {
 function removeAgent(data) {
 	alertify.log('Request to remove '+data.name()+' '+data.id()+' from queue '+data.queue());
 	var pkg = {
+		id: '',
 		queue: data.queue(),
-		interface: data.location()
+		interface: data.location(),
+		origin: 0
 	};
 	socket.emit('removeAgent', pkg);
 	clearAgentData(null, null);

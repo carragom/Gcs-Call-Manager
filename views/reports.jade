@@ -61,19 +61,19 @@ block content
 			div.queue-list-container
 				ul.call-list-ul
 					li.user-list-header
-						span.call-field
+						span.queueCall-field
 							|Date
-						span.call-field
+						span.queueCall-field
 							|Origin
-						span.call-field
+						span.queueCall-field
 							|Destiny
 					<!-- ko foreach: calls -->
 					li.user-list-user
-						span.call-field.user-list-name(data-bind="text: date")
+						span.queueCall-field.user-list-name(data-bind="text: date")
 							|&nbsp;&nbsp;
-						span.call-field.user-list-name(data-bind="text: connectedlinenum")
+						span.queueCall-field.user-list-name(data-bind="text: calleridnum")
 							|&nbsp;&nbsp;
-						span.call-field.user-list-name(data-bind="text: calleridnum")
+						span.queueCall-field.user-list-name(data-bind="text: connectedlinenum")
 							|&nbsp;&nbsp;
 					<!-- /ko -->
 
