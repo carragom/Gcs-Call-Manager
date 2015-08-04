@@ -171,7 +171,6 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 			});
 
 			root.selectedQueue = ko.observable({
-				queue:false,
 				abandonedDay:'',
 				id: '',
 				statsCalls: ko.observableArray()
@@ -179,10 +178,6 @@ var AppViewModel = ko.viewmodel.fromModel(queueArray, {
 		},
 		'{root}.queues[i].agents[i]': function(agent) {
 			agent.selected = ko.observable(false);
-		},
-
-		'{root}.queues[i]': function(queue) {
-			queue.selected = ko.observable(false);
 		}
 	}
 });
@@ -269,7 +264,7 @@ function isTalking(data) {
 /* exported pauseAgent */ //needed for JsHint
 function pauseAgent(data) {
 	var pkg = {
-		id: '',
+		id: data.id(),
 		queue: data.queue(),
 		interface: data.location(),
 		paused: data.paused(),
@@ -390,32 +385,6 @@ function clearAgentData(data, evt) {
 }
 
 
-/*function detailedQueue(data, evt) {
-	if (AppViewModel.selectedQueue() !== data) {
-		clearAgentData();
-		var clickedElement = $(evt.currentTarget);
-		$('.statsData').not(clickedElement).removeClass('selectedAgent');
-		$('.agentTop').not(clickedElement).removeClass('selectedAgent');
-		$(clickedElement).addClass('selectedAgent');
-		AppViewModel.selectedQueue(data);
-		if ($('.infoContainer').is(':visible')) {} else {
-			// similar behavior as an HTTP redirect
-			//window.location.replace("http://stackoverflow.com");
-			var parents = $(evt.currentTarget).parentsUntil('queueHead');
-			var queueHead = parents[1];
-			var idQueue = $(queueHead).attr('id');
-			//$.get('/abandonedCalls', {abandonedCalls: idQueue});
-			//socket.emit('abandonedCalls', idQueue);
-			//$('#abandonedCallsModal').modal('show');
-			// showQueueDropUl(data, evt);
-		}
-	} else {
-		clearQueueData();
-		clearAgentData();
-	}
-}*/
-
-
 function detailedQueue(data, evt) {
 	if ($('.infoContainer').is(':visible')) {
 		if (AppViewModel.selectedQueue() !== data) {
@@ -439,7 +408,6 @@ function clearQueueData(data, evt) {
 	/* jshint unused:false */
 	$('#infoQueueData').fadeOut('400', function(){
 		AppViewModel.selectedQueue({
-			queue:false,
 			abandonedDay:'',
 			id: '',
 			statsCalls: ko.observableArray()
@@ -454,7 +422,7 @@ socket.on('generalMsg', function(msg){
 });
 
 socket.on('freshData', function(data){
-	alertify.log('freshData');
+	// alertify.log('freshData');
 	queueArray.queues = data;
 	ko.viewmodel.updateFromModel(AppViewModel, queueArray);
 });

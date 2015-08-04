@@ -35,7 +35,7 @@ function MakeQueue (id, completed, abandoned, holdtime, waiting_calls) {
 	this.waiting_calls  = waiting_calls; //Calls on hold
 	this.agents         = []; //An array of members
 	this.age            = 0; //If age > 0 then is not in asterisk anymore
-	this.queue          = true; 
+	this.agentsCharts   = false; 
 	this.statsCalls     = []; //An array of abandoned calls
 }
 
@@ -163,7 +163,7 @@ var updateQueue = function (datos) {
 		queueArray[ind].holdtime       = tmpQueue.holdtime;
 		queueArray[ind].waiting_calls  = tmpQueue.waiting_calls;
 		queueArray[ind].age            = 0; //Age is back to 0 to keep it safe from the garbage collector
-		queueArray[ind].queue          = true; 
+		queueArray[ind].agentsCharts   = false; 
 		queueArray[ind].statsCalls     = []; 
 	} else {
 		queueArray.push(tmpQueue);
@@ -315,7 +315,7 @@ gcs_ami.prototype.connect = function (conf) {
 					});
 				} else { 
 					Events.abandoned(function (){
-						Events.freshData(queueArray, extenUser, function (payload){
+						Events.freshData({order: order, queueArray: queueArray, extenUser: extenUser}, function (payload){
 								// console.log(payload);
 							self.emit('freshData', payload);
 							queueGarbageCollector();
@@ -366,14 +366,14 @@ gcs_ami.prototype.connect = function (conf) {
 				break;
 
 			case 'Newchannel':
-				if(!/Local/.test(ami_datos.channel)){
+				if(/SIP/.test(ami_datos.channel)){
 					// console.log(ami_datos);
 					Events.add(ami_datos);
 				}
 				break;
 
 			case 'Newstate':
-				if(!/Local/.test(ami_datos.channel)){
+				if(/SIP/.test(ami_datos.channel)){
 					// console.log(ami_datos);
 					Events.add(ami_datos);
 					ami.send({action: 'QueueStatus'});
@@ -381,15 +381,8 @@ gcs_ami.prototype.connect = function (conf) {
 				}
 				break;
 
-			// case 'Join':
-			// 	if(!/Local/.test(ami_datos.channel)){
-			// 		// console.log(ami_datos);
-			// 		Events.add(ami_datos);
-			// 	}
-			// 	break;
-
 			case 'Hangup':
-				if(!/Local/.test(ami_datos.channel)){
+				if(/SIP/.test(ami_datos.channel)){
 					// console.log(ami_datos);
 					Events.add(ami_datos);
 				}
@@ -405,7 +398,7 @@ gcs_ami.prototype.connect = function (conf) {
 
 gcs_ami.prototype.send = function (req) {
 	//req must have an "order" field and a "payload" with all the properties needed for asterisk to perform the action
-	console.log(req)
+	//console.log(req)
 	if ('spyAgent' === req.order) {
 		//We originate a ChanSpy with the data in payload
 		ami.send({
@@ -420,11 +413,17 @@ gcs_ami.prototype.send = function (req) {
 	} else if (('QueuePause' === req.order) || ('QueueRemove' === req.order)) {
 		order = req.origin;
 		extenUser = req.extenUser;
-		ami.send(req.payload);
+		if ('QueuePause' === req.order) {
+			Events.pausedAgent({order: order, extenUser: extenUser, payload: req.payload}, function() {
+				ami.send(req.payload);
+			});
+		} else {
+			ami.send(req.payload);
+		}
 	} else if('QueueLogin' === req.order || 'queueReport' === req.order || 'agentReport' === req.order){
-		setInterval(function (){
-			Events.mergeEvents();
-		}, 5000);
+		// setInterval(function (){
+		// 	Events.mergeEvents();
+		// }, 5000);
 		('QueueLogin' === req.order) ? order = 0 : ('queueReport' === req.order) ? order = 1 : order = 2;
 		('QueueLogin' === req.order) ? extenUser = '' : ('queueReport' === req.order) ? extenUser = '' : extenUser = req.extenUser;
 

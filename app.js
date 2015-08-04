@@ -14,7 +14,8 @@ var env = process.env.NODE_ENV || 'development',
 	config = require('./config/config')[env],
 	cookie = require('express/node_modules/cookie'),
 	connect = require('express/node_modules/connect'),
-	mongoose = require('mongoose');
+	mongoose = require('mongoose'),
+	moment = require('moment');
 
 
 mongoose.connect(config.db);
@@ -155,6 +156,34 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.send({order: 'agentReport', extenUser: extenUser});
 	});
 
+	var Events = require('./config/Events');
+	socket.on('agentsCharts', function(agents){ 
+		// console.log(agents);
+		var match = {'$or': agents }
+		Events.agentsCharts(match, function(pauses){
+			// console.log(pauses)
+			socket.emit('agentsCharts', pauses);			
+		})
+	});
+
+	socket.on('filterPauses', function(range){ 
+		var from = moment(range.from).hour('00').unix();
+		var until = moment(range.until).hour('23').minute('59').second('59').unix();
+		if(range.or == 0){
+			var match = {'$or': range.agents , 'epochStart': {'$gte': from, '$lte': until}}
+			Events.agentsCharts(match, function(pauses){
+				// console.log(pauses)
+				socket.emit('agentsCharts', pauses);			
+			})
+		} else {
+			var search = {'agent': range.agents , 'epochStart': {'$gte': from, '$lte': until}}
+			Events.singleAgentChart(search, function(pauses){
+				// console.log(pauses)
+				socket.emit('singleAgentChart', pauses);			
+			})
+		}
+	});
+
 	/**
 	 *  In order to safely unbind the listeners when the user disconnect, they must be called with a named callback
 	 *   not an anonymous function, so here are the callbacks
@@ -172,15 +201,21 @@ io.sockets.on('connection', function(socket){
 		socket.emit('agentRemoved', payload);
 	}
 
-	function queueReport(payload) {
+	function queueReport(payload) { //console.log(payload);
 		socket.emit('queueReport', payload);
 	}
+
+	function agentPaused(payload) { 
+		socket.emit('agentPaused', payload);
+	}
+
 
 	/** Then we add the listeners **/
 	gcsAmi.on('newAgent', newAgent);
 	gcsAmi.on('agentRemoved', agentRemoved);
 	gcsAmi.on('freshData', freshData);
 	gcsAmi.on('queueReport', queueReport);
+	gcsAmi.on('agentPaused', agentPaused);
 
 	socket.on('disconnect', function() {
 		/** All non socket.io listeners must be cleaned at disconnect **/
@@ -188,6 +223,7 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.removeListener('agentRemoved', agentRemoved);
 		gcsAmi.removeListener('freshData', freshData);
 		gcsAmi.removeListener('queueReport', queueReport);
+		gcsAmi.removeListener('agentPaused', agentPaused);
 	});
 
 });

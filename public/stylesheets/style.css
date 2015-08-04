@@ -131,6 +131,17 @@ input:not([type=submit]) {
   position: fixed;
   right: 7px;
 }
+.searchContainer {
+  background-color: rgba(0,0,0,0.7);
+  border-radius: 50% / 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,5);
+  text-shadow: 0px 2px 1px rgba(0,0,0, 0.3);
+  width:300px; 
+  float:left;
+  padding: 15px;
+  color: #ffe761;
+  margin-right: 20px;
+}
 
 #infoAgentData {
   height: 65%;

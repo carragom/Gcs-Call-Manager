@@ -1,53 +1,59 @@
 'use strict';
 
-var Event = require('../models/Event');
-var queue = require('../models/queue');
-var moment = require('moment');
-var User = require('../models/user');
+var Event = require('../models/Event'),
+	queue = require('../models/queue'),
+	moment = require('moment'),
+	User = require('../models/user'),
+	pause = require('../models/pause');
 
 exports.add = function (eventAMI) {
 	// console.log(eventAMI)
 	var epochTime = moment().unix();
 	var momentDate = moment().format('MMM Do YYYY, h:mm:ss a');
 
-	var exten = (eventAMI.event == "Join") ? eventAMI.queue : eventAMI.exten;
-		var ev = new Event({
-			events: [{
-		        status: eventAMI.channelstatedesc,
-				epoch: epochTime /*1434777777*/,
-				exten: exten,
-				name: eventAMI.event
-		     }],
-			date: momentDate,
-			status: "Abandoned",
-			channel: eventAMI.channel,
-			uniqueid: eventAMI.uniqueid,
-			calleridnum: eventAMI.calleridnum,
-			calleridname: eventAMI.calleridname,
-			connectedlinenum: eventAMI.connectedlinenum,
-			connectedlinename: eventAMI.connectedlinename
-		});
-		if(!eventAMI.hasOwnProperty("connectedlinenum") ){
-			ev.connectedlinenum = '';
-			ev.connectedlinename = '';
+	var ev = new Event({
+		events: [{
+	        status: eventAMI.channelstatedesc,
+			epoch: epochTime,
+			exten: eventAMI.exten,
+			name: eventAMI.event
+	     }],
+		date: momentDate,
+		status: "Abandoned",
+		channel: eventAMI.channel,
+		uniqueid: eventAMI.uniqueid,
+		calleridnum: eventAMI.calleridnum,
+		calleridname: eventAMI.calleridname,
+		connectedlinenum: eventAMI.connectedlinenum,
+		connectedlinename: eventAMI.connectedlinename
+	});
+	if(!eventAMI.hasOwnProperty("connectedlinenum") ){
+		ev.connectedlinenum = '';
+		ev.connectedlinename = '';
+	}
+	if(!eventAMI.hasOwnProperty("calleridnum") ){
+		ev.calleridnum = '';
+		ev.calleridname = '';
+	}
+	// console.log(ev)
+	ev.save(function(error, evnt) {
+		if (error) console.log(error);
+		else{
+			// console.log(evnt)
+			if (eventAMI.event == 'Hangup') {
+				mergeEventsSingle(evnt.uniqueid);
+			}
 		}
-		if(!eventAMI.hasOwnProperty("calleridnum") ){
-			ev.calleridnum = '';
-			ev.calleridname = '';
-		}
-		// console.log(ev)
-		ev.save(function(error, evnt) {
-			if (error) console.log(error);
-			// else console.log(evnt)
-		});
+	});
 }
 
 
-exports.freshData = function (queueArray, extenUser, cb) {
+exports.freshData = function (data, cb) {
+	var queueArray = data.queueArray;
 	// console.log("*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+")
 	// console.log(queueArray)
 	// console.log(extenUser)
-	if(extenUser === '') {
+	if(data.order === 0) { //admin Page
 		queue.find().exec( function (err, queues){
 	 		abandonedCalls(queueArray, function(queueArray){
 				var j = queues[0].queues.length - 1;
@@ -58,10 +64,10 @@ exports.freshData = function (queueArray, extenUser, cb) {
 	 			return cb(queueArray);
 	 		});
 		})//queue
-	} else {
+	} else { //agents report
 		for (var i = 0; i < queueArray.length; i++) {
 			for (var j = 0; j < queueArray[i].agents.length; j++) {
-				if(queueArray[i].agents[j].id === extenUser){
+				if(queueArray[i].agents[j].id === data.extenUser){
 					agentReport(queueArray[i].agents[j], function(users){
 						return cb(users);
 					});
@@ -71,76 +77,59 @@ exports.freshData = function (queueArray, extenUser, cb) {
 	}
 }
 
-exports.mergeEvents = function (cb){
-	// console.log("------------------------------------------ Entro al metodo de mergeEvents !!!!!!!!!!!!!")
-	queue.find({}, function (err, queues) {
-		var colas = queues[0];
-		Event.find({events: { '$elemMatch': { epoch: { '$gte': colas.epoch} } } },{uniqueid:1}).sort({uniqueid:1}).exec(function(err,events){
-			// console.log(events.length)
-			var uniqueids = [ ],
-				y = 0;
-			for (var i = 0; i < events.length; i++) {
-				if(y == 0) uniqueids[y++] = events[i].uniqueid;
-			 	else{
-			 		if(uniqueids[y - 1] != events[i].uniqueid){
-			 			uniqueids[y++] = events[i].uniqueid;
-			 		}
-			 	}
-			 	if(i == events.length - 1) {
-			 		merge(uniqueids, function(){
-			 			return cb();
-			 		});
-			 	}
-			};
+/*
+	exports.mergeEvents = function (cb){
+		// console.log("------------------------------------------ Entro al metodo de mergeEvents !!!!!!!!!!!!!")
+		queue.find({}, function (err, queues) {
+			var colas = queues[0];
+			Event.find({events: { '$elemMatch': { epoch: { '$gte': colas.epoch} } } },{uniqueid:1}).sort({uniqueid:1}).exec(function(err,events){
+				// console.log(events)
+				if(err) console.log(err)
+				else {
+					var uniqueids = [ ],
+						y = 0;
+					for (var i = 0; i < events.length; i++) {
+						if(y == 0) uniqueids[y++] = events[i].uniqueid;
+					 	else{
+					 		if(uniqueids[y - 1] != events[i].uniqueid){
+					 			uniqueids[y++] = events[i].uniqueid;
+					 		}
+					 	}
+					 	if(i == events.length - 1) {
+					 		merge(uniqueids, function(){
+					 			return cb();
+					 		});
+					 	}
+					};
+				}
+			});
 		});
-	});
-}
+	}
 
-function merge (uniqueids, cb){
-	for (var h = 0; h < uniqueids.length; h++) {
-		var delField = [ ]; 
-		Event.find({uniqueid: uniqueids[h]}).exec(function(err,evnts){
-			if(evnts.length > 1){
-				var ev;
-				for (var i = 0; i < evnts.length; i++) {
-					// console.log("============================================================")
-					// console.log(evnts[i])
-					// console.log(i)
-					delField.push(evnts[i]._id);
-					if(i == 0){
-						ev = new Event({
-							events: evnts[i].events,
-							date: evnts[i].date,
-							status: evnts[i].status,
-							channel: evnts[i].channel,
-							uniqueid: evnts[i].uniqueid,
-							calleridnum: evnts[i].calleridnum,
-							calleridname: evnts[i].calleridname,
-							connectedlinenum: evnts[i].connectedlinenum,
-							connectedlinename: evnts[i].connectedlinename
-						});
-						if(evnts[i].events[0].status == 'Up') {
-							ev.status = "Completed";
-						} else if(evnts[i].events[0].status == 'Ringing') {
-							ev.calleridnum = evnts[i].connectedlinenum,
-							ev.calleridname = evnts[i].connectedlinename,
-							ev.connectedlinenum = evnts[i].calleridnum,
-							ev.connectedlinename = evnts[i].calleridname
-						}
-					} else {
-						// console.log(ev)
-						if(ev.connectedlinenum === '' && evnts[i].connectedlinenum != ''){
-							ev.connectedlinename = evnts[i].connectedlinename;
-							ev.connectedlinenum = evnts[i].connectedlinenum;
-						}
-						if(ev.calleridnum === '' && evnts[i].calleridnum != ''){
-							ev.calleridname = evnts[i].calleridname;
-							ev.calleridnum = evnts[i].calleridnum;
-						}
-						for (var j = 0; j < evnts[i].events.length; j++) {
-							ev.events.push(evnts[i].events[j])
-							
-							if(evnts[i].events[j].status == 'Up'){
+	function merge (uniqueids, cb){
+		for (var h = 0; h < uniqueids.length; h++) {
+			var delField = [ ]; 
+			Event.find({uniqueid: uniqueids[h]}).exec(function(err,evnts){
+				if(evnts.length > 1){
+					var ev;
+					for (var i = 0; i < evnts.length; i++) {
+						// console.log("============================================================")
+						// console.log(evnts[i])
+						// console.log(i)
+						delField.push(evnts[i]._id);
+						if(i == 0){
+							ev = new Event({
+								events: evnts[i].events,
+								date: evnts[i].date,
+								status: evnts[i].status,
+								channel: evnts[i].channel,
+								uniqueid: evnts[i].uniqueid,
+								calleridnum: evnts[i].calleridnum,
+								calleridname: evnts[i].calleridname,
+								connectedlinenum: evnts[i].connectedlinenum,
+								connectedlinename: evnts[i].connectedlinename
+							});
+							if(evnts[i].events[0].status == 'Up') {
 								ev.status = "Completed";
 							} else if(evnts[i].events[0].status == 'Ringing') {
 								ev.calleridnum = evnts[i].connectedlinenum,
@@ -148,26 +137,48 @@ function merge (uniqueids, cb){
 								ev.connectedlinenum = evnts[i].calleridnum,
 								ev.connectedlinename = evnts[i].calleridname
 							}
-						};
-					}
-					//console.log(ev)
-					Event.findByIdAndRemove(evnts[i]._id, function (err, callback){
-						if(err) console.log(err)
-					});
-				};//For loop
-				// console.log("////////////////////////////////////////////////////////////////")
-				// console.log(ev)
-				// console.log("////////////////////////////////////////////////////////////////")
-				
-				ev.save();
+						} else {
+							// console.log(ev)
+							if(ev.connectedlinenum === '' && evnts[i].connectedlinenum != ''){
+								ev.connectedlinename = evnts[i].connectedlinename;
+								ev.connectedlinenum = evnts[i].connectedlinenum;
+							}
+							if(ev.calleridnum === '' && evnts[i].calleridnum != ''){
+								ev.calleridname = evnts[i].calleridname;
+								ev.calleridnum = evnts[i].calleridnum;
+							}
+							for (var j = 0; j < evnts[i].events.length; j++) {
+								ev.events.push(evnts[i].events[j])
+								
+								if(evnts[i].events[j].status == 'Up'){
+									ev.status = "Completed";
+								} else if(evnts[i].events[0].status == 'Ringing') {
+									ev.calleridnum = evnts[i].connectedlinenum,
+									ev.calleridname = evnts[i].connectedlinename,
+									ev.connectedlinenum = evnts[i].calleridnum,
+									ev.connectedlinename = evnts[i].calleridname
+								}
+							};
+						}
+						//console.log(ev)
+						Event.findByIdAndRemove(evnts[i]._id, function (err, callback){
+							if(err) console.log(err)
+						});
+					};//For loop
+					// console.log("////////////////////////////////////////////////////////////////")
+					// console.log(ev)
+					// console.log("////////////////////////////////////////////////////////////////")
+					
+					ev.save();
 
-				if(h == uniqueids.length - 1 && i == evnts.length - 1){
-					return cb();
+					if(h == uniqueids.length - 1 && i == evnts.length - 1){
+						return cb();
+					}
 				}
-			}
-		});
-	}//For loop 
-}
+			});
+		}//For loop 
+	}
+*/
 
 exports.abandoned = function(cb){
 	queue.find({}, function (err, queues) {
@@ -249,7 +260,6 @@ exports.queueReport = function (queueArray, cb){
 
 	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}]}).exec( function (err, abandoned){
 		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': 'Up'}, {'events.name': 'Hangup'}]}).exec( function (err, completed){
-
 			if(err) return cb(queueArray);
 			//var abandonedCalls = [ [], [], [], [], [] ];
 			var abandonedCalls = new Array(6);
@@ -294,6 +304,7 @@ exports.queueReport = function (queueArray, cb){
 				queueArray[j].statsCalls.push({calls: abandonedCalls[k], name: "Abandoned: ", length: abandonedCalls[k].length});
 				queueArray[j].abandonedDay = abandonedCalls[k].length;
 			};
+			// console.log(queueArray);
 			return cb(queueArray);
 		});//eventos
 	});//eventos
@@ -304,17 +315,168 @@ function agentReport (agent, cb){
 
 	Event.find({channel: {'$regex': /SIP/}, 'connectedlinenum': agent.id, 'events.status': 'Ringing'}).exec( function (err, received){
 		Event.find({channel: {'$regex': /SIP/}, 'calleridnum': agent.id, 'events.status': 'Ring', '$and' : [{'events.exten': { '$not': /\*45/ }}, {'events.exten': { '$not': /555/ }}]}).exec( function (err, realized){
+			pause.find({agent: agent.id}).exec( function (err, pausesArray){
 
-			if(!err){
-				var statsCalls = [];
-				statsCalls.push({calls: received, name: "Received: ", length: received.length});
-				statsCalls.push({calls: realized, name: "Realized: ", length: realized.length});
-				agent.statsCalls = statsCalls;
-				// console.log(agent)
-			}
-			var users = [agent];
-			return cb(users);
+				if(!err){
+					var statsCalls = [],
+						pauses = [];
+					statsCalls.push({calls: received, name: "Received: ", length: received.length});
+					statsCalls.push({calls: realized, name: "Realized: ", length: realized.length});
+					pauses = {pausesArray: pausesArray, show: true};
+					agent.statsCalls = statsCalls;
+					agent.pauses = pauses;
+					// console.log(agent)
+				}
+				var users = [agent];
+				return cb(users);
+			});//pauses
 		});//realized
 	});//received
+}
 
+exports.pausedAgent = function (data, cb){
+	var epoch = moment();
+	var pausedAgent = {}
+	if(data.payload.paused == 1){
+		pausedAgent = new pause({
+			agent: data.extenUser,
+			epochStart: epoch.unix(),
+			epochS: epoch.format('MMM Do YYYY, h:mm:ss a'),
+			state: data.payload.paused
+		});
+		pausedAgent.save(function(){
+			return cb();
+		});
+	} else {
+		pause.find({agent: data.extenUser}).sort({_id: -1}).limit(1).exec( function (err, pAgent){
+			var diff = epoch.unix() - pAgent[0].epochStart;
+			var h, m, s;
+			if(diff < 60){ // si la pausa no duro ni un minuto
+				h = m = 0;
+				s = diff;
+			} else { 
+				h = Math.floor(diff / 60 / 60);
+				diff -= h*60*60;
+				m = Math.floor(diff / 60);
+				diff -= m*60;
+				s = diff;
+			}
+			m < 10 ? m = ":0" + m : m = ":" + m ;
+            s < 10 ? s = ":0" + s : s = ":" + s ;
+            console.log(h + m + s)
+			pausedAgent = {
+				epochFinish: epoch.unix(),
+				epochF: epoch.format('MMM Do YYYY, h:mm:ss a'),
+				timeDiff: diff,
+				timeD: h + m + s
+			}
+			pause.findByIdAndUpdate(pAgent[0]._id, pausedAgent, function (err, pAgent){
+				return cb();
+			});
+		});
+	}
+}
+
+exports.agentsCharts = function (match, cb) {
+	var pipeline = [
+        { "$match" : match
+        },
+        { '$group': {
+	        	'_id': '$agent', 
+	        	'totalSeg': {
+	        		'$sum':'$timeDiff'
+	        	},
+	        	'pauses' : { 
+	        		'$push' : { 
+	        			'epochFinish' : '$epochFinish', 
+	        			'epochStart': '$epochStart', 
+	        			'timeDiff': '$timeDiff',
+	        			'epochF' : '$epochF', 
+	        			'epochS': '$epochS', 
+	        			'timeD': '$timeD'
+	        		}
+        		} 
+        	}
+        }
+    ];
+	pause.aggregate(pipeline, function (err, pauses) {
+		console.log(pauses)
+		return cb(pauses);
+	});
+}
+exports.singleAgentChart = function (search, cb) {
+
+	pause.find(search, function (err, pauses) {
+		if(err) return cb(new Array());
+		console.log(pauses)
+		return cb(pauses);
+	});
+}
+
+function mergeEventsSingle (uniqueid){
+	Event.find({uniqueid: uniqueid}).exec(function(err,evnts){
+		// console.log(evnts)
+		var delField = [ ]; 
+		if(evnts.length > 1){
+			var ev;
+			for (var i = 0; i < evnts.length; i++) {
+				// console.log("============================================================")
+				// console.log(evnts[i])
+				// console.log(i)
+				delField.push(evnts[i]._id);
+				if(i == 0){
+					ev = new Event({
+						events: evnts[i].events,
+						date: evnts[i].date,
+						status: evnts[i].status,
+						channel: evnts[i].channel,
+						uniqueid: evnts[i].uniqueid,
+						calleridnum: evnts[i].calleridnum,
+						calleridname: evnts[i].calleridname,
+						connectedlinenum: evnts[i].connectedlinenum,
+						connectedlinename: evnts[i].connectedlinename
+					});
+					if(evnts[i].events[0].status == 'Up') {
+						ev.status = "Completed";
+					} else if(evnts[i].events[0].status == 'Ringing') {
+						ev.calleridnum = evnts[i].connectedlinenum,
+						ev.calleridname = evnts[i].connectedlinename,
+						ev.connectedlinenum = evnts[i].calleridnum,
+						ev.connectedlinename = evnts[i].calleridname
+					}
+				} else {
+					// console.log(ev)
+					if(ev.connectedlinenum === '' && evnts[i].connectedlinenum != ''){
+						ev.connectedlinename = evnts[i].connectedlinename;
+						ev.connectedlinenum = evnts[i].connectedlinenum;
+					}
+					if(ev.calleridnum === '' && evnts[i].calleridnum != ''){
+						ev.calleridname = evnts[i].calleridname;
+						ev.calleridnum = evnts[i].calleridnum;
+					}
+					for (var j = 0; j < evnts[i].events.length; j++) {
+						ev.events.push(evnts[i].events[j])
+						
+						if(evnts[i].events[j].status == 'Up'){
+							ev.status = "Completed";
+						} else if(evnts[i].events[0].status == 'Ringing') {
+							ev.calleridnum = evnts[i].connectedlinenum,
+							ev.calleridname = evnts[i].connectedlinename,
+							ev.connectedlinenum = evnts[i].calleridnum,
+							ev.connectedlinename = evnts[i].calleridname
+						}
+					};
+				}
+				//console.log(ev)
+				Event.findByIdAndRemove(evnts[i]._id, function (err, callback){
+					if(err) console.log(err)
+				});
+			};//For loop
+			console.log("////////////////////////////////////////////////////////////////")
+			console.log(ev)
+			console.log("////////////////////////////////////////////////////////////////")
+			
+			ev.save();
+		}
+	});
 }

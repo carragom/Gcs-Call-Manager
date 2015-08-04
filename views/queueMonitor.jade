@@ -265,10 +265,10 @@ block content
 				div#infoQueueData
 					center
 						h1
-							span(data-bind="fadeVisible: queue")
+							span(data-bind="fadeVisible: id != ''")
 								i.icon-group &nbsp;
 							span(data-bind="text: id")
-					div.infoValidData(data-bind="fadeVisible: queue")
+					div.infoValidData(data-bind="fadeVisible: id != ''")
 						center
 							button.gcsBtn(data-bind="click: clearQueueData")
 								|Dismiss
