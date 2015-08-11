@@ -222,7 +222,7 @@ function abandonedCalls (queueArray, cb){
 	epochGte.minutes(0);
 	epochGte.seconds(0);
 
-	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}, {'events.epoch': {'$gte' : epochGte.unix() }}]}).exec( function (err, ami_datos){
+	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}, {'events.epoch': {'$gte' : epochGte.unix() }}]}).sort({'events.epoch': -1}).exec( function (err, ami_datos){
 
 		if(err) return cb(queueArray);
 		//var abandonedCalls = [ [], [], [], [], [] ];
@@ -258,8 +258,8 @@ function abandonedCalls (queueArray, cb){
 exports.queueReport = function (queueArray, cb){
 	// console.log(queueArray);
 
-	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}]}).exec( function (err, abandoned){
-		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': 'Up'}, {'events.name': 'Hangup'}]}).exec( function (err, completed){
+	Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': {'$ne': 'Up'}}, {'events.status': 'Ringing'}, {'events.name': 'Hangup'}]}).sort({'events.epoch': -1}).exec( function (err, abandoned){
+		Event.find({channel: {'$regex': /SIP/}, '$and': [{'events.status': 'Up'}, {'events.name': 'Hangup'}]}).sort({'events.epoch': -1}).exec( function (err, completed){
 			if(err) return cb(queueArray);
 			//var abandonedCalls = [ [], [], [], [], [] ];
 			var abandonedCalls = new Array(6);
@@ -313,8 +313,8 @@ exports.queueReport = function (queueArray, cb){
 function agentReport (agent, cb){
 	// console.log(agent);
 
-	Event.find({channel: {'$regex': /SIP/}, 'connectedlinenum': agent.id, 'events.status': 'Ringing'}).exec( function (err, received){
-		Event.find({channel: {'$regex': /SIP/}, 'calleridnum': agent.id, 'events.status': 'Ring', '$and' : [{'events.exten': { '$not': /\*45/ }}, {'events.exten': { '$not': /555/ }}]}).exec( function (err, realized){
+	Event.find({channel: {'$regex': /SIP/}, 'connectedlinenum': agent.id, 'events.status': 'Ringing'}).sort({'events.epoch': -1}).exec( function (err, received){
+		Event.find({channel: {'$regex': /SIP/}, 'calleridnum': agent.id, 'events.status': 'Ring', '$and' : [{'events.exten': { '$not': /\*45/ }}, {'events.exten': { '$not': /555/ }}]}).sort({'events.epoch': -1}).exec( function (err, realized){
 			pause.find({agent: agent.id}).exec( function (err, pausesArray){
 
 				if(!err){

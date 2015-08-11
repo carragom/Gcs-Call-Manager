@@ -7,32 +7,31 @@ block gcsCss
 
 block gcsNavbarItems
 	ul.nav.navbar-nav
-		if(role)
-			li
-				a(href="/queueMonitor")
-					i.icon-desktop.icon-large 
-					|&nbsp;Queues
-			li
-				a(href="/userAdmin")
-					i.icon-user.icon-large 
-					|&nbsp;Users
-			li.active
-				a(href="#")
-					i.icon-file-text.icon-large 
-					|&nbsp;Reports
-		else
-			li
-				a(href="/reportsAgents")
-					i.icon-archive.icon-large 
-					|&nbsp;Agents
+		li
+			a(href="/queueMonitor")
+				i.fa.fa-desktop.fa-lg 
+				|&nbsp;Queues
+		li
+			a(href="/userAdmin")
+				i.fa.fa-user.fa-lg
+				|&nbsp;Users
+		li.active
+			a(href="#")
+				i.fa.fa-file-text.fa-lg 
+				|&nbsp;Reports
+		li
+			a(href="/campaigns")
+				i.fa.fa-files-o.fa-lg 
+				|&nbsp;Campaigns
 		li
 			a(href="/logout")
-				i.icon-off.icon-large 
+				i.fa.fa-power-off.fa-lg 
 				|&nbsp;Logout
 		li
 			a(data-toggle="modal" href="#helpModal")
-				i.icon-question-sign.icon-large
+				i.fa.fa-question-circle.fa-lg
 				|&nbsp;Help
+
 	div.nav.nav-pills
 		p.navbar-text Queues:
 		<!-- ko foreach: $data.queues -->
@@ -54,9 +53,9 @@ block content
 			div.statsDataReports
 				li.liHover(data-bind="attr: {'id': id}, visible: id != '', click: agentsChart")
 					span Agents chart 
-						span.icon-stack.liButton
-							i.icon-circle.icon-stack-base.actionBtnBase
-							i.icon-bar-chart.actionBtnIcon
+						span.fa-stack.liButton
+							i.fa.fa-circle.fa-stack-2x.actionBtnBase
+							i.fa.fa-bar-chart.actionBtnIcon.fa-stack-1x
 				<!-- ko foreach: statsCalls -->
 				li.liHover.liDynamic(data-bind="click: markSelectedStat")
 					span(data-bind="text: name")

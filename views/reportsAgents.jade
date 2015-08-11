@@ -7,33 +7,21 @@ block gcsCss
 
 block gcsNavbarItems
 	ul.nav.navbar-nav
-		if(role)
-			li
-				a(href="/queueMonitor")
-					i.icon-desktop.icon-large 
-					|&nbsp;Queues
-			li
-				a(href="/userAdmin")
-					i.icon-user.icon-large 
-					|&nbsp;Users
-			li
-				a(href="/reports")
-					i.icon-file-text.icon-large 
-					|&nbsp;Reports
-		else
-			li.active
-				a(href="#")
-					i.icon-archive.icon-large 
-					|&nbsp;Agents
-					button#agentReport(hidden value=exten)
+		li.active
+			a(href="#")
+				i.fa.fa-desktop.fa-lg 
+				|&nbsp;Agents
+				button#agentReport(hidden value=exten)
 		li
 			a(href="/logout")
-				i.icon-off.icon-large 
+				i.fa.fa-power-off.fa-lg 
 				|&nbsp;Logout
 		li
 			a(data-toggle="modal" href="#helpModal")
-				i.icon-question-sign.icon-large
+				i.fa.fa-question-circle.fa-lg
 				|&nbsp;Help
+
+
 block content
 	br
 	br
@@ -58,14 +46,14 @@ block content
 				span.statValue(data-bind="text: caller")
 			li.liHover
 				span Pause 
-					span.icon-stack.liButton(data-bind="click: pauseAgent")
-						i.icon-circle.icon-stack-base.actionBtnBase
-						i.icon-pause.actionBtnIcon
+					span.fa-stack.liButton(data-bind="click: pauseAgent")
+						i.fa.fa-circle.fa-stack-2x.actionBtnBase
+						i.fa.fa-pause.fa-stack-1x.actionBtnfa.fa
 				li.liHover(data-bind="click: agentsChart")
 					span Agent chart 
-						span.icon-stack.liButton
-							i.icon-circle.icon-stack-base.actionBtnBase
-							i.icon-bar-chart.actionBtnIcon
+						span.fa-stack.liButton
+							i.fa.fa-circle.fa-stack-2x.actionBtnBase
+							i.fa.fa-bar-chart.fa-stack-1x.actionBtnIcon
 
 
 			<!-- ko foreach: statsCalls -->

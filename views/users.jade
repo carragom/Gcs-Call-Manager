@@ -6,31 +6,29 @@ block gcsCss
 
 block gcsNavbarItems
 	ul.nav.navbar-nav
-		if(role)
-			li
-				a(href="/queueMonitor")
-					i.icon-desktop.icon-large 
-					|&nbsp;Queues
-			li.active
-				a(href="#")
-					i.icon-user.icon-large 
-					|&nbsp;Users
-			li
-				a(href="/reports")
-					i.icon-file-text.icon-large 
-					|&nbsp;Reports
-		else
-			li
-				a(href="/reportsAgents")
-					i.icon-archive.icon-large 
-					|&nbsp;Agents
+		li
+			a(href="/queueMonitor")
+				i.fa.fa-desktop.fa-lg 
+				|&nbsp;Queues
+		li.active
+			a(href="#")
+				i.fa.fa-user.fa-lg
+				|&nbsp;Users
+		li
+			a(href="/reports")
+				i.fa.fa-file-text.fa-lg 
+				|&nbsp;Reports
+		li
+			a(href="/campaigns")
+				i.fa.fa-files-o.fa-lg 
+				|&nbsp;Campaigns
 		li
 			a(href="/logout")
-				i.icon-off.icon-large 
+				i.fa.fa-power-off.fa-lg 
 				|&nbsp;Logout
 		li
 			a(data-toggle="modal" href="#helpModal")
-				i.icon-question-sign.icon-large
+				i.fa.fa-question-circle.fa-lg
 				|&nbsp;Help
 
 block content
@@ -54,7 +52,7 @@ block content
 				<!-- /ko -->
 				li.user-list-controls
 					span.user-list-control-add.gcsBtn(data-bind="click: newUser")
-						i.icon-plus.icon-2x
+						i.fa.fa-plus.fa-2x
 		div.user-form-container.infoContainer(data-bind="with: selectedUser")
 			h1(data-bind="visible: !id") Select a user
 			h1(data-bind="visible: id") User:&nbsp;

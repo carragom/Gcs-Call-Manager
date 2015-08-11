@@ -7,12 +7,12 @@ html {
 
 @font-face {
   font-family: DroidSans;
-  src: url('../font/DroidSans.ttf');
+  src: url('../fonts/DroidSans.ttf');
 }
 
 @font-face {
   font-family: Radian;
-  src: url('../font/radion.otf') format("opentype");
+  src: url('../fonts/radion.otf') format("opentype");
 }
 
 body {
@@ -168,7 +168,7 @@ input:not([type=submit]) {
   border-top: 1px dotted #fff;
 }
 
-.infoContainerUl .icon-stack-base {
+.infoContainerUl .fa-stack-2x {
   color: #fff3ad;
 }
 .infoAbandonedCalls li, .infoACDrop li{
@@ -454,7 +454,7 @@ input:not([type=submit]) {
   font-size: 17px;
 }
 
-.actionBtn:disabled .icon-stack-base {
+.actionBtn:disabled .fa-stack-2x {
   color: #fff3ad;
 }
 
@@ -621,6 +621,44 @@ span .icon-stack {
   margin-top: 10px;
 }
 
+.chargeCal {
+  margin: 10px 40%;
+  width: 355px;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 70px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.btn-browse {
+  background-color: #007730;
+  border-radius: 15px 0 0 0;
+  padding: 7px;
+  color: #63DB93;
+}
+.input-browse {
+  border-radius: 0 0 15px 0;
+  box-shadow: 0px 2px 2px #000;
+  height: 34px;
+}
+
+.btn-browse:hover {
+  background-color: #0C8F41;
+}
 /** Media Queries **/
 
 

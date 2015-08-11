@@ -17,7 +17,8 @@
     "passport-local": "*",
     "async": "latest",
     "underscore": "*",
-    "moment": "*"
+    "moment": "*",
+    "delivery": "*"
   },
   "devDependencies": {
     "grunt": "^0.4.4",

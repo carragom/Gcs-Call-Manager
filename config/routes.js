@@ -14,6 +14,7 @@
 var auth = require('./middleware/authorization'),
 	users = require('./middleware/users'),
 	userCookie = require('./middleware/userCookie');
+	
 
 /** Finally Expose routes
  *
@@ -67,6 +68,10 @@ module.exports = function (app, passport) {
 
 	app.get('/reportsAgents', auth.requiresLogin, userCookie.set, function(req, res){
 		res.render('reportsAgents', {title: 'Greencore Solutions Queue Monitor', role: req.session.role, exten: req.user.exten});
+	});
+
+	app.get('/campaigns', auth.requiresLogin, userCookie.set, function(req, res){
+		res.render('campaigns', {title: 'Greencore Solutions Queue Monitor'});
 	});
 
 	app.get('/logout', function(req, res){

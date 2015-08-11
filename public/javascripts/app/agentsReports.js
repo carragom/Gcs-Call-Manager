@@ -100,40 +100,40 @@ function clearAgentsChart() {
 ko.bindingHandlers.statusIcon = {
 	update: function(element, valueAccessor) {
 		var iconMain ='';
-		var iconCircle = 'icon-circle-blank';
+		var iconCircle = 'fa fa-circle-o';
 		var status = valueAccessor();
 
 		switch (status) {
 			case '1':
-				iconMain = 'icon-phone';
+				iconMain = 'fa fa-phone';
 				break;
 			case '2':
-				iconMain = 'icon-comments-alt';
+				iconMain = 'fa fa-comments-o';
 				break;
 			case '3':
-				iconMain = 'icon-minus-sign-alt';
+				iconMain = 'fa fa-minus-square';
 				break;
 			case '4':
-				iconMain = 'icon-asterisk';
+				iconMain = 'fa fa-asterisk';
 				break;
 			case '5':
-				iconMain = 'icon-phone';
-				iconCircle = 'icon-ban-circle';
+				iconMain = 'fa fa-phone';
+				iconCircle = 'fa fa-ban';
 				break;
 			case '6':
-				iconMain = 'icon-bell';
+				iconMain = 'fa fa-bell-o';
 				break;
 			case '7':
-				iconMain = 'icon-bell-alt';
+				iconMain = 'fa fa-bell';
 				break;
 			case '8':
-				iconMain = 'icon-music';
+				iconMain = 'fa fa-music';
 				break;
 			default:
-				iconMain = 'icon-asterisk';
+				iconMain = 'fa fa-asterisk';
 		}
 
-		var iconStack = '<span class="icon-stack" title:"Status"><i class="'+iconMain+'"></i><i class="'+iconCircle+' icon-stack-base"></i></span>';
+		var iconStack = '<span class="fa-stack" title:"Status"><i class="'+iconMain+' fa-stack-1x"></i><i class="'+iconCircle+' fa-stack-2x"></i></span>';
 		$(element).html(iconStack);
 	}
 };
@@ -192,6 +192,7 @@ function chartCanvas() {
 	var totalSeg = 0;
 	var p = queueViewModel.pauses().pausesArray();
 	for (var i = 0; i < p.length; i++) {
+		// column.dataPoints.push({y: p[i].timeDiff()});
 		totalSeg += p[i].timeDiff();
 	};
 	column.dataPoints.push({label: queueViewModel.users()[0].id(), y: totalSeg});
@@ -219,10 +220,12 @@ $('#range').click(function(){
 });
 
 $('#AllPauses').click(function(){
+	queueViewModel.pauses(queueViewModel.users()[0].pauses);
 	chartCanvas()
 });
 
 socket.on('singleAgentChart', function(pauses){
+	queueViewModel.pauses({show: true, pausesArray: pauses});
 	var column = { //dataSeries - first quarter
    		/*** Change type "column" to "bar", "area", "line" or "pie"***/        
 		type: "column",

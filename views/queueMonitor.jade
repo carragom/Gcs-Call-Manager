@@ -10,28 +10,32 @@ block gcsNavbarItems
 		if(role)
 			li.active
 				a(href="#")
-					i.icon-desktop.icon-large 
+					i.fa.fa-desktop.fa-lg 
 					|&nbsp;Queues
 			li
 				a(href="/userAdmin")
-					i.icon-user.icon-large 
+					i.fa.fa-user.fa-lg
 					|&nbsp;Users
 			li
 				a(href="/reports")
-					i.icon-file-text.icon-large 
+					i.fa.fa-file-text.fa-lg 
 					|&nbsp;Reports
+			li
+				a(href="/campaigns")
+					i.fa.fa-files-o.fa-lg 
+					|&nbsp;Campaigns
 		else
 			li
 				a(href="/reportsAgents")
-					i.icon-archive.icon-large 
+					i.fa.fa-archive.fa-lg 
 					|&nbsp;Agents
 		li
 			a(href="/logout")
-				i.icon-off.icon-large 
+				i.fa.fa-power-off.fa-lg 
 				|&nbsp;Logout
 		li
 			a(data-toggle="modal" href="#helpModal")
-				i.icon-question-sign.icon-large
+				i.fa.fa-question-circle.fa-lg
 				|&nbsp;Help
 
 block content
@@ -40,7 +44,7 @@ block content
 			div.modal-content
 				div.modal-header
 					button.close(type="button" data-dismiss="modal" aria-hidden="true")
-						i.icon-remove
+						i.fa.fa-remove
 					h4#helpModalLabel
 						|GCS QueueMonitor Help
 				div.modal-body
@@ -122,7 +126,7 @@ block content
 						div.agentTop(data-bind="click: markSelectedAgent")
 							div.agentStatus
 								button.btn-gcs(data-bind="visible: selected")
-									i.icon-arrow-right
+									i.fa.fa-arrow-right
 								div.agentIcon(data-bind="statusIcon: status()")
 								div.agentTopName
 									span(data-bind="text: name")
@@ -134,10 +138,10 @@ block content
 						div.agentDrop
 							ul.agentsUl.infoContainerUl
 								li.agentName
-									i.icon-user 
+									i.fa.fa-user 
 									span(data-bind="text: name")
 								li(data-bind="visible: paused() == 1")
-									i.icon-pause
+									i.fa.fa-pause
 									|&nbsp;Paused
 								li
 									span.infoLabel The agent is now:&nbsp
@@ -146,35 +150,35 @@ block content
 								li
 									span.infoLabel And is talking to:&nbsp;
 									span(data-bind="text: caller")
-									span.infoIcon.icon-stack
-										i.icon-circle-blank.icon-stack-base
-										i.icon-comments-alt
+									span.infoIcon.fa-stack
+										i.fa.fa-circle-o.fa-stack-2x
+										i.fa.fa-comments-o.fa-stack-1x
 								li
 									span.infoLabel The last call was:&nbsp;
 									span(data-bind="text: lastCall")
-									span.infoIcon.icon-stack
-										i.icon-circle-blank.icon-stack-base
-										i.icon-time
+									span.infoIcon.fa-stack
+										i.fa.fa-circle-o.fa-stack-2x
+										i.fa.fa-clock-o.fa-stack-1x
 								li
 									span.infoLabel Has taken:&nbsp;
 									span(data-bind="text: taken")
 									span.infoLabel &nbsp;calls
-									span.infoIcon.icon-stack
-										i.icon-circle-blank.icon-stack-base
-										i.icon-check
+									span.infoIcon.fa-stack
+										i.fa.fa-circle-o.fa-stack-2x
+										i.fa.fa-check.fa-stack-1x
 								
 							button.actionBtn(data-bind="click: removeAgent")
-								span.icon-stack
-									i.icon-circle.icon-stack-base.actionBtnBase
-									i.icon-remove.actionBtn
+								span.fa-stack
+									i.fa.fa-circle.fa-stack-2x.actionBtnBase
+									i.fa.fa-remove.actionBtn.fa-stack-1x
 							button.actionBtn(data-bind="click: pauseAgent")
-								span.icon-stack
-									i.icon-circle.icon-stack-base.actionBtnBase
-									i.icon-pause.actionBtn
+								span.fa-stack
+									i.fa.fa-circle.fa-stack-2x.actionBtnBase
+									i.fa.fa-pause.actionBtn.fa-stack-1x
 							button.actionBtn(data-bind="enable: isTalking(status())" data-toggle="modal" href="#chanspyModal")
-								span.icon-stack
-									i.icon-circle.icon-stack-base.actionBtnBase
-									i.icon-headphones.actionBtn
+								span.fa-stack
+									i.fa.fa-circle.fa-stack-2x.actionBtnBase
+									i.fa.fa-headphones.actionBtn.fa-stack-1x
 
 			<!-- /ko -->
 			<!-- /ko -->
@@ -186,7 +190,7 @@ block content
 					center
 						h1
 							span(data-bind="fadeVisible: queue")
-								i.icon-user &nbsp;
+								i.fa.fa-user &nbsp;
 							span(data-bind="text: name")
 					div.infoValidData(data-bind="fadeVisible: queue")
 						center
@@ -207,22 +211,22 @@ block content
 							li
 								span.infoLabel And is talking to:&nbsp;
 								span(data-bind="text: caller")
-								span.infoIcon.icon-stack
-									i.icon-circle-blank.icon-stack-base
-									i.icon-comments-alt
+								span.infoIcon.fa.fa-stack
+									i.fa.fa-circle-o.fa.fa-stack-2x
+									i.fa.fa-comments-o.fa-stack-1x
 							li
 								span.infoLabel The last call was:&nbsp;
 								span(data-bind="text: lastCall")
-								span.infoIcon.icon-stack
-									i.icon-circle-blank.icon-stack-base
-									i.icon-time
+								span.infoIcon.fa.fa-stack
+									i.fa.fa-circle-o.fa.fa-stack-2x
+									i.fa.fa-clock-o.fa-stack-1x
 							li
 								span.infoLabel Has taken:&nbsp;
 								span(data-bind="text: taken")
 								span.infoLabel &nbsp;calls
-								span.infoIcon.icon-stack
-									i.icon-circle-blank.icon-stack-base
-									i.icon-check
+								span.infoIcon.fa.fa-stack
+									i.fa.fa-circle-o.fa.fa-stack-2x
+									i.fa.fa-check.fa-stack-1x
 
 				div#actionData(data-bind="fadeVisible: queue")
 					center
@@ -230,21 +234,21 @@ block content
 							tr
 								td
 									button.actionBtn(data-bind="click: removeAgent, enable: queue")
-											span.icon-stack
-												i.icon-circle.icon-stack-base.actionBtnBase
-												i.icon-trash.actionBtnIcon
+											span.fa.fa-stack
+												i.fa.fa-circle.actionBtnBase.fa-stack-2x
+												i.fa.fa-trash.actionBtnIcon.fa-stack-1x
 
 								td
 									button.actionBtn(data-bind="click: pauseAgent, enable: queue")
-											span.icon-stack
-												i.icon-circle.icon-stack-base.actionBtnBase
-												i.icon-pause.actionBtnIcon
+											span.fa.fa-stack
+												i.fa.fa-circle.actionBtnBase.fa-stack-2x
+												i.fa.fa-pause.actionBtnIcon.fa-stack-1x
 
 								td
 									button.actionBtn(data-bind="click: toggleSpyForm, enable: isTalking(status())")
-											span.icon-stack
-												i.icon-circle.icon-stack-base.actionBtnBase
-												i.icon-headphones.actionBtnIcon
+											span.fa.fa-stack
+												i.fa.fa-circle.actionBtnBase.fa-stack-2x
+												i.fa.fa-headphones.actionBtnIcon.fa-stack-1x
 							tr
 								td
 									|Remove
@@ -266,7 +270,7 @@ block content
 					center
 						h1
 							span(data-bind="fadeVisible: id != ''")
-								i.icon-group &nbsp;
+								i.fa.fa-group &nbsp;
 							span(data-bind="text: id")
 					div.infoValidData(data-bind="fadeVisible: id != ''")
 						center

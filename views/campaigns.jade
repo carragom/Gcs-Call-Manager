@@ -1,0 +1,72 @@
+extends layout
+
+block gcsNavbarItems
+	ul.nav.navbar-nav
+		li
+			a(href="/queueMonitor")
+				i.fa.fa-desktop.fa-lg 
+				|&nbsp;Queues
+		li
+			a(href="/userAdmin")
+				i.fa.fa-user.fa-lg
+				|&nbsp;Users
+		li
+			a(href="/reports")
+				i.fa.fa-file-text.fa-lg 
+				|&nbsp;Reports
+		li.active
+			a(href="#")
+				i.fa.fa-files-o.fa-lg 
+				|&nbsp;Campaigns
+		li
+			a(href="/logout")
+				i.fa.fa-power-off.fa-lg 
+				|&nbsp;Logout
+		li
+			a(data-toggle="modal" href="#helpModal")
+				i.fa.fa-question-circle.fa-lg
+				|&nbsp;Help
+
+
+block content
+	div.chargeCal.queueHead
+		.input-group
+			span.input-group-btn
+				span.btn-browse.btn-file(style="font-size: 17px;") Browse 
+					input#fileUpload(type='file')
+			input.input-browse(type='text', disabled, style="width: 216px;color: #555;margin-bottom: 0px;")
+			span.liHover(data-bind="click: read" style="margin-left: 9px;")  
+				span#uploadSpan.fa-stack.liButton
+					i.fa.fa-circle.fa-stack-2x.actionBtnBase
+					i.fa.fa-upload.fa-stack-1x.actionBtnfa
+	#output
+
+	div.queueHead
+		div.info-queue-container
+			div.queue-list-container
+				ul.call-list-ul
+					li.user-list-header
+						span.queueCall-field
+							|Start
+						span.queueCall-field
+							|End
+						span.queueCall-field
+							|Pausedtime
+					<!-- ko foreach: directory -->
+					//
+						li.user-list-user
+							span.queueCall-field.user-list-name(data-bind="text: epochS")
+								|&nbsp;&nbsp;
+							span.queueCall-field.user-list-name(data-bind="text: epochF")
+								|&nbsp;&nbsp;
+							span.queueCall-field.user-list-name(data-bind="text: timeD")
+								|&nbsp;&nbsp;
+					<!-- /ko -->
+
+block gcsScripts
+	script(src="/javascripts/components/alertify.min.js")
+	script(src="/javascripts/components/knockout-2.3.0.js")
+	script(src="/javascripts/components/knockout.viewmodel.min.js")
+	script(src="/javascripts/components/delivery.js")
+	script(src="/socket.io/socket.io.js")
+	script(src="/javascripts/app/campaigns.js")

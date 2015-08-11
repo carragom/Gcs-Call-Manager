@@ -15,7 +15,9 @@ var env = process.env.NODE_ENV || 'development',
 	cookie = require('express/node_modules/cookie'),
 	connect = require('express/node_modules/connect'),
 	mongoose = require('mongoose'),
-	moment = require('moment');
+	moment = require('moment'),
+	Events = require('./config/Events'),
+	campaings = require('./config/campaings');
 
 
 mongoose.connect(config.db);
@@ -84,6 +86,7 @@ io.set('authorization', function (handshakeData, accept) {
  * React to client events from socket.io
  **/
 io.sockets.on('connection', function(socket){
+
 	socket.on('login', function	() {
 		gcsAmi.send({order: 'QueueLogin'});
 	});
@@ -156,7 +159,6 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.send({order: 'agentReport', extenUser: extenUser});
 	});
 
-	var Events = require('./config/Events');
 	socket.on('agentsCharts', function(agents){ 
 		// console.log(agents);
 		var match = {'$or': agents }
@@ -182,6 +184,19 @@ io.sockets.on('connection', function(socket){
 				socket.emit('singleAgentChart', pauses);			
 			})
 		}
+	});
+
+	socket.on('csv', function(arrayData){
+		var date = moment(arrayData[0]).format('MMM Do YYYY, h:mm:ss a');
+
+		var campaing = {
+			date: date
+			epoch: date.unix()
+			queues:
+			numbers:
+		}
+		var newcampaing = new campaing(campaing);
+		newcampaing.save(function(){})
 	});
 
 	/**
