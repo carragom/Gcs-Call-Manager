@@ -47,7 +47,6 @@ exports.add = function (eventAMI) {
 	});
 }
 
-
 exports.freshData = function (data, cb) {
 	var queueArray = data.queueArray;
 	// console.log("*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+")

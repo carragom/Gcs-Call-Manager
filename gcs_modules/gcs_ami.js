@@ -390,6 +390,10 @@ gcs_ami.prototype.connect = function (conf) {
 				ami.send({action: 'CoreShowChannels'})
 				break;
 
+			case 'QueueSummary':
+				self.emit('QueueSummary', ami_datos)
+				break;
+
 			default:
 				self.emit('gcs_ami_data', ami_datos);	
 		}		
@@ -429,6 +433,8 @@ gcs_ami.prototype.send = function (req) {
 
 		ami.send({action: 'QueueStatus'});
 		ami.send({action: 'CoreShowChannels'});
+	} else if('QueueSummary' === req.order) {
+		ami.send(req.payload);
 	} else {
 		console.log('gcs_ami: Invalid action recieved');
 	}

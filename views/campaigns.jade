@@ -1,5 +1,10 @@
 extends layout
 
+block gcsCss
+	link(rel='stylesheet', href='/stylesheets/alertify.core.css')
+	link(rel='stylesheet', href='/stylesheets/alertify.default.css')
+	link(rel='stylesheet', href='/stylesheets/jquery.datetimepicker.css')
+
 block gcsNavbarItems
 	ul.nav.navbar-nav
 		li
@@ -29,12 +34,20 @@ block gcsNavbarItems
 
 
 block content
-	div.chargeCal.queueHead
+	div.chargeCal.searchContainer
+		label.control-label From: 
+			input#dateFrom
+		br
+		label.control-label Until: 
+			input#dateUntil
+		br
+		label.control-label Queues: 
+			input#queues		
 		.input-group
 			span.input-group-btn
 				span.btn-browse.btn-file(style="font-size: 17px;") Browse 
 					input#fileUpload(type='file')
-			input.input-browse(type='text', disabled, style="width: 216px;color: #555;margin-bottom: 0px;")
+			input.input-browse(type='text', disabled, style="width: 216px;font-weight: 700;margin-bottom: 0px;")
 			span.liHover(data-bind="click: read" style="margin-left: 9px;")  
 				span#uploadSpan.fa-stack.liButton
 					i.fa.fa-circle.fa-stack-2x.actionBtnBase
@@ -67,6 +80,6 @@ block gcsScripts
 	script(src="/javascripts/components/alertify.min.js")
 	script(src="/javascripts/components/knockout-2.3.0.js")
 	script(src="/javascripts/components/knockout.viewmodel.min.js")
-	script(src="/javascripts/components/delivery.js")
+	script(src="/javascripts/components/jquery.datetimepicker.js")
 	script(src="/socket.io/socket.io.js")
-	script(src="/javascripts/app/campaigns.js")
+	script(src="/javascripts/app/campaignsSettings.js")

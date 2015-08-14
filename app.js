@@ -186,17 +186,8 @@ io.sockets.on('connection', function(socket){
 		}
 	});
 
-	socket.on('csv', function(arrayData){
-		var date = moment(arrayData[0]).format('MMM Do YYYY, h:mm:ss a');
-
-		var campaing = {
-			date: date
-			epoch: date.unix()
-			queues:
-			numbers:
-		}
-		var newcampaing = new campaing(campaing);
-		newcampaing.save(function(){})
+	socket.on('csv', function(data){
+		campaings.add(data);
 	});
 
 	/**
@@ -205,6 +196,7 @@ io.sockets.on('connection', function(socket){
 	 *
 	 */
 	function freshData(payload) {	
+		// console.log('freshData')
 		socket.emit('freshData', payload);
 	}
 
@@ -253,3 +245,58 @@ server.listen(config.port, function () {
 exports.use = function() {
 	app.use.apply(app, arguments);
 };*/
+
+campaings.task(function (pkg){
+	// console.log(pkg)
+	for (var i = 0; i < pkg.start.length; i++) {
+		start(pkg.start[i]);
+	};
+	for (var i = 0; i < pkg.unpause.length; i++) {
+		unpause(pkg.unpause[i]);
+	};
+});
+
+setInterval(function (){
+	campaings.task(function (pkg){
+		console.log(pkg)
+	});
+}, 300000);//cada 5 minutos
+
+
+function start (campaing) {
+	campaings.updateStatus({id: campaing._id, status: 2});
+	/*for (var i = 0; i < campaing.phones.length; i++) {
+		campaing.phones[i];
+	};*/;
+	console.log(campaings)
+	/*for (var i = 0; i < campaing.queues.length; i++) {
+		var pkg = {
+			action: 'QueueSummary', 
+			queue: campaing.queues[i].queue
+		};
+		gcsAmi.send({order: 'QueueSummary', payload: pkg});
+	}*/
+	var pkg = {
+		action: 'QueueSummary', 
+		queue: campaing.queue
+	};
+	gcsAmi.send({order: 'QueueSummary', payload: pkg});
+}
+
+function unpause (campaing) {
+	// campaings.updateStatus({id: campaing._id, status: 3});
+	
+}
+
+function pause (campaing) {
+	// campaings.updateStatus({id: campaing._id, status: 2});
+}
+
+function QueueSummary(payload) { 
+	/* Supongamos que la relación entre las campañas y las colas es de 1 a 1 */
+	campaings.makeCalls(payload, function (originateArray){
+
+	});
+}
+
+gcsAmi.on('QueueSummary', QueueSummary);

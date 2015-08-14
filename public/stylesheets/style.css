@@ -622,8 +622,9 @@ span .icon-stack {
 }
 
 .chargeCal {
-  margin: 10px 40%;
-  width: 355px;
+  margin: 10px 35%;
+  width: 380px;
+  padding: 24px 0px 24px 24px;
 }
 
 .btn-file {
