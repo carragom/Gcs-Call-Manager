@@ -12,6 +12,8 @@ var sys         = require('sys'); // In order of expanding event emitter we need
 var moment      = require('moment'); //Format dates to human readable
 var Events = require('../config/Events');
 
+var callsCampaing = []
+
 //Default AMI Connection setup (will be overwritten with conf info before ami.connect())
 var ami = new AsteriskAmi({ 
 	host: '127.0.0.1',
@@ -377,17 +379,41 @@ gcs_ami.prototype.connect = function (conf) {
 					// console.log(ami_datos);
 					Events.add(ami_datos);
 					ami.send({action: 'QueueStatus'});
-					ami.send({action: 'CoreShowChannels'})
+					ami.send({action: 'CoreShowChannels'});
 				}
 				break;
 
 			case 'Hangup':
 				if(/SIP/.test(ami_datos.channel)){
-					// console.log(ami_datos);
-					Events.add(ami_datos);
+					console.log(ami_datos);
+					Events.add(ami_datos, function(){
+						console.log('Helloo helloooo')
+					});
+					ami.send({action: 'QueueStatus'});
+					ami.send({action: 'CoreShowChannels'});
+
+					// Check if the ended call has from a campaing
+					for (var i = 0; i < callsCampaing.length; i++) {
+						// console.log(callsCampaing)
+						var k = 0;
+						while( k < queueArray.length){
+							if(queueArray[k].id == callsCampaing[i].queue){
+								var queue = queueArray[k];
+								// console.log(queue)
+								for (var j = 0; j < queue.agents.length; j++) {
+									if(queue.agents[j].id == ami_datos.calleridnum) {
+										console.log('----------------------- Envia new call')
+										// console.log(callsCampaing[i])
+										self.emit('nextCall', {campaing: callsCampaing[i], uniqueid: ami_datos.uniqueid});
+										j = queue.agents.length;
+									}
+								};
+								k = queueArray.length;
+							}
+							k++;
+						}
+					};
 				}
-				ami.send({action: 'QueueStatus'});
-				ami.send({action: 'CoreShowChannels'})
 				break;
 
 			case 'QueueSummary':
@@ -434,7 +460,43 @@ gcs_ami.prototype.send = function (req) {
 		ami.send({action: 'QueueStatus'});
 		ami.send({action: 'CoreShowChannels'});
 	} else if('QueueSummary' === req.order) {
-		ami.send(req.payload);
+		ami.send({
+			action: 'QueueSummary', 
+			queue: req.payload.queue 
+		});
+		var notFound = true;
+		for (var i = 0; i < callsCampaing.length; i++) {
+			if(callsCampaing[i].queue == req.payload.queue) {
+				notFound = false;
+				i = callsCampaing.length;
+			}
+		}
+		if(notFound) {
+			callsCampaing.push({ _id: req.payload.id, queue: req.payload.queue });
+		}
+	} else if('ClearCampaing' === req.order) {
+		console.log('**************** CLEAR ************************')
+		console.log(req)
+		console.log(callsCampaing)
+		var i = 0, j = callsCampaing.length;
+		while (i < j) {
+			console.log(callsCampaing[i].queue)
+			console.log(req.queue)
+			if(callsCampaing[i].queue == req.queue) {
+				callsCampaing.splice(i, 1); // remove from array
+				i = j;
+			}
+			i++;
+		};
+		console.log(callsCampaing)
+		console.log('***********************************************')
+	} else if('startCampaing' === req.order) {
+		console.log('gcs_ami get startCampaing')
+		var self = this;
+		if (callsCampaing.length > 0) {
+			console.log('gcs_ami send callsCampaing')
+			self.emit('startCampaing', callsCampaing);
+		}
 	} else {
 		console.log('gcs_ami: Invalid action recieved');
 	}

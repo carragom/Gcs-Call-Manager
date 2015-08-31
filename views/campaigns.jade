@@ -42,7 +42,7 @@ block content
 			input#dateUntil
 		br
 		label.control-label Queues: 
-			input#queues		
+			input#queues
 		.input-group
 			span.input-group-btn
 				span.btn-browse.btn-file(style="font-size: 17px;") Browse 
@@ -54,26 +54,34 @@ block content
 					i.fa.fa-upload.fa-stack-1x.actionBtnfa
 	#output
 
-	div.queueHead
+	div.queueHead(data-bind="foreach: campaigns")
 		div.info-queue-container
 			div.queue-list-container
 				ul.call-list-ul
 					li.user-list-header
-						span.queueCall-field
-							|Start
-						span.queueCall-field
-							|End
-						span.queueCall-field
-							|Pausedtime
-					<!-- ko foreach: directory -->
+						span.campaing-field
+							|Name
+						span.campaing-field
+							|Phone number
+						span.campaing-field
+							|Status
+						span.campaing-field
+							|Agent
+						span.campaing-field
+							|Comment
+					<!-- ko foreach: phones -->
+					li.user-list-user
+						span.campaing-field.user-list-name(data-bind="text: name")
+							|&nbsp;&nbsp;
+						span.campaing-field.user-list-name(data-bind="text: phone")
+							|&nbsp;&nbsp;
 					//
-						li.user-list-user
-							span.queueCall-field.user-list-name(data-bind="text: epochS")
-								|&nbsp;&nbsp;
-							span.queueCall-field.user-list-name(data-bind="text: epochF")
-								|&nbsp;&nbsp;
-							span.queueCall-field.user-list-name(data-bind="text: timeD")
-								|&nbsp;&nbsp;
+						span.campaing-field.user-list-name(data-bind="text: status")
+							|&nbsp;&nbsp;
+						span.campaing-field.user-list-name(data-bind="text: agent")
+							|&nbsp;&nbsp;
+						span.campaing-field.user-list-name(data-bind="text: comment")
+							|&nbsp;&nbsp;
 					<!-- /ko -->
 
 block gcsScripts

@@ -190,6 +190,10 @@ io.sockets.on('connection', function(socket){
 		campaings.add(data);
 	});
 
+	socket.on('campaingStart', function(){
+		gcsAmi.send({order: 'startCampaing'});
+	});
+
 	/**
 	 *  In order to safely unbind the listeners when the user disconnect, they must be called with a named callback
 	 *   not an anonymous function, so here are the callbacks
@@ -216,6 +220,14 @@ io.sockets.on('connection', function(socket){
 		socket.emit('agentPaused', payload);
 	}
 
+	function startCampaing(payload) {
+		console.log('***---***---***---***---***---***---***---***')
+		console.log(payload)
+		console.log('***---***---***---***---***---***---***---***')
+		campaings.startCampaing(payload, function (campaings){
+			socket.emit('startCampaing', campaings);
+		});
+	}
 
 	/** Then we add the listeners **/
 	gcsAmi.on('newAgent', newAgent);
@@ -223,6 +235,7 @@ io.sockets.on('connection', function(socket){
 	gcsAmi.on('freshData', freshData);
 	gcsAmi.on('queueReport', queueReport);
 	gcsAmi.on('agentPaused', agentPaused);
+	gcsAmi.on('startCampaing', startCampaing);
 
 	socket.on('disconnect', function() {
 		/** All non socket.io listeners must be cleaned at disconnect **/
@@ -231,6 +244,7 @@ io.sockets.on('connection', function(socket){
 		gcsAmi.removeListener('freshData', freshData);
 		gcsAmi.removeListener('queueReport', queueReport);
 		gcsAmi.removeListener('agentPaused', agentPaused);
+		gcsAmi.removeListener('startCampaing', startCampaing);
 	});
 
 });
@@ -247,12 +261,12 @@ exports.use = function() {
 };*/
 
 campaings.task(function (pkg){
-	// console.log(pkg)
+	console.log(pkg)
 	for (var i = 0; i < pkg.start.length; i++) {
 		start(pkg.start[i]);
 	};
-	for (var i = 0; i < pkg.unpause.length; i++) {
-		unpause(pkg.unpause[i]);
+	for (var i = 0; i < pkg.inProgress.length; i++) {
+		inProgress(pkg.inProgress[i]);
 	};
 });
 
@@ -264,39 +278,65 @@ setInterval(function (){
 
 
 function start (campaing) {
-	campaings.updateStatus({id: campaing._id, status: 2});
-	/*for (var i = 0; i < campaing.phones.length; i++) {
-		campaing.phones[i];
-	};*/;
-	console.log(campaings)
-	/*for (var i = 0; i < campaing.queues.length; i++) {
-		var pkg = {
-			action: 'QueueSummary', 
-			queue: campaing.queues[i].queue
-		};
-		gcsAmi.send({order: 'QueueSummary', payload: pkg});
-	}*/
+	campaings.updateStatus({id: campaing._id, status: 2}, function(){
+		askStatus(campaing);
+	});
+}
+
+function askStatus(campaing){
 	var pkg = {
-		action: 'QueueSummary', 
-		queue: campaing.queue
+		queue: campaing.queue,
+		id: campaing._id
 	};
 	gcsAmi.send({order: 'QueueSummary', payload: pkg});
 }
 
-function unpause (campaing) {
-	// campaings.updateStatus({id: campaing._id, status: 3});
+function pause (campaing) {
+	// campaings.updateStatus({id: campaing._id, status: 2}, function(){});
 	
 }
 
-function pause (campaing) {
-	// campaings.updateStatus({id: campaing._id, status: 2});
+function inProgress (campaing) {
+	// campaings.updateStatus({id: campaing._id, status: 2}, function(){});
+	askStatus(campaing);
 }
 
 function QueueSummary(payload) { 
 	/* Supongamos que la relación entre las campañas y las colas es de 1 a 1 */
-	campaings.makeCalls(payload, function (originateArray){
-
+	// console.log(payload)
+	campaings.makeCalls(payload, function (data){
+		var originateArray = data.originateArray;
+		// console.log(originateArray)
+		if(!data.isEmpty) {
+			for (var i = 0; i < originateArray.length; i++) {
+				
+				// console.log(originateArray[i])
+				var pkg = {
+						action: 'Originate',
+						channel: 'Local/' + data.queue + '@from-internal',
+						exten: originateArray[i].phone,
+						timeout: '30000',
+						priority: '1',
+						variable: 'queue=' + data.queue,
+						context: 'from-internal',
+						queue: data.queue
+					};
+				// console.log(pkg)
+				gcsAmi.send({order: 'spyAgent', payload: pkg});
+			};
+		} else {
+			gcsAmi.send({order: 'ClearCampaing', queue: data.queue})
+		}
 	});
 }
 
+
+function nextCall(payload) { 
+	console.log('++++++++++++++++ Recibe next call')
+	console.log(payload)
+	askStatus(payload.campaing);
+	campaings.callStatus(payload);
+}
+
 gcsAmi.on('QueueSummary', QueueSummary);
+gcsAmi.on('nextCall', nextCall);

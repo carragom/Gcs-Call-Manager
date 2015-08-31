@@ -6,7 +6,7 @@ $('#dateUntil').datepick({dateFormat: 'yyyy-mm-dd'});//'dd-mm-yyyy'*/
 jQuery('#dateFrom').datetimepicker();
 jQuery('#dateUntil').datetimepicker();
 
-var campaigns = {directory:[]}
+var campaigns = {campaigns:[{phones:[]}]}
 
 var campaignsViewModel = ko.viewmodel.fromModel(campaigns);
 
@@ -33,9 +33,11 @@ $(document).ready( function() {
         
     });
 });
-
 var socket = io.connect('/');
 
+// setInterval(function ()
+    socket.emit('campaingStart');
+// }, 5000);
 
 function read(){
 	var file    = document.querySelector('input[type=file]').files[0];
@@ -63,3 +65,9 @@ function read(){
         alertify.error('Selected a file');
     }
 }
+
+socket.on('startCampaing', function(directory) {
+    // alertify.log('freshData');
+    campaigns.directory = directory;
+    ko.viewmodel.updateFromModel(campaignsViewModel, campaigns);
+});

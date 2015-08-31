@@ -565,19 +565,24 @@ span .icon-stack {
   color: #fff;
 }
 
+.user-field, .call-field, .queueCall-field, .campaing-field {
+  display: inline-block;
+}
+
 .user-field {
   width: 150px;
-  display: inline-block;
 }
 
 .call-field {
   width: 25%;
-  display: inline-block;
 }
 
 .queueCall-field {
   width: 32%;
-  display: inline-block;
+}
+
+.campaing-field {
+  width: 18%;
 }
 
 .user-controls {
