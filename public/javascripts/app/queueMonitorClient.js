@@ -134,7 +134,7 @@ var queueArray = {queues:[]};
  * Connect to the socket.io server
  *
  **/
-var socket = io.connect('/');
+var socket = io.connect(window.location.origin);
 
 
 /**
